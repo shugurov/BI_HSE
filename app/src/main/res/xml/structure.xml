@@ -115,10 +115,10 @@
             <selected>projects_selected</selected>
         </icon>
         <url>
-            <url>http://app.bi.hse.ru/JSONsender.php?section=Projects</url>
+            <url>http://app.bi.hse.ru/JSONsender.php?</url>
             <url-parameter>
                 <key>section</key>
-                <value>Volunteering</value>
+                <value>Projects</value>
             </url-parameter>
             <url-parameter>
                 <key>F</key>
@@ -186,6 +186,14 @@
             <url-parameter>
                 <key>section</key>
                 <value>Contacts</value>
+            </url-parameter>
+            <url-parameter>
+                <key>F</key>
+                <value>0</value>
+            </url-parameter>
+            <url-parameter>
+                <key>L</key>
+                <value>10</value>
             </url-parameter>
         </url>
     </section>

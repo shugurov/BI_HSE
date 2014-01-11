@@ -27,7 +27,7 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
 
     public PlaceholderFragmentWithList(Context context, MainActivity.FragmentChanged fragmentChanged, int sectionNumber)
     {
-        super(context, fragmentChanged , sectionNumber);
+        super(context, fragmentChanged, sectionNumber);
         this.context = context;
     }
 
@@ -54,18 +54,18 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
                 {
                     if (item instanceof ProjectItem)
                     {
-                        ProjectItemPlaceholderFragment projectItemPlaceholderFragment = new ProjectItemPlaceholderFragment(getContext(),(ProjectItem) item, getFragmentChanged(), getSectionNumber());
+                        ProjectItemPlaceholderFragment projectItemPlaceholderFragment = new ProjectItemPlaceholderFragment(getContext(), (ProjectItem) item, getFragmentChanged(), getSectionNumber());
                         projectItemPlaceholderFragment.setAdapter(adapter);
                         getFragmentManager().beginTransaction().replace(R.id.container, projectItemPlaceholderFragment).commit();
                     } else
                     {
                         if (item instanceof Contact)
                         {
-                            ContactPlaceholderFragment contactPlaceholderFragment =  new ContactPlaceholderFragment(context, (Contact) item, getFragmentChanged(), getSectionNumber());
+                            ContactPlaceholderFragment contactPlaceholderFragment = new ContactPlaceholderFragment(context, (Contact) item, getFragmentChanged(), getSectionNumber());
                             getFragmentManager().beginTransaction().replace(R.id.container, contactPlaceholderFragment).commit();
                         } else
                         {
-                            getFragmentManager().beginTransaction().replace(R.id.container, new PlaceholderFragment(getContext(), getFragmentChanged() , getSectionNumber())).commit();
+                            getFragmentManager().beginTransaction().replace(R.id.container, new PlaceholderFragment(getContext(), getFragmentChanged(), getSectionNumber())).commit();
                         }
                     }
                 }
@@ -78,8 +78,8 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
     {
         if (listView != null)
         {
-            listView.setAdapter(adapter);
             this.adapter = adapter;
+            listView.setAdapter(adapter);
         } else
         {
             this.adapter = adapter;

@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
+import android.widget.ListAdapter;
 
 import ru.hse.shugurov.ContentTypes;
 import ru.hse.shugurov.Downloader;
@@ -20,8 +20,10 @@ import ru.hse.shugurov.gui.placeholders.EventsPlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragmentWithList;
 import ru.hse.shugurov.model.ApplicationStructure;
+import ru.hse.shugurov.model.MultipleViewScreen;
 import ru.hse.shugurov.model.Parser;
 import ru.hse.shugurov.model.Section;
+import ru.hse.shugurov.model.SingleViewSection;
 
 public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks
 {
@@ -93,111 +95,127 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         switch (sections[position].getType())
         {
             case ContentTypes.NEWS:
-                final PlaceholderFragmentWithList placeholderFragmentWithList = new PlaceholderFragmentWithList(this, fragmentChanged , position);
+                final PlaceholderFragmentWithList placeholderFragmentWithList = new PlaceholderFragmentWithList(this, fragmentChanged, position);
                 currentPlaceholder = placeholderFragmentWithList;
-                if (sections[position].getAdapters()[0] != null)
+                if (sections[position] instanceof SingleViewSection)
                 {
-                    placeholderFragmentWithList.setAdapter(sections[position].getAdapters()[0]);
-                } else
-                {
-                    dialog.show();
-                    downloader = new Downloader(new CallBack()
+                    ListAdapter adapter = ((SingleViewSection) sections[position]).getAdapter();
+                    if (adapter != null)
                     {
-                        @Override
-                        public void call(String[] results)
+                        placeholderFragmentWithList.setAdapter(adapter);
+                    } else
+                    {
+                        dialog.show();
+                        downloader = new Downloader(new CallBack()
                         {
-                            NewsAdapter adapter = null;
-                            if (results != null) //TODO а что делать, если null?(
+                            @Override
+                            public void call(String[] results)
                             {
-                                adapter = new NewsAdapter(MainActivity.this, Parser.parseNews(results[0]));
+                                NewsAdapter adapter = null;
+                                if (results != null) //TODO а что делать, если null?(
+                                {
+                                    adapter = new NewsAdapter(MainActivity.this, Parser.parseNews(results[0]));
+                                }
+                                placeholderFragmentWithList.setAdapter(adapter);
+                                ((SingleViewSection) sections[position]).setAdapter(adapter);
+                                dialog.cancel();
                             }
-                            placeholderFragmentWithList.setAdapter(adapter);
-                            sections[position].setAdapter(0, adapter);
-                            dialog.cancel();
-                        }
-                    });
-                    downloader.execute("http://app.bi.hse.ru/JSONsender.php?section=News&filter=1234&F=0&L=10"); //TODO убрать этот ужас
+                        });
+                        downloader.execute(((SingleViewSection) sections[position]).getUrl());
+                    }
                 }
                 break;
             case ContentTypes.PROJECTS_VOLUNTEERING:
                 final PlaceholderFragmentWithList placeholderFragmentWithList1 = new PlaceholderFragmentWithList(this, fragmentChanged, position);
                 currentPlaceholder = placeholderFragmentWithList1;
-                if (sections[position].getAdapters()[0] != null)
+                if (sections[position] instanceof SingleViewSection)
                 {
-                    placeholderFragmentWithList1.setAdapter(sections[position].getAdapters()[0]);
-                } else
-                {
-                    dialog.show();
-                    downloader = new Downloader(new CallBack()
+                    ListAdapter adapter = ((SingleViewSection) sections[position]).getAdapter();
+                    if (adapter != null)
                     {
-                        @Override
-                        public void call(String[] results)
+                        placeholderFragmentWithList1.setAdapter(adapter);
+                    } else
+                    {
+                        dialog.show();
+                        downloader = new Downloader(new CallBack()
                         {
-                            ProjectAdapter adapter = null;
-                            if (results != null) //TODO а что делать, если null?(
+                            @Override
+                            public void call(String[] results)
                             {
-                                adapter = new ProjectAdapter(MainActivity.this, Parser.parseProjects(results[0]));
+                                ProjectAdapter adapter = null;
+                                if (results != null) //TODO а что делать, если null?(
+                                {
+                                    adapter = new ProjectAdapter(MainActivity.this, Parser.parseProjects(results[0]));
+                                }
+                                placeholderFragmentWithList1.setAdapter(adapter);
+                                ((SingleViewSection) sections[position]).setAdapter(adapter);
+                                dialog.cancel();
                             }
-                            placeholderFragmentWithList1.setAdapter(adapter);
-                            sections[position].setAdapter(0, adapter);
-                            dialog.cancel();
-                        }
-                    });
-                    downloader.execute(sections[position].getUrl() + "&F=0&L=10"); //TODO убрать этот стыд(
+                        });
+                        downloader.execute(((SingleViewSection) sections[position]).getUrl());
+                    }
                 }
                 break;
             case ContentTypes.CONTACTS:
                 final PlaceholderFragmentWithList placeholderFragmentWithList2 = new PlaceholderFragmentWithList(this, fragmentChanged, position);
                 currentPlaceholder = placeholderFragmentWithList2;
-                if (sections[position].getAdapters()[0] != null)
+                if (sections[position] instanceof SingleViewSection)
                 {
-                    placeholderFragmentWithList2.setAdapter(sections[position].getAdapters()[0]);
-                } else
-                {
-                    dialog.show();
-                    downloader = new Downloader(new CallBack()
+                    ListAdapter adapter = ((SingleViewSection) sections[position]).getAdapter();
+                    if (adapter != null)
                     {
-                        @Override
-                        public void call(String[] results)
+                        placeholderFragmentWithList2.setAdapter(adapter);
+                    } else
+                    {
+                        dialog.show();
+                        downloader = new Downloader(new CallBack()
                         {
-                            ContactAdapter adapter = null;
-                            if (results != null) //TODO а что делать, если null?(
+                            @Override
+                            public void call(String[] results)
                             {
-                                adapter = new ContactAdapter(MainActivity.this, Parser.parseContacts(results[0]));
+                                ContactAdapter adapter = null;
+                                if (results != null) //TODO а что делать, если null?(
+                                {
+                                    adapter = new ContactAdapter(MainActivity.this, Parser.parseContacts(results[0]));
+                                }
+                                placeholderFragmentWithList2.setAdapter(adapter);
+                                ((SingleViewSection) sections[position]).setAdapter(adapter);
+                                dialog.cancel();
                             }
-                            placeholderFragmentWithList2.setAdapter(adapter);
-                            sections[position].setAdapter(0, adapter);
-                            dialog.cancel();
-                        }
-                    });
-                    downloader.execute(sections[position].getUrl() + "&F=0&L=10"); //TODO убрать этот стыд(
+                        });
+                        downloader.execute(((SingleViewSection) sections[position]).getUrl()); //TODO убрать этот стыд(
+                    }
                 }
                 break;
             case ContentTypes.EVENTS:
                 final EventsPlaceholderFragment eventsPlaceholderFragment = new EventsPlaceholderFragment(this, fragmentChanged, position);
                 currentPlaceholder = eventsPlaceholderFragment;
-                if (sections[position].getAdapters()[0] != null)
+                if (sections[position] instanceof MultipleViewScreen)
                 {
-                   // eventsPlaceholderFragment.setAdapter(sections[position].getAdapters()[0]); TODO расскомментить
-                } else
-                {
-                    dialog.show();
-                    downloader = new Downloader(new CallBack()
+                    ListAdapter adapter = ((MultipleViewScreen) sections[position]).getAdapter(0); //TODO а почему 0?
+                    if (adapter != null)
                     {
-                        @Override
-                        public void call(String[] results)
+                        // eventsPlaceholderFragment.setAdapter(sections[position].getAdapters()[0]); TODO расскомментить
+                    } else
+                    {
+                        dialog.show();
+                        downloader = new Downloader(new CallBack()
                         {
-                            ContactAdapter adapter = null;
-                            if (results != null) //TODO а что делать, если null?(
+                            @Override
+                            public void call(String[] results)
                             {
-                                adapter = new ContactAdapter(MainActivity.this, Parser.parseContacts(results[0]));
+                                ContactAdapter adapter = null;
+                                if (results != null) //TODO а что делать, если null?(
+                                {
+                                    adapter = new ContactAdapter(MainActivity.this, Parser.parseContacts(results[0]));
+                                }
+                                //eventsPlaceholderFragment.setAdapter(adapter); Расскомментить
+                                ((MultipleViewScreen) sections[position]).setAdapter(0, adapter);//TODO а почему 0?
+                                dialog.cancel();
                             }
-                            //eventsPlaceholderFragment.setAdapter(adapter); Расскомментить
-                            sections[position].setAdapter(0, adapter);
-                            dialog.cancel();
-                        }
-                    });
-                    downloader.execute(sections[position].getUrl() + "&F=0&L=10"); //TODO убрать этот стыд(
+                        });
+                        downloader.execute(((MultipleViewScreen) sections[position]).getUrl(0)); //TODO а почему 0?
+                    }
                 }
                 break;
             default:

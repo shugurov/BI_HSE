@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.XmlResourceParser;
 
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -31,8 +32,7 @@ public class ApplicationStructure
         }
         parser = context.getResources().getXml(R.xml.structure);
         List<Section> sectionList = readStructure();
-        sections = (Section[]) sectionList.toArray(new Section[sectionList.size()]);
-        //anotherRad();
+        sections = sectionList.toArray(new Section[sectionList.size()]);
     }
 
     public static void setContext(Context cont)
@@ -56,31 +56,13 @@ public class ApplicationStructure
 
     private List<Section> readStructure()
     {
-        List<Section> entries = new ArrayList<Section>();
-        try
-        {
-            parser.next();
-        } catch (XmlPullParserException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        try
-        {
-            parser.next();
-        } catch (XmlPullParserException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        List<Section> sections = new ArrayList<Section>();
+        next();
+        next();
         try
         {
             parser.require(XmlPullParser.START_TAG, null, "structure");
-            while (parser.next() != XmlPullParser.END_TAG)
+            while (next() != XmlPullParser.END_TAG)
             {
                 if (parser.getEventType() != XmlPullParser.START_TAG)
                 {
@@ -89,7 +71,7 @@ public class ApplicationStructure
                 String name = parser.getName();
                 if (name.equals("section"))
                 {
-                    entries.add(readSection());
+                    sections.add(readSection());
                 } else
                 {
                     skip();
@@ -102,7 +84,7 @@ public class ApplicationStructure
         {
             e.printStackTrace();
         }
-        return entries;
+        return sections;
     }
 
     private void skip()
@@ -141,21 +123,30 @@ public class ApplicationStructure
         Section section = null;
         String title = "";
         Icon icon = null;
-        String url = "";
+        String url = null;
+        ArrayList<String> urls = null;
         int type = -1;
         try
         {
             parser.require(XmlPullParser.START_TAG, null, "section");
-            while (parser.next() != XmlPullParser.END_TAG)
+            next();
+            title = readTitle();
+            type = getType();
+            icon = getIcon();
+            boolean isFirst = true;
+            while (parser.getName().equals("url"))
             {
-                if (parser.getEventType() != XmlPullParser.START_TAG)
+                if (urls != null)
                 {
-                    continue;
+                    if (isFirst)
+                    {
+                        isFirst = false;
+                        urls = new ArrayList<String>();
+                        urls.add(url);
+                    }
+                    urls.add(readUrl());
                 } else
                 {
-                    title = readTitle();
-                    type = getType();
-                    icon = getIcon();
                     url = readUrl();
                 }
             }
@@ -166,7 +157,14 @@ public class ApplicationStructure
         {
             e.printStackTrace();
         }
-        section = new Section(title, icon.getDefaultIcon(), icon.getSelectedIcon(), url, type);
+        if (urls == null)
+        {
+            section = new SingleViewSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), url, type);
+        } else
+        {
+            section = new MultipleViewScreen(title, icon.getDefaultIcon(), icon.getSelectedIcon(), urls.toArray(new String[urls.size()]), type);
+        }
+
         return section;
     }
 
@@ -201,110 +199,49 @@ public class ApplicationStructure
         {
             e.printStackTrace();
         }
-        try
-        {
-            parser.next();
-        } catch (XmlPullParserException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        try
-        {
-            parser.next();
-        } catch (XmlPullParserException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        next();
+        next();
         String defaultString = readText();
-        try
-        {
-            parser.next();
-        } catch (XmlPullParserException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        next();
         String selectedString = readText();
         int defaultId = context.getResources().getIdentifier(defaultString, "drawable", context.getPackageName());
         int selectedId = context.getResources().getIdentifier(selectedString, "drawable", context.getPackageName());
-        ;
+        next();
+        next();
         icon = new Icon(defaultId, selectedId);
         return icon;
     }
 
     private String readUrl()
     {
-        String url = "";
-        try
-        {
-            parser.next();
-        } catch (XmlPullParserException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        try
-        {
-            parser.next();
-        } catch (XmlPullParserException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        try
-        {
-            parser.next();
-        } catch (XmlPullParserException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        String url;
+        next();
         url = readText();
-        int tagEvent = XmlPullParser.END_TAG;
-        try
+        next();
+        boolean isFirst = true;
+        while (parser.getName().equals("url-parameter"))
         {
-            tagEvent = parser.next();
-        } catch (XmlPullParserException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
+            next();
+            NameValuePair pair = getParam();
+            if (isFirst)
+            {
+                url += pair.getName() + "=" + pair.getValue();
+                isFirst = false;
+            } else
+            {
+                url += "&" + pair.getName() + "=" + pair.getValue();
+            }
+            next();
+            next();
         }
-        while (tagEvent != XmlPullParser.END_TAG)
-        {
-            getParam();
-        }
+        next();
         return url;
     }
 
     private int getType()
     {
         int type = -1;
-        try
-        {
-            parser.next();
-        } catch (XmlPullParserException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        next();
         String str = readText();
         type = Integer.parseInt(str);
         return type;
@@ -313,30 +250,28 @@ public class ApplicationStructure
     private String readText()
     {
         String text = "";
-        try
+        if (next() == XmlPullParser.TEXT)
         {
-            if (parser.next() == XmlPullParser.TEXT)
-            {
-                text = parser.getText();
-                parser.nextTag();
-            }
-        } catch (XmlPullParserException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
+            text = parser.getText();
+            next();
         }
         return text;
     }
 
     private NameValuePair getParam()
     {
-        String key = parser.getText();
+
+        String key = readText();
+        next();
+        String value = readText();
+        return new BasicNameValuePair(key, value);
+    }
+
+    private int next()
+    {
         try
         {
-            parser.next();
-            parser.next();
+            return parser.next();
         } catch (XmlPullParserException e)
         {
             e.printStackTrace();
@@ -344,7 +279,6 @@ public class ApplicationStructure
         {
             e.printStackTrace();
         }
-        String value = parser.getName();
-        return null;
+        return 0;
     }
 }

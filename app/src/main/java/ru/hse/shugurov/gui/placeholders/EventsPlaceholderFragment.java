@@ -27,8 +27,16 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
     }
 
     @Override
-    public void onClick(View v)
+    public void onClick(View view)
     {
-
+        switch (view.getId())
+        {
+            case R.id.events_first_icon:
+                break;
+            case R.id.events_second_icon:
+                break;
+            case R.id.events_third_icon:
+                break;
+        }
     }
 }
