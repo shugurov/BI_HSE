@@ -6,12 +6,6 @@
               android:gravity="bottom"
               android:orientation="vertical">
 
-
-    <ViewStub
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"></ViewStub>
-
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="50dp"
@@ -25,20 +19,20 @@
             android:layout_weight="1">
 
             <ImageView
-                android:id="@+id/events_first_icon"
+                android:id="@+id/events_announce_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/anons_button"
                 android:layout_gravity="center_horizontal"/>
 
             <TextView
-                android:id="@+id/events_first_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="first"
                 />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -46,19 +40,19 @@
             android:layout_weight="1">
 
             <ImageView
-                android:id="@+id/events_second_icon"
+                android:id="@+id/events_calendar_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/calendar_button"
                 android:layout_gravity="center_horizontal"/>
 
             <TextView
-                android:id="@+id/events_second_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:text="second"/>
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -66,14 +60,13 @@
             android:layout_weight="1">
 
             <ImageView
-                android:id="@+id/events_third_icon"
+                android:id="@+id/events_archives_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/archive_button"
                 android:layout_gravity="center_horizontal"/>
 
             <TextView
-                android:id="@+id/events_third_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

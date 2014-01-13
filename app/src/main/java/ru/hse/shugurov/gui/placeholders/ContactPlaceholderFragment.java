@@ -14,6 +14,7 @@ import android.widget.Toast;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.model.Contact;
+import ru.hse.shugurov.model.Section;
 
 /**
  * Created by Иван on 07.01.14.
@@ -23,9 +24,9 @@ public class ContactPlaceholderFragment extends SpecificItemPlaceholder
     private Contact contact;
     private Context context;
 
-    public ContactPlaceholderFragment(Context context, Contact contact, MainActivity.FragmentChanged fragmentChanged, int sectionNumber)
+    public ContactPlaceholderFragment(Context context, Contact contact, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
     {
-        super(context, fragmentChanged , sectionNumber);
+        super(context, fragmentChanged, section, sectionNumber);
         this.contact = contact;
         this.context = context;
         getFragmentChanged().setCurrentFragment(this);

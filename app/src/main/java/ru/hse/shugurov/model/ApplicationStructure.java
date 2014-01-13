@@ -136,7 +136,7 @@ public class ApplicationStructure
             boolean isFirst = true;
             while (parser.getName().equals("url"))
             {
-                if (urls != null)
+                if (url != null)
                 {
                     if (isFirst)
                     {

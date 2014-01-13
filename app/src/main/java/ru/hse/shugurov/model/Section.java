@@ -5,10 +5,10 @@ package ru.hse.shugurov.model;
  */
 public class Section
 {
-    private String title;
-    private int iconDefault;
-    private int iconSelected;
-    private int type;
+    private final String title;
+    private final int iconDefault;
+    private final int iconSelected;
+    private final int type;
 
 
     public Section(String title, int iconDefault, int iconSelected, int type)

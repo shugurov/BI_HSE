@@ -5,13 +5,13 @@ package ru.hse.shugurov.model;
  */
 public class Contact
 {
-    private String address;
-    private String url;
-    private String name;
-    private String picture;
-    private String email;
-    private String telephone;
-    private String department;
+    private final String address;
+    private final String url;
+    private final String name;
+    private final String picture;
+    private final String email;
+    private final String telephone;
+    private final String department;
 
     public String getDepartment()
     {

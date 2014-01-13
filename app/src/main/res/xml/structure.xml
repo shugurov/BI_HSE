@@ -69,7 +69,11 @@
             </url-parameter>
         </url>
         <url>
-            <url>http://app.bi.hse.ru/JSONsender.php?section=Activity</url>
+            <url>http://app.bi.hse.ru/JSONsender.php?</url>
+            <url-parameter>
+                <key>section</key>
+                <value>Activity</value>
+            </url-parameter>
             <url-parameter>
                 <key>subsection</key>
                 <value>archive</value>
@@ -132,13 +136,25 @@
     </section>
     <section>
         <title>Доска объявлений</title>
-        <type>1</type>
+        <type>3</type>
         <icon>
             <default>callboard</default>
             <selected>callboard_selected</selected>
         </icon>
         <url>
-            <url>тут ссылка</url>
+            <url>http://app.bi.hse.ru/JSONsender.php?</url>
+            <url-parameter>
+                <key>section</key>
+                <value>Callboard</value>
+            </url-parameter>
+            <url-parameter>
+                <key>F</key>
+                <value>0</value>
+            </url-parameter>
+            <url-parameter>
+                <key>L</key>
+                <value>10</value>
+            </url-parameter>
         </url>
     </section>
     <section>

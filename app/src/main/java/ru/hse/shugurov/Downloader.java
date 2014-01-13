@@ -12,17 +12,17 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.ExecutionException;
 
-import ru.hse.shugurov.gui.MainActivity;
-
 /**
  * Created by Иван on 29.12.13.
  */
 public class Downloader extends AsyncTask<String, Void, String[]>
 {
-    MainActivity.CallBack callBack;
+    CallBack callBack;
+
     public Downloader()
     {    }
-    public Downloader(MainActivity.CallBack callBack)
+
+    public Downloader(CallBack callBack)
     {
         this.callBack = callBack;
     }

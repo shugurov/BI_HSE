@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.widget.ListAdapter;
 
+import ru.hse.shugurov.CallBack;
 import ru.hse.shugurov.ContentTypes;
 import ru.hse.shugurov.Downloader;
 import ru.hse.shugurov.R;
@@ -16,6 +17,7 @@ import ru.hse.shugurov.gui.adapters.ContactAdapter;
 import ru.hse.shugurov.gui.adapters.NavigationDrawerAdapter;
 import ru.hse.shugurov.gui.adapters.NewsAdapter;
 import ru.hse.shugurov.gui.adapters.ProjectAdapter;
+import ru.hse.shugurov.gui.placeholders.BillboardPlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.EventsPlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragmentWithList;
@@ -95,7 +97,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         switch (sections[position].getType())
         {
             case ContentTypes.NEWS:
-                final PlaceholderFragmentWithList placeholderFragmentWithList = new PlaceholderFragmentWithList(this, fragmentChanged, position);
+                final PlaceholderFragmentWithList placeholderFragmentWithList = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
                 currentPlaceholder = placeholderFragmentWithList;
                 if (sections[position] instanceof SingleViewSection)
                 {
@@ -126,7 +128,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 }
                 break;
             case ContentTypes.PROJECTS_VOLUNTEERING:
-                final PlaceholderFragmentWithList placeholderFragmentWithList1 = new PlaceholderFragmentWithList(this, fragmentChanged, position);
+                final PlaceholderFragmentWithList placeholderFragmentWithList1 = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
                 currentPlaceholder = placeholderFragmentWithList1;
                 if (sections[position] instanceof SingleViewSection)
                 {
@@ -157,7 +159,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 }
                 break;
             case ContentTypes.CONTACTS:
-                final PlaceholderFragmentWithList placeholderFragmentWithList2 = new PlaceholderFragmentWithList(this, fragmentChanged, position);
+                final PlaceholderFragmentWithList placeholderFragmentWithList2 = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
                 currentPlaceholder = placeholderFragmentWithList2;
                 if (sections[position] instanceof SingleViewSection)
                 {
@@ -188,38 +190,20 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 }
                 break;
             case ContentTypes.EVENTS:
-                final EventsPlaceholderFragment eventsPlaceholderFragment = new EventsPlaceholderFragment(this, fragmentChanged, position);
-                currentPlaceholder = eventsPlaceholderFragment;
+                if (sections[position] instanceof SingleViewSection)
+                {
+                    final EventsPlaceholderFragment eventsPlaceholderFragment = new EventsPlaceholderFragment(this, fragmentChanged, (MultipleViewScreen) sections[position], position);
+                    currentPlaceholder = eventsPlaceholderFragment;
+                }
+                break;
+            case ContentTypes.BILLBOARD:
                 if (sections[position] instanceof MultipleViewScreen)
                 {
-                    ListAdapter adapter = ((MultipleViewScreen) sections[position]).getAdapter(0); //TODO а почему 0?
-                    if (adapter != null)
-                    {
-                        // eventsPlaceholderFragment.setAdapter(sections[position].getAdapters()[0]); TODO расскомментить
-                    } else
-                    {
-                        dialog.show();
-                        downloader = new Downloader(new CallBack()
-                        {
-                            @Override
-                            public void call(String[] results)
-                            {
-                                ContactAdapter adapter = null;
-                                if (results != null) //TODO а что делать, если null?(
-                                {
-                                    adapter = new ContactAdapter(MainActivity.this, Parser.parseContacts(results[0]));
-                                }
-                                //eventsPlaceholderFragment.setAdapter(adapter); Расскомментить
-                                ((MultipleViewScreen) sections[position]).setAdapter(0, adapter);//TODO а почему 0?
-                                dialog.cancel();
-                            }
-                        });
-                        downloader.execute(((MultipleViewScreen) sections[position]).getUrl(0)); //TODO а почему 0?
-                    }
+                    final BillboardPlaceholderFragment billboardPlaceholderFragment = new BillboardPlaceholderFragment(this, fragmentChanged, sections[position], position);
                 }
                 break;
             default:
-                currentPlaceholder = new PlaceholderFragment(this, fragmentChanged, position);
+                currentPlaceholder = new PlaceholderFragment(this, fragmentChanged, sections[position], position);
                 break;
         }
 
@@ -249,11 +233,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             return true;
         }
         return super.onCreateOptionsMenu(menu);
-    }
-
-    public interface CallBack
-    {
-        public void call(String[] results);
     }
 
     public interface FragmentChanged

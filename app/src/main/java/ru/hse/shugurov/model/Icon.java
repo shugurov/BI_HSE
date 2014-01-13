@@ -21,6 +21,6 @@ public class Icon
         this.selectedIcon = selectedIcon;
     }
 
-    private int defaultIcon;
-    private int selectedIcon;
+    private final int defaultIcon;
+    private final int selectedIcon;
 }

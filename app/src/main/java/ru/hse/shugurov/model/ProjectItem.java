@@ -6,10 +6,10 @@ package ru.hse.shugurov.model;
  */
 public class ProjectItem
 {
-    private String text;
-    private String url;
-    private String headline;
-    private String pictureUrl;
+    private final String text;
+    private final String url;
+    private final String headline;
+    private final String pictureUrl;
 
     public ProjectItem(String text, String url, String headline, String pictureUrl)
     {

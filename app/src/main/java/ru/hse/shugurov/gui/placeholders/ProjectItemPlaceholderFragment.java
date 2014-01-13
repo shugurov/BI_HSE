@@ -1,6 +1,5 @@
 package ru.hse.shugurov.gui.placeholders;
 
-import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,6 +12,7 @@ import android.widget.TextView;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.model.ProjectItem;
+import ru.hse.shugurov.model.Section;
 
 /**
  * Created by Иван on 06.01.14.
@@ -20,9 +20,10 @@ import ru.hse.shugurov.model.ProjectItem;
 public class ProjectItemPlaceholderFragment extends SpecificItemPlaceholder
 {
     private ProjectItem item;
-    public ProjectItemPlaceholderFragment(Context context, ProjectItem item, MainActivity.FragmentChanged fragmentChanged, int sectionNumber)
+
+    public ProjectItemPlaceholderFragment(Context context, ProjectItem item, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
     {
-        super(context,fragmentChanged ,sectionNumber);
+        super(context, fragmentChanged, section, sectionNumber);
         this.item = item;
         getFragmentChanged().setCurrentFragment(this);
     }
@@ -31,7 +32,7 @@ public class ProjectItemPlaceholderFragment extends SpecificItemPlaceholder
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.project_layout, container, false);
-        ((TextView)rootView.findViewById(R.id.project_layout_text)).setText(item.getText());
+        ((TextView) rootView.findViewById(R.id.project_layout_text)).setText(item.getText());
         rootView.findViewById(R.id.project_layout_details).setOnClickListener(new View.OnClickListener()
         {
             @Override

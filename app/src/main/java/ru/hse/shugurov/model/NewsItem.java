@@ -3,7 +3,7 @@ package ru.hse.shugurov.model;
 /**
  * Created by Иван on 01.01.14.
  */
-public class NewsItem
+public class NewsItem //TODO где и как я использую сеттеры?(
 {
     private String title;
     private String text;

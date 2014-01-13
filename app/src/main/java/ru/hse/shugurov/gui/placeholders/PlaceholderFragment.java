@@ -5,7 +5,6 @@ package ru.hse.shugurov.gui.placeholders;
  */
 
 import android.app.Activity;
-import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +15,7 @@ import android.widget.TextView;
 
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
+import ru.hse.shugurov.model.Section;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -29,12 +29,10 @@ public class PlaceholderFragment extends Fragment
     private static final String ARG_SECTION_NUMBER = "section_number";
     private int sectionNumber;
     private Context context;
-
-
-
+    private Section section;
     private MainActivity.FragmentChanged fragmentChanged;
 
-    public PlaceholderFragment(Context context, MainActivity.FragmentChanged fragmentChanged, int sectionNumber)
+    public PlaceholderFragment(Context context, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
     {
         this.sectionNumber = sectionNumber;
         this.context = context;
@@ -67,16 +65,22 @@ public class PlaceholderFragment extends Fragment
 
     protected Context getContext()
     {
-        return  context;
+        return context;
     }
+
     protected MainActivity.FragmentChanged getFragmentChanged()
     {
         return fragmentChanged;
     }
-    //TODO возвращаем true, когда MainActivity должно обработать нажатие
+
     public boolean moveBack()
     {
-        return true; //TODO поправить это
+        return true;
+    }
+
+    public Section getSection()
+    {
+        return section;
     }
 
 

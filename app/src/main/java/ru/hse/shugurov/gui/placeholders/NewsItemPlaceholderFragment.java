@@ -10,6 +10,7 @@ import android.widget.TextView;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.model.NewsItem;
+import ru.hse.shugurov.model.Section;
 
 /**
  * Created by Иван on 06.01.14.
@@ -17,9 +18,10 @@ import ru.hse.shugurov.model.NewsItem;
 public class NewsItemPlaceholderFragment extends SpecificItemPlaceholder
 {
     private NewsItem item;
-    public NewsItemPlaceholderFragment(Context context, NewsItem item, MainActivity.FragmentChanged fragmentChanged, int sectionNumber)
+
+    public NewsItemPlaceholderFragment(Context context, NewsItem item, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
     {
-        super(context, fragmentChanged, sectionNumber);
+        super(context, fragmentChanged, section, sectionNumber);
         this.item = item;
         getFragmentChanged().setCurrentFragment(this);
     }
@@ -28,8 +30,8 @@ public class NewsItemPlaceholderFragment extends SpecificItemPlaceholder
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.news_layout, container, false);
-        ((TextView)rootView.findViewById(R.id.news_layout_date)).setText(item.getDate());
-        ((TextView)rootView.findViewById(R.id.news_layout_text)).setText(item.getText());
+        ((TextView) rootView.findViewById(R.id.news_layout_date)).setText(item.getDate());
+        ((TextView) rootView.findViewById(R.id.news_layout_text)).setText(item.getText());
         return rootView;
     }
 }

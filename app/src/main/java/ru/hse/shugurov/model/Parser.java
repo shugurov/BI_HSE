@@ -11,6 +11,8 @@ public class Parser
 {
     public static NewsItem[] parseNews(String str)
     {
+        str = str.replaceAll("News\":", "\":");
+        str = str.replaceAll("Activity\":", "\":");
         JSONArray array;
         try
         {
@@ -35,7 +37,7 @@ public class Parser
             String title = "";
             try
             {
-                title = jsonObject.getString("nameNews");
+                title = jsonObject.getString("name");
             } catch (JSONException e)
             {
                 e.printStackTrace();
@@ -43,7 +45,7 @@ public class Parser
             String date = "";
             try
             {
-                date = jsonObject.getString("dateNews");
+                date = jsonObject.getString("date");
             } catch (JSONException e)
             {
                 e.printStackTrace();
@@ -51,7 +53,7 @@ public class Parser
             String text = "";
             try
             {
-                text = jsonObject.getString("txtNews");
+                text = jsonObject.getString("txt");
             } catch (JSONException e)
             {
                 e.printStackTrace();
@@ -59,7 +61,7 @@ public class Parser
             String summary = "";
             try
             {
-                summary = jsonObject.getString("shorttxtNews");
+                summary = jsonObject.getString("shorttxt");
             } catch (JSONException e)
             {
                 e.printStackTrace();
@@ -67,7 +69,7 @@ public class Parser
             String picture = "";
             try
             {
-                picture = jsonObject.getString("imgNews");
+                picture = jsonObject.getString("img");
             } catch (JSONException e)
             {
                 e.printStackTrace();
@@ -75,7 +77,7 @@ public class Parser
             int type = -1;
             try
             {
-                type = jsonObject.getInt("typeNews");
+                type = jsonObject.getInt("type");
             } catch (JSONException e)
             {
                 e.printStackTrace();
@@ -88,7 +90,7 @@ public class Parser
     public static ProjectItem[] parseProjects(String str)
     {
         ProjectItem[] items = null;
-        str = str.replaceAll("Volunteering\":", "\":");
+        str = str.replaceAll("Volunteering\":", "\":"); //TODO replace with regex
         str = str.replaceAll("Projects\":", "\":");
         JSONArray jsonArray = null;
         try
