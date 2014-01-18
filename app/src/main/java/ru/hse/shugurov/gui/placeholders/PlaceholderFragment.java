@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
-import ru.hse.shugurov.model.Section;
+import ru.hse.shugurov.sections.Section;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -37,6 +37,8 @@ public class PlaceholderFragment extends Fragment
         this.sectionNumber = sectionNumber;
         this.context = context;
         this.fragmentChanged = fragmentChanged;
+        this.fragmentChanged.setCurrentFragment(this);
+        this.section = section;
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         this.setArguments(args);
@@ -73,6 +75,7 @@ public class PlaceholderFragment extends Fragment
         return fragmentChanged;
     }
 
+    //возвращет true, если эту операцию выполняет MainActivity
     public boolean moveBack()
     {
         return true;
@@ -82,6 +85,4 @@ public class PlaceholderFragment extends Fragment
     {
         return section;
     }
-
-
 }

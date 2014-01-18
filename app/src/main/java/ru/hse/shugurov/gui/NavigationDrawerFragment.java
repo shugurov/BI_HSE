@@ -99,7 +99,7 @@ public class NavigationDrawerFragment extends Fragment
     {
         mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        { //TODO onClickListener тут!
+        {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {

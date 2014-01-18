@@ -19,13 +19,12 @@ public class Downloader extends AsyncTask<String, Void, String[]>
 {
     CallBack callBack;
 
-    public Downloader()
-    {    }
 
     public Downloader(CallBack callBack)
     {
         this.callBack = callBack;
     }
+
     @Override
     protected String[] doInBackground(String... params)
     {
@@ -89,7 +88,6 @@ public class Downloader extends AsyncTask<String, Void, String[]>
             {
                 return null;
             }
-            HttpURLConnection urlConnection = (HttpURLConnection) connection;
             connection.connect();
             int response = ((HttpURLConnection) connection).getResponseCode();
             if (response == HttpURLConnection.HTTP_OK)

@@ -3,7 +3,7 @@ package ru.hse.shugurov.model;
 /**
  * Created by Иван on 06.01.14.
  */
-public class Contact
+public class ContactItem
 {
     private final String address;
     private final String url;
@@ -48,7 +48,7 @@ public class Contact
         return telephone;
     }
 
-    public Contact(String address, String url, String name, String picture, String email, String telephone, String department)
+    public ContactItem(String address, String url, String name, String picture, String email, String telephone, String department)
     {
         this.address = address;
         this.url = url;

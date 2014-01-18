@@ -1,4 +1,4 @@
-package ru.hse.shugurov.model;
+package ru.hse.shugurov.sections;
 
 /**
  * Created by Иван on 02.01.14.
@@ -38,6 +38,4 @@ public class Section
     {
         return iconSelected;
     }
-
-
 }

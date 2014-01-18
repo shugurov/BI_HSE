@@ -87,15 +87,15 @@ public class Parser
         return items;
     }
 
-    public static ProjectItem[] parseProjects(String str)
+    public static ProjectItem[] parseProjects(String jsonString)
     {
         ProjectItem[] items = null;
-        str = str.replaceAll("Volunteering\":", "\":"); //TODO replace with regex
-        str = str.replaceAll("Projects\":", "\":");
+        jsonString = jsonString.replaceAll("Volunteering\":", "\":"); //TODO replace with regex
+        jsonString = jsonString.replaceAll("Projects\":", "\":");
         JSONArray jsonArray = null;
         try
         {
-            jsonArray = new JSONArray(str);
+            jsonArray = new JSONArray(jsonString);
         } catch (JSONException e)
         {
             e.printStackTrace();
@@ -156,20 +156,20 @@ public class Parser
         return items;
     }
 
-    public static Contact[] parseContacts(String str)
+    public static ContactItem[] parseContacts(String jsonString)
     {
-        Contact[] contacts = null;
+        ContactItem[] contactItems = null;
         JSONArray array = null;
         try
         {
-            array = new JSONArray(str);
+            array = new JSONArray(jsonString);
         } catch (JSONException e)
         {
             e.printStackTrace();
         }
         if (array != null)
         {
-            contacts = new Contact[array.length()];
+            contactItems = new ContactItem[array.length()];
             for (int i = 0; i < array.length(); i++)
             {
                 JSONObject jsonObject = null;
@@ -238,10 +238,65 @@ public class Parser
                     {
                         e.printStackTrace();
                     }
-                    contacts[i] = new Contact(adress, url, name, picture, email, telephone, department);
+                    contactItems[i] = new ContactItem(adress, url, name, picture, email, telephone, department);
                 }
             }
         }
-        return contacts;
+        return contactItems;
+    }
+
+    public static Advert[] parseAdverts(String str)
+    {
+        Advert[] advertItems = null;
+        JSONArray adverts = null;
+        try
+        {
+            adverts = new JSONArray(str);
+        } catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        if (adverts != null)
+        {
+            advertItems = new Advert[adverts.length()];
+            for (int i = 0; i < advertItems.length; i++)
+            {
+                JSONObject jsonObject = null;
+                String title = "";
+                String text = "";
+                int course = 0;
+                try
+                {
+                    jsonObject = adverts.getJSONObject(i);
+                } catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+
+                try
+                {
+                    title = jsonObject.getString("dayCallboard");
+                } catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+                try
+                {
+                    text = jsonObject.getString("txtCallboard");
+                } catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+                try
+                {
+                    course = jsonObject.getInt("courseCallboard");
+                } catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+                advertItems[i] = new Advert(title, text, course);
+            }
+        }
+        return advertItems;
     }
 }

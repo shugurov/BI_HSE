@@ -16,9 +16,9 @@ import ru.hse.shugurov.Downloader;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.gui.adapters.NewsAdapter;
-import ru.hse.shugurov.model.MultipleViewScreen;
 import ru.hse.shugurov.model.NewsItem;
 import ru.hse.shugurov.model.Parser;
+import ru.hse.shugurov.sections.MultipleViewScreen;
 
 /**
  * Created by Иван on 09.01.14.
@@ -35,7 +35,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
 
     public EventsPlaceholderFragment(Context context, MainActivity.FragmentChanged fragmentChanged, MultipleViewScreen currentScreen, int sectionNumber)
     {
-        super(context, fragmentChanged, currentScreen, sectionNumber);//TODO поправить currentScreen на getSection
+        super(context, fragmentChanged, currentScreen, sectionNumber);
         this.currentScreen = currentScreen;
         if (currentScreen.getAdaptersNumber() != 3 || currentScreen.getUrlsNumber() != 3)
         {
@@ -44,13 +44,13 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
         switch (currentScreen.getCurrentState())
         {
             case 0:
-                lastPressedButton = R.id.events_announce_button;
+                lastPressedButton = R.id.events_announce_image;
                 break;
             case 1:
-                lastPressedButton = R.id.events_calendar_icon;
+                lastPressedButton = R.id.events_calendar_image;
                 break;
             case 2:
-                lastPressedButton = R.id.events_announce_button;
+                lastPressedButton = R.id.events_archives_image;
                 break;
         }
     }
@@ -60,33 +60,30 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
     {
         root = (LinearLayout) inflater.inflate(R.layout.events, container, false);
         //select appropriate button
-        if (lastPressedButton == R.id.events_announce_button)
+        switch (lastPressedButton)
         {
-            root.findViewById(R.id.events_calendar_icon).setOnClickListener(this);
-            ImageView imageView = (ImageView) root.findViewById(R.id.events_announce_button);
-            imageView.setOnClickListener(this);
-            imageView.setImageDrawable(getResources().getDrawable(R.drawable.anons_button_pressed));
-            root.findViewById(R.id.events_archives_icon).setOnClickListener(this);
-        } else
-        {
-            switch (lastPressedButton)
-            {
-                case R.id.events_calendar_icon:
-                    ImageView imageView = (ImageView) root.findViewById(R.id.events_calendar_icon);
-                    imageView.setOnClickListener(this);
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.calendar_button_pressed));
-                    root.findViewById(R.id.events_announce_button).setOnClickListener(this);
-                    root.findViewById(R.id.events_archives_icon).setOnClickListener(this);
+            case R.id.events_announce_image:
+                root.findViewById(R.id.events_calendar_image).setOnClickListener(this);
+                ImageView imageView = (ImageView) root.findViewById(R.id.events_announce_image);
+                imageView.setOnClickListener(this);
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.anons_button_pressed));
+                root.findViewById(R.id.events_archives_image).setOnClickListener(this);
+                break;
+            case R.id.events_calendar_image:
+                imageView = (ImageView) root.findViewById(R.id.events_calendar_image);
+                imageView.setOnClickListener(this);
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.calendar_button_pressed));
+                root.findViewById(R.id.events_announce_image).setOnClickListener(this);
+                root.findViewById(R.id.events_archives_image).setOnClickListener(this);
 
-                    break;
-                case R.id.events_archives_icon:
-                    root.findViewById(R.id.events_calendar_icon).setOnClickListener(this);
-                    root.findViewById(R.id.events_announce_button).setOnClickListener(this);
-                    imageView = (ImageView) root.findViewById(R.id.events_archives_icon);
-                    imageView.setOnClickListener(this);
-                    imageView.setImageDrawable(getResources().getDrawable(R.drawable.archive_button_pressed));
-                    break;
-            }
+                break;
+            case R.id.events_archives_image:
+                root.findViewById(R.id.events_calendar_image).setOnClickListener(this);
+                root.findViewById(R.id.events_announce_image).setOnClickListener(this);
+                imageView = (ImageView) root.findViewById(R.id.events_archives_image);
+                imageView.setOnClickListener(this);
+                imageView.setImageDrawable(getResources().getDrawable(R.drawable.archive_button_pressed));
+                break;
         }
         progress = inflater.inflate(R.layout.progress, root, false);
         root.addView(progress, 0);
@@ -108,7 +105,10 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                 }
             }
         });
-        downloader.execute(currentScreen.getUrl(0)); //TODO а почему 0?(
+        if (currentScreen.getCurrentState() != 1)
+        {
+            downloader.execute(currentScreen.getUrl(currentScreen.getCurrentState()));
+        }
         return root;
     }
 
@@ -120,8 +120,8 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
         String url = null;
         switch (view.getId())
         {
-            case R.id.events_announce_button:
-                if (lastPressedButton == R.id.events_announce_button)
+            case R.id.events_announce_image:
+                if (lastPressedButton == R.id.events_announce_image)
                 {
                     return;
                 } else
@@ -130,9 +130,9 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                     {
                         downloader.cancel(false);
                     }
-                    ((ImageView) getView().findViewById(R.id.events_announce_button)).setImageDrawable(getResources().getDrawable(R.drawable.anons_button_pressed));
+                    ((ImageView) getView().findViewById(R.id.events_announce_image)).setImageDrawable(getResources().getDrawable(R.drawable.anons_button_pressed));
                     releaseButton(lastPressedButton);
-                    lastPressedButton = R.id.events_announce_button;
+                    lastPressedButton = R.id.events_announce_image;
                     currentScreen.setCurrentState(0);
                     adapter = currentScreen.getAdapter(0);
                     root.removeView(currentView);
@@ -167,21 +167,21 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                     }
                 }
                 break;
-            case R.id.events_calendar_icon:
-                if (lastPressedButton == R.id.events_calendar_icon)
+            case R.id.events_calendar_image:
+                if (lastPressedButton == R.id.events_calendar_image)
                 {
                     return;
                 } else
                 {
-                    ((ImageView) getView().findViewById(R.id.events_calendar_icon)).setImageDrawable(getResources().getDrawable(R.drawable.calendar_button_pressed));
+                    ((ImageView) getView().findViewById(R.id.events_calendar_image)).setImageDrawable(getResources().getDrawable(R.drawable.calendar_button_pressed));
                     releaseButton(lastPressedButton);
-                    lastPressedButton = R.id.events_calendar_icon;
+                    lastPressedButton = R.id.events_calendar_image;
                     currentScreen.setCurrentState(1);
                     root.removeView(currentView);
                 }
                 break;
-            case R.id.events_archives_icon:
-                if (lastPressedButton == R.id.events_archives_icon)
+            case R.id.events_archives_image:
+                if (lastPressedButton == R.id.events_archives_image)
                 {
                     return;
                 } else
@@ -190,9 +190,9 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                     {
                         downloader.cancel(false);
                     }
-                    ((ImageView) getView().findViewById(R.id.events_archives_icon)).setImageDrawable(getResources().getDrawable(R.drawable.archive_button_pressed));
+                    ((ImageView) getView().findViewById(R.id.events_archives_image)).setImageDrawable(getResources().getDrawable(R.drawable.archive_button_pressed));
                     releaseButton(lastPressedButton);
-                    lastPressedButton = R.id.events_archives_icon;
+                    lastPressedButton = R.id.events_archives_image;
                     currentScreen.setCurrentState(2);
                     adapter = currentScreen.getAdapter(2);
                     root.removeView(currentView);
@@ -241,14 +241,14 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
     {
         switch (id)
         {
-            case R.id.events_announce_button:
-                ((ImageView) getView().findViewById(R.id.events_announce_button)).setImageDrawable(getResources().getDrawable(R.drawable.anons_button));
+            case R.id.events_announce_image:
+                ((ImageView) getView().findViewById(R.id.events_announce_image)).setImageDrawable(getResources().getDrawable(R.drawable.anons_button));
                 break;
-            case R.id.events_calendar_icon:
-                ((ImageView) getView().findViewById(R.id.events_calendar_icon)).setImageDrawable(getResources().getDrawable(R.drawable.calendar_button));
+            case R.id.events_calendar_image:
+                ((ImageView) getView().findViewById(R.id.events_calendar_image)).setImageDrawable(getResources().getDrawable(R.drawable.calendar_button));
                 break;
-            case R.id.events_archives_icon:
-                ((ImageView) getView().findViewById(R.id.events_archives_icon)).setImageDrawable(getResources().getDrawable(R.drawable.archive_button));
+            case R.id.events_archives_image:
+                ((ImageView) getView().findViewById(R.id.events_archives_image)).setImageDrawable(getResources().getDrawable(R.drawable.archive_button));
                 break;
         }
     }
@@ -256,12 +256,11 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        ListAdapter adapter = currentScreen.getAdapter(currentScreen.getCurrentState());
+        NewsAdapter adapter = (NewsAdapter) currentScreen.getAdapter(currentScreen.getCurrentState());
         Object item = adapter.getItem(position);
         if (item instanceof NewsItem)
         {
             NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment(getContext(), (NewsItem) item, getFragmentChanged(), getSection(), getSectionNumber());
-            newsItemPlaceholderFragment.setAdapter(adapter);
             getFragmentManager().beginTransaction().replace(R.id.container, newsItemPlaceholderFragment).commit();
         }
     }

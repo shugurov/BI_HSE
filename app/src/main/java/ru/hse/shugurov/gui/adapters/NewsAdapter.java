@@ -5,8 +5,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import ru.hse.shugurov.ImageLoader;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.model.NewsItem;
 
@@ -16,14 +18,19 @@ import ru.hse.shugurov.model.NewsItem;
 public class NewsAdapter extends BaseAdapter
 {
     private NewsItem[] items;
-    private Context context;
     private LayoutInflater inflater;
+    private ImageLoader imageLoader;
 
     public NewsAdapter(Context context, NewsItem[] items)
     {
         this.items = items;
-        this.context = context;
         inflater = LayoutInflater.from(context);
+        imageLoader = new ImageLoader(context, context.getResources().getDrawable(R.drawable.ic_launcher));
+    }
+
+    public ImageLoader getImageLoader()
+    {
+        return imageLoader;
     }
 
     @Override
@@ -41,7 +48,7 @@ public class NewsAdapter extends BaseAdapter
     @Override
     public long getItemId(int position)
     {
-        return position; //TODO наверное, стоит поправить id
+        return position;
     }
 
     @Override
@@ -55,6 +62,7 @@ public class NewsAdapter extends BaseAdapter
         ((TextView) view.findViewById(R.id.news_item_headline)).setText(items[position].getTitle());
         ((TextView) view.findViewById(R.id.news_item_text)).setText(items[position].getSummary());
         ((TextView) view.findViewById(R.id.news_item_date)).setText(items[position].getDate());
+        imageLoader.displayImage(items[position].getPicture(), (ImageView) view.findViewById(R.id.news_item_picture));
         return view;
     }
 }

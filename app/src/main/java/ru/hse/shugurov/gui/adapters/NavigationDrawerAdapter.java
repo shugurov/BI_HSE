@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import ru.hse.shugurov.R;
-import ru.hse.shugurov.model.Section;
+import ru.hse.shugurov.sections.Section;
 
 /**
  * Created by Иван on 02.01.14.

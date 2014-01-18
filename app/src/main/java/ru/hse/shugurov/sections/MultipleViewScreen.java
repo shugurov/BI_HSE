@@ -1,4 +1,4 @@
-package ru.hse.shugurov.model;
+package ru.hse.shugurov.sections;
 
 import android.widget.ListAdapter;
 

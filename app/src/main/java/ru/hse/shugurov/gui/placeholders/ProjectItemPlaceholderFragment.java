@@ -7,12 +7,16 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import ru.hse.shugurov.ImageLoader;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
+import ru.hse.shugurov.gui.adapters.ProjectAdapter;
 import ru.hse.shugurov.model.ProjectItem;
-import ru.hse.shugurov.model.Section;
+import ru.hse.shugurov.sections.Section;
+import ru.hse.shugurov.sections.SingleViewSection;
 
 /**
  * Created by Иван on 06.01.14.
@@ -25,7 +29,6 @@ public class ProjectItemPlaceholderFragment extends SpecificItemPlaceholder
     {
         super(context, fragmentChanged, section, sectionNumber);
         this.item = item;
-        getFragmentChanged().setCurrentFragment(this);
     }
 
     @Override
@@ -42,6 +45,8 @@ public class ProjectItemPlaceholderFragment extends SpecificItemPlaceholder
                 startActivity(browserIntent);
             }
         });
+        ImageLoader imageLoader = ((ProjectAdapter) ((SingleViewSection) getSection()).getAdapter()).getImageLoader();
+        imageLoader.displayImage(item.getPictureUrl(), (ImageView) rootView.findViewById(R.id.project_layout_picture));
         return rootView;
     }
 }

@@ -12,7 +12,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.hse.shugurov.ContentTypes;
 import ru.hse.shugurov.R;
+import ru.hse.shugurov.sections.MultipleAdaptersViewSection;
+import ru.hse.shugurov.sections.MultipleViewScreen;
+import ru.hse.shugurov.sections.Section;
+import ru.hse.shugurov.sections.SingleViewSection;
 
 /**
  * Created by Иван on 04.01.14.
@@ -159,7 +164,13 @@ public class ApplicationStructure
         }
         if (urls == null)
         {
-            section = new SingleViewSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), url, type);
+            if (type == ContentTypes.BILLBOARD)
+            {
+                section = new MultipleAdaptersViewSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), type, 6, url);
+            } else
+            {
+                section = new SingleViewSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), url, type);
+            }
         } else
         {
             section = new MultipleViewScreen(title, icon.getDefaultIcon(), icon.getSelectedIcon(), urls.toArray(new String[urls.size()]), type);
