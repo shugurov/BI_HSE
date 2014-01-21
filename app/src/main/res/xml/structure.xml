@@ -159,35 +159,71 @@
     </section>
     <section>
         <title>Расписание</title>
-        <type>1</type>
+        <type>4</type>
         <icon>
             <default>schedule</default>
             <selected>schedule_selected</selected>
         </icon>
         <url>
-            <url>тут ссылка</url>
+            <url>http://app.bi.hse.ru/JSONsender.php?</url>
+            <url-parameter>
+                <key>section</key>
+                <value>Schedule</value>
+            </url-parameter>
+            <url-parameter>
+                <key>F</key>
+                <value>0</value>
+            </url-parameter>
+            <url-parameter>
+                <key>L</key>
+                <value>10</value>
+            </url-parameter>
         </url>
     </section>
     <section>
         <title>Рейтинг</title>
-        <type>1</type>
+        <type>4</type>
         <icon>
             <default>rating</default>
             <selected>rating_selected</selected>
         </icon>
         <url>
-            <url>тут ссылка</url>
+            <url>http://app.bi.hse.ru/JSONsender.php?</url>
+            <url-parameter>
+                <key>section</key>
+                <value>Raiting</value>
+            </url-parameter>
+            <url-parameter>
+                <key>F</key>
+                <value>0</value>
+            </url-parameter>
+            <url-parameter>
+                <key>L</key>
+                <value>10</value>
+            </url-parameter>
         </url>
     </section>
     <section>
-        <title>Прподаватели</title>
-        <type>1</type>
+        <title>Преподаватели</title>
+        <type>5</type>
         <icon>
             <default>teachers</default>
             <selected>teachers_selected</selected>
         </icon>
         <url>
-            <url>тут ссылка</url>
+            <url>http://app.bi.hse.ru/JSONsender.php?</url>
+            <url-parameter>
+                <key>section</key>
+                <value>Teachers</value>
+            </url-parameter>
+            <url-parameter>
+                <key>F</key>
+                <value>0</value>
+            </url-parameter>
+            <url-parameter>
+                <key>L</key>
+                <value>10</value>
+            </url-parameter>
         </url>
     </section>
     <section>

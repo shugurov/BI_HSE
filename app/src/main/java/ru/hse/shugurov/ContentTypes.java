@@ -9,5 +9,7 @@ public interface ContentTypes
     int EVENTS = 1;
     int PROJECTS_VOLUNTEERING = 2;
     int BILLBOARD = 3;
+    int SCHEDULE = 4;
+    int TEACHERS = 5;
     int CONTACTS = 8;
 }

@@ -16,6 +16,7 @@ import ru.hse.shugurov.ContentTypes;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.sections.MultipleAdaptersViewSection;
 import ru.hse.shugurov.sections.MultipleViewScreen;
+import ru.hse.shugurov.sections.ReferencesSection;
 import ru.hse.shugurov.sections.Section;
 import ru.hse.shugurov.sections.SingleViewSection;
 
@@ -164,16 +165,22 @@ public class ApplicationStructure
         }
         if (urls == null)
         {
-            if (type == ContentTypes.BILLBOARD)
+            switch (type)
             {
-                section = new MultipleAdaptersViewSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), type, 6, url);
-            } else
-            {
-                section = new SingleViewSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), url, type);
+                case ContentTypes.BILLBOARD:
+                    section = new MultipleAdaptersViewSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), type, 6, url);
+                    break;
+                case ContentTypes.SCHEDULE:
+                    section = new ReferencesSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), type, 6);
+                    break;
+                default:
+                    section = new SingleViewSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), url, type);
+                    break;
             }
         } else
         {
             section = new MultipleViewScreen(title, icon.getDefaultIcon(), icon.getSelectedIcon(), urls.toArray(new String[urls.size()]), type);
+
         }
 
         return section;

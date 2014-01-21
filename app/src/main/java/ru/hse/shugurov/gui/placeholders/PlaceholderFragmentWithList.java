@@ -86,6 +86,7 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
                                 listView.setAdapter(projectAdapter);
                                 break;
                             case ContentTypes.CONTACTS:
+                            case ContentTypes.TEACHERS:
                                 ContactItem[] contactItems = Parser.parseContacts(results[0]);
                                 ContactAdapter contactAdapter = new ContactAdapter(getContext(), contactItems);
                                 ((SingleViewSection) getSection()).setAdapter(contactAdapter);

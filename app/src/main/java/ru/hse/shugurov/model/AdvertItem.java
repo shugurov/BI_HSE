@@ -3,13 +3,13 @@ package ru.hse.shugurov.model;
 /**
  * Created by Иван on 18.01.14.
  */
-public class Advert
+public class AdvertItem
 {
     private final String title;
     private final String text;
     private final int course;
 
-    public Advert(String title, String text, int course)
+    public AdvertItem(String title, String text, int course)
     {
         this.title = title;
         this.text = text;

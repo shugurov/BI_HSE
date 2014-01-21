@@ -15,10 +15,13 @@ import ru.hse.shugurov.gui.placeholders.BillboardPlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.EventsPlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragmentWithList;
+import ru.hse.shugurov.gui.placeholders.SchedulePlaceholderFragment;
 import ru.hse.shugurov.model.ApplicationStructure;
 import ru.hse.shugurov.sections.MultipleAdaptersViewSection;
 import ru.hse.shugurov.sections.MultipleViewScreen;
+import ru.hse.shugurov.sections.ReferencesSection;
 import ru.hse.shugurov.sections.Section;
+import ru.hse.shugurov.sections.SingleViewSection;
 
 public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks
 {
@@ -88,7 +91,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         };
         switch (sections[position].getType())
         {
-            case ContentTypes.NEWS:
+            case ContentTypes.NEWS://TODO проверять тип секции всегда
                 currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
                 break;
             case ContentTypes.PROJECTS_VOLUNTEERING:
@@ -107,6 +110,18 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 if (sections[position] instanceof MultipleAdaptersViewSection)
                 {
                     currentPlaceholder = new BillboardPlaceholderFragment(this, fragmentChanged, (MultipleAdaptersViewSection) sections[position], position);
+                }
+                break;
+            case ContentTypes.SCHEDULE:
+                if (sections[position] instanceof ReferencesSection)
+                {
+                    currentPlaceholder = new SchedulePlaceholderFragment(this, fragmentChanged, sections[position], position);
+                }
+                break;
+            case ContentTypes.TEACHERS:
+                if (sections[position] instanceof SingleViewSection)
+                {
+                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
                 }
                 break;
             default:

@@ -159,6 +159,8 @@ public class Parser
     public static ContactItem[] parseContacts(String jsonString)
     {
         ContactItem[] contactItems = null;
+        jsonString = jsonString.replaceAll("Contacts\":", "\":"); //TODO replace with regex
+        jsonString = jsonString.replaceAll("Teachers\":", "\":");
         JSONArray array = null;
         try
         {
@@ -191,42 +193,42 @@ public class Parser
                     String department = "";
                     try
                     {
-                        adress = jsonObject.getString("adressContacts");
+                        adress = jsonObject.getString("adress");
                     } catch (JSONException e)
                     {
                         e.printStackTrace();
                     }
                     try
                     {
-                        url = jsonObject.getString("refContacts");
+                        url = jsonObject.getString("ref");
                     } catch (JSONException e)
                     {
                         e.printStackTrace();
                     }
                     try
                     {
-                        name = jsonObject.getString("nameContacts");
+                        name = jsonObject.getString("name");
                     } catch (JSONException e)
                     {
                         e.printStackTrace();
                     }
                     try
                     {
-                        picture = jsonObject.getString("imgContacts");
+                        picture = jsonObject.getString("img");
                     } catch (JSONException e)
                     {
                         e.printStackTrace();
                     }
                     try
                     {
-                        email = jsonObject.getString("emailContacts");
+                        email = jsonObject.getString("email");
                     } catch (JSONException e)
                     {
                         e.printStackTrace();
                     }
                     try
                     {
-                        telephone = jsonObject.getString("telnumbContacts");
+                        telephone = jsonObject.getString("telnumb");
                     } catch (JSONException e)
                     {
                         e.printStackTrace();
@@ -245,9 +247,9 @@ public class Parser
         return contactItems;
     }
 
-    public static Advert[] parseAdverts(String str)
+    public static AdvertItem[] parseAdverts(String str)
     {
-        Advert[] advertItems = null;
+        AdvertItem[] advertItemItems = null;
         JSONArray adverts = null;
         try
         {
@@ -258,8 +260,8 @@ public class Parser
         }
         if (adverts != null)
         {
-            advertItems = new Advert[adverts.length()];
-            for (int i = 0; i < advertItems.length; i++)
+            advertItemItems = new AdvertItem[adverts.length()];
+            for (int i = 0; i < advertItemItems.length; i++)
             {
                 JSONObject jsonObject = null;
                 String title = "";
@@ -294,9 +296,9 @@ public class Parser
                 {
                     e.printStackTrace();
                 }
-                advertItems[i] = new Advert(title, text, course);
+                advertItemItems[i] = new AdvertItem(title, text, course);
             }
         }
-        return advertItems;
+        return advertItemItems;
     }
 }

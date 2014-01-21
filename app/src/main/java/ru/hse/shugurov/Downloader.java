@@ -39,7 +39,7 @@ public class Downloader extends AsyncTask<String, Void, String[]>
                 InputStream inputStream = openInputStream(params[i]);
                 if (inputStream == null)
                 {
-                    params[i] = null;
+                    return null;
                 } else
                 {
                     params[i] = readInputStream(inputStream);

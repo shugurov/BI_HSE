@@ -10,32 +10,32 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import ru.hse.shugurov.R;
-import ru.hse.shugurov.model.Advert;
+import ru.hse.shugurov.model.AdvertItem;
 
 /**
  * Created by Иван on 18.01.14.
  */
 public class AdvertAdapter extends BaseAdapter
 {
-    private ArrayList<Advert> adverts;
+    private ArrayList<AdvertItem> advertItems;
     private LayoutInflater inflater;
 
-    public AdvertAdapter(Context context, ArrayList<Advert> adverts)
+    public AdvertAdapter(Context context, ArrayList<AdvertItem> advertItems)
     {
-        this.adverts = adverts;
+        this.advertItems = advertItems;
         inflater = LayoutInflater.from(context);
     }
 
     @Override
     public int getCount()
     {
-        return adverts.size();
+        return advertItems.size();
     }
 
     @Override
     public Object getItem(int position)
     {
-        return adverts.get(position);
+        return advertItems.get(position);
     }
 
     @Override
@@ -52,8 +52,8 @@ public class AdvertAdapter extends BaseAdapter
         {
             resultView = inflater.inflate(R.layout.advert_item, parent, false);
         }
-        ((TextView) resultView.findViewById(R.id.advert_item_title)).setText(adverts.get(position).getTitle());
-        ((TextView) resultView.findViewById(R.id.advert_item_text)).setText(adverts.get(position).getText());
+        ((TextView) resultView.findViewById(R.id.advert_item_title)).setText(advertItems.get(position).getTitle());
+        ((TextView) resultView.findViewById(R.id.advert_item_text)).setText(advertItems.get(position).getText());
         return resultView;
     }
 }

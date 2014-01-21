@@ -8,4 +8,6 @@
     <string name="make_call">Позвонить</string>
     <string name="send_email">E-Mail</string>
     <string name="address_prefix">Адрес: </string>
+    <string name="bs">Бакалавриат</string>
+    <string name="ms">Магистратура</string>
 </resources>
