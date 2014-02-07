@@ -1,12 +1,12 @@
 package ru.hse.shugurov.gui;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
+import android.widget.Toast;
 
 import ru.hse.shugurov.ContentTypes;
 import ru.hse.shugurov.R;
@@ -16,6 +16,7 @@ import ru.hse.shugurov.gui.placeholders.EventsPlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragmentWithList;
 import ru.hse.shugurov.gui.placeholders.SchedulePlaceholderFragment;
+import ru.hse.shugurov.gui.placeholders.SettingPlaceholderFragment;
 import ru.hse.shugurov.model.ApplicationStructure;
 import ru.hse.shugurov.sections.MultipleAdaptersViewSection;
 import ru.hse.shugurov.sections.MultipleViewScreen;
@@ -36,15 +37,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private CharSequence mTitle;
     private Section[] sections;
     private PlaceholderFragment[] fragments;
-    private ProgressDialog dialog;
     private PlaceholderFragment currentPlaceholder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        dialog = new ProgressDialog(this);
-        dialog.setCancelable(false);
+        String lol = getResources().getString(R.string.app_name);
         ApplicationStructure.setContext(this);
         ApplicationStructure structure = ApplicationStructure.getStructure();
         sections = structure.getSections();
@@ -66,12 +65,15 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     public void onBackPressed()
     {
         //TODO обдумать, что делать, если открыт drawer
-        if (currentPlaceholder != null) //TODO а что делать, если null?
+        if (currentPlaceholder != null)
         {
             if (!currentPlaceholder.moveBack())
             {
                 return;
             }
+        } else
+        {
+            Toast.makeText(this, "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
         }
         super.onBackPressed();
 
@@ -91,14 +93,23 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         };
         switch (sections[position].getType())
         {
-            case ContentTypes.NEWS://TODO проверять тип секции всегда
-                currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
+            case ContentTypes.NEWS:
+                if (sections[position] instanceof SingleViewSection)
+                {
+                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
+                }
                 break;
             case ContentTypes.PROJECTS_VOLUNTEERING:
-                currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
+                if (sections[position] instanceof SingleViewSection)
+                {
+                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
+                }
                 break;
             case ContentTypes.CONTACTS:
-                currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
+                if (sections[position] instanceof SingleViewSection)
+                {
+                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
+                }
                 break;
             case ContentTypes.EVENTS:
                 if (sections[position] instanceof MultipleViewScreen)
@@ -124,6 +135,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                     currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
                 }
                 break;
+            case ContentTypes.SETTINGS:
+            {
+                currentPlaceholder = new SettingPlaceholderFragment(this, fragmentChanged, sections[position], position);
+                break;
+            }
             default:
                 currentPlaceholder = new PlaceholderFragment(this, fragmentChanged, sections[position], position);
                 break;

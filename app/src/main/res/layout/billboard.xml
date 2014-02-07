@@ -17,103 +17,56 @@
         android:paddingTop="5dp">
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp">
+            style="@style/BillboardWrapper">
 
             <ImageView
                 android:id="@+id/bs1"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_gravity="top"
+                style="@style/BillboardItemTopGravity"
                 android:src="@drawable/course1"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp">
+            style="@style/BillboardWrapper">
 
             <ImageView
                 android:id="@+id/ms1"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_gravity="bottom"
+                style="@style/BillboardItemBottomGravity"
                 android:src="@drawable/course1"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp">
+            style="@style/BillboardWrapper">
 
             <ImageView
                 android:id="@+id/bs2"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_gravity="top"
+                style="@style/BillboardItemTopGravity"
                 android:src="@drawable/course2"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp">
+            style="@style/BillboardWrapper">
 
             <ImageView
                 android:id="@+id/bs3"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_gravity="top"
+                style="@style/BillboardItemTopGravity"
                 android:src="@drawable/course3"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp">
+            style="@style/BillboardWrapper">
 
             <ImageView
                 android:id="@+id/ms2"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_gravity="bottom"
+                style="@style/BillboardItemBottomGravity"
                 android:src="@drawable/course2"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="horizontal"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp">
+            style="@style/BillboardWrapper">
 
             <ImageView
                 android:id="@+id/bs4"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_gravity="top"
+                style="@style/BillboardItemTopGravity"
                 android:src="@drawable/course4"/>
         </LinearLayout>
     </LinearLayout>

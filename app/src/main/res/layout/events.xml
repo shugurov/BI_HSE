@@ -13,63 +13,42 @@
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            style="@style/EventWrapper">
 
             <ImageView
                 android:id="@+id/events_announce_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                style="@style/EventGUIElement"
                 android:src="@drawable/anons_button"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                style="@style/EventGUIElement"
                 android:text="first"
                 />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            style="@style/EventWrapper">
 
             <ImageView
                 android:id="@+id/events_calendar_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                style="@style/EventGUIElement"
                 android:src="@drawable/calendar_button"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                style="@style/EventGUIElement"
                 android:text="second"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            style="@style/EventWrapper">
 
             <ImageView
                 android:id="@+id/events_archives_image"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                style="@style/EventGUIElement"
                 android:src="@drawable/archive_button"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
+                style="@style/EventGUIElement"
                 android:text="first"/>
         </LinearLayout>
     </LinearLayout>

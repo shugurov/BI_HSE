@@ -1,6 +1,7 @@
 package ru.hse.shugurov.gui.placeholders;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import ru.hse.shugurov.CallBack;
 import ru.hse.shugurov.ContentTypes;
@@ -34,7 +36,7 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
     private Context context;
     private LinearLayout rootView;
     private ListView listView;
-    private Downloader downloader;
+
     private View progressDialog;
 
     public PlaceholderFragmentWithList(Context context, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
@@ -50,10 +52,22 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        final Downloader downloader;
         rootView = (LinearLayout) inflater.inflate(R.layout.fragment_list, container, false);
         ListAdapter adapter = ((SingleViewSection) getSection()).getAdapter();
         if (adapter != null)
         {
+            if (getSection().getType() == ContentTypes.NEWS)
+            {
+                SharedPreferences preferences = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
+                String existedFilter = preferences.getString("filter", "&filter=");
+                String filter = getFilter();
+                if (!existedFilter.equals(filter))
+                {
+                    ((SingleViewSection) getSection()).setAdapter(null);
+                    return onCreateView(inflater, container, savedInstanceState);
+                }
+            }
             listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
             listView.setAdapter(adapter);
             selListener();
@@ -66,7 +80,7 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
                 @Override
                 public void call(String[] results)
                 {
-                    if (results != null) //TODO а что если не null?
+                    if (results != null)
                     {
                         rootView.removeView(progressDialog);
                         listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
@@ -92,13 +106,30 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
                                 ((SingleViewSection) getSection()).setAdapter(contactAdapter);
                                 listView.setAdapter(contactAdapter);
                                 break;
-                            default:
-                                return;
                         }
+                    } else
+                    {
+                        Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
-            downloader.execute(((SingleViewSection) getSection()).getUrl());
+            if (getSection().getType() == ContentTypes.NEWS)
+            {
+                String filter = getFilter();
+                SharedPreferences.Editor editor = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE).edit();
+                editor.putString("filter", filter);
+                editor.commit();
+                if (filter.length() == 8)
+                {
+                    downloader.execute(((SingleViewSection) getSection()).getUrl());
+                } else
+                {
+                    downloader.execute(((SingleViewSection) getSection()).getUrl() + filter);
+                }
+            } else
+            {
+                downloader.execute(((SingleViewSection) getSection()).getUrl());
+            }
         }
 
         return rootView;
@@ -137,5 +168,28 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
                 }
             }
         });
+    }
+
+    private String getFilter()
+    {
+        String filter = "&filter=";
+        SharedPreferences preferences = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
+        if (preferences.getBoolean("enrolee", false))
+        {
+            filter += "1";
+        }
+        if (preferences.getBoolean("bs", false))
+        {
+            filter += "2";
+        }
+        if (preferences.getBoolean("ms_enrolee", false))
+        {
+            filter += "3";
+        }
+        if (preferences.getBoolean("ms", false))
+        {
+            filter += "4";
+        }
+        return filter;
     }
 }

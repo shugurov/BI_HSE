@@ -21,33 +21,22 @@
 
         <ImageView
             android:id="@+id/schedule_bs1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="@dimen/standard"
+            style="@style/ScheduleImage"
             android:src="@drawable/rating1"/>
 
         <ImageView
             android:id="@+id/schedule_bs2"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="@dimen/standard"
+            style="@style/ScheduleImage"
             android:src="@drawable/rating2"/>
 
         <ImageView
             android:id="@+id/schedule_bs3"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="@dimen/standard"
+            style="@style/ScheduleImage"
             android:src="@drawable/rating3"/>
 
         <ImageView
             android:id="@+id/schedule_bs4"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            style="@style/ScheduleImage"
             android:src="@drawable/rating4"/>
     </LinearLayout>
 
@@ -64,18 +53,14 @@
 
         <ImageView
             android:id="@+id/schedule_ms1"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            style="@style/ScheduleImage"
             android:layout_weight="3"
-            android:layout_marginRight="@dimen/standard"
             android:src="@drawable/rating1"/>
 
         <ImageView
             android:id="@+id/schedule_ms2"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            style="@style/ScheduleImage"
             android:layout_weight="3"
-            android:layout_marginRight="@dimen/standard"
             android:src="@drawable/rating2"/>
 
         <LinearLayout

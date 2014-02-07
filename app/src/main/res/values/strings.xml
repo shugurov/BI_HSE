@@ -9,5 +9,15 @@
     <string name="send_email">E-Mail</string>
     <string name="address_prefix">Адрес: </string>
     <string name="bs">Бакалавриат</string>
+    <string name="bs_enrolee">Абитуриент</string>
     <string name="ms">Магистратура</string>
+    <string name="ms_enrolee">Абитуриент магистратуры</string>
+
+    <string-array name="settings">
+        <item>Абитуриент</item>
+        <item>Бакалавриат</item>
+        <item>Абитуриент магистратуры</item>
+        <item>Магистратура</item>
+    </string-array>
+
 </resources>

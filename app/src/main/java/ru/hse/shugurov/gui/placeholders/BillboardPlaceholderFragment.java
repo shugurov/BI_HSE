@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -58,7 +59,7 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
                         @Override
                         public void call(String[] results)
                         {
-                            if (results != null) //TODO что делать, если null?
+                            if (results != null)
                             {
                                 AdvertItem[] advertItems = Parser.parseAdverts(results[0]);
                                 ArrayList<AdvertItem> bs1 = new ArrayList<AdvertItem>();
@@ -101,6 +102,9 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
                                 section.setAdapter(new AdvertAdapter(getContext(), ms2), 5);
                                 root.removeView(currentView);
                                 setAdapter(inflater, 0);
+                            } else
+                            {
+                                Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });

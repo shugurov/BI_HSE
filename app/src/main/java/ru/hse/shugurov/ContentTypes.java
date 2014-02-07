@@ -11,5 +11,6 @@ public interface ContentTypes
     int BILLBOARD = 3;
     int SCHEDULE = 4;
     int TEACHERS = 5;
+    int SETTINGS = 6;
     int CONTACTS = 8;
 }

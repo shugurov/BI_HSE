@@ -26,8 +26,7 @@
 
         <TextView
             android:id="@+id/project_layout_details"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/Wrappable"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:text="@string/details"

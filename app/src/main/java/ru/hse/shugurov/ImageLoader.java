@@ -131,10 +131,7 @@ public class ImageLoader
         @Override
         protected void onPostExecute(TransitionDrawable transitionDrawable)
         {
-            if (imageViewReused(photoToLoad))
-            {
-                return;
-            } else
+            if (!imageViewReused(photoToLoad))
             {
                 if (transitionDrawable != null)
                 {

@@ -77,7 +77,7 @@ public class Downloader extends AsyncTask<String, Void, String[]>
         }
     }
 
-    private InputStream openInputStream(String urlString)
+    private InputStream openInputStream(String urlString) //TODO wtf? как и что тут происходит?(
     {
         InputStream inputStream = null;
         try
@@ -99,6 +99,9 @@ public class Downloader extends AsyncTask<String, Void, String[]>
         {
             e.printStackTrace();
         } catch (IOException e)
+        {
+            e.printStackTrace();
+        } catch (Exception e)
         {
             e.printStackTrace();
         }

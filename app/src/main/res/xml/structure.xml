@@ -19,7 +19,7 @@
             </url-parameter>
             <url-parameter>
                 <key>L</key>
-                <value>10</value>
+                <value>20</value>
             </url-parameter>
         </url>
     </section>
@@ -46,7 +46,7 @@
             </url-parameter>
             <url-parameter>
                 <key>L</key>
-                <value>10</value>
+                <value>20</value>
             </url-parameter>
         </url>
         <url>
@@ -65,7 +65,7 @@
             </url-parameter>
             <url-parameter>
                 <key>L</key>
-                <value>10</value>
+                <value>20</value>
             </url-parameter>
         </url>
         <url>
@@ -84,7 +84,7 @@
             </url-parameter>
             <url-parameter>
                 <key>L</key>
-                <value>10</value>
+                <value>20</value>
             </url-parameter>
         </url>
     </section>
@@ -107,7 +107,7 @@
             </url-parameter>
             <url-parameter>
                 <key>L</key>
-                <value>10</value>
+                <value>20</value>
             </url-parameter>
         </url>
     </section>
@@ -130,7 +130,7 @@
             </url-parameter>
             <url-parameter>
                 <key>L</key>
-                <value>10</value>
+                <value>20</value>
             </url-parameter>
         </url>
     </section>
@@ -153,7 +153,7 @@
             </url-parameter>
             <url-parameter>
                 <key>L</key>
-                <value>10</value>
+                <value>20</value>
             </url-parameter>
         </url>
     </section>
@@ -176,7 +176,7 @@
             </url-parameter>
             <url-parameter>
                 <key>L</key>
-                <value>10</value>
+                <value>20</value>
             </url-parameter>
         </url>
     </section>
@@ -199,7 +199,7 @@
             </url-parameter>
             <url-parameter>
                 <key>L</key>
-                <value>10</value>
+                <value>20</value>
             </url-parameter>
         </url>
     </section>
@@ -245,7 +245,7 @@
             </url-parameter>
             <url-parameter>
                 <key>L</key>
-                <value>10</value>
+                <value>20</value>
             </url-parameter>
         </url>
     </section>
@@ -262,7 +262,7 @@
     </section>
     <section>
         <title>Настройки</title>
-        <type>1</type>
+        <type>6</type>
         <icon>
             <default>settings</default>
             <selected>settings_selected</selected>

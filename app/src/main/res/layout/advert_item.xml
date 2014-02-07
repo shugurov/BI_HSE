@@ -9,14 +9,12 @@
 
     <TextView
         android:id="@+id/advert_item_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Wrappable"
         android:maxLines="1"/>
 
     <TextView
         android:id="@+id/advert_item_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Wrappable"
         android:maxLines="3"/>
 
 </LinearLayout>

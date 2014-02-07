@@ -23,7 +23,6 @@ import android.widget.ListView;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.adapters.NavigationDrawerAdapter;
 
-;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.

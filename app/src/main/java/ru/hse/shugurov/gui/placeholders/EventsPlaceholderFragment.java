@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import ru.hse.shugurov.CallBack;
 import ru.hse.shugurov.Downloader;
@@ -94,7 +95,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
             @Override
             public void call(String[] results)
             {
-                if (results != null) //TODO and what about case when results == null
+                if (results != null)
                 {
                     root.removeView(progress);
                     ListAdapter adapter = new NewsAdapter(getContext(), Parser.parseNews(results[0]));
@@ -102,6 +103,9 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                     list.setAdapter(adapter);
                     root.addView(list, 0);
                     currentView = list;
+                } else
+                {
+                    Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -151,7 +155,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                             @Override
                             public void call(String[] results)
                             {
-                                if (results != null) //TODO and what about case when results == null
+                                if (results != null)
                                 {
                                     root.removeView(progress);
                                     ListAdapter adapter = new NewsAdapter(getContext(), Parser.parseNews(results[0]));
@@ -160,6 +164,9 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                                     root.addView(list, 0);
                                     currentView = list;
                                     downloader = null;
+                                } else
+                                {
+                                    Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         };
@@ -210,7 +217,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                             @Override
                             public void call(String[] results)
                             {
-                                if (results != null) //TODO and what about case when results == null
+                                if (results != null)
                                 {
                                     root.removeView(progress);
                                     ListAdapter adapter = new NewsAdapter(getContext(), Parser.parseNews(results[0]));
@@ -219,6 +226,9 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                                     root.addView(list, 0);
                                     currentView = list;
                                     downloader = null;
+                                } else
+                                {
+                                    Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         };

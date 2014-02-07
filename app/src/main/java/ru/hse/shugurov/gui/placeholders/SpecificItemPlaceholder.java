@@ -20,7 +20,7 @@ public class SpecificItemPlaceholder extends PlaceholderFragment
     }
 
     @Override
-    public boolean moveBack()//TODO поправить, чтобы в событиях нормально возвращалось назад
+    public boolean moveBack()
     {
         if (getSection() instanceof SingleViewSection)
         {

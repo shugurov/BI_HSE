@@ -24,8 +24,7 @@
 
         <TextView
             android:id="@+id/news_layout_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/Wrappable"
             android:layout_gravity="right"/>
 
         <TextView
