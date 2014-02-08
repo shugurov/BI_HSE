@@ -12,5 +12,6 @@ public interface ContentTypes
     int SCHEDULE = 4;
     int TEACHERS = 5;
     int SETTINGS = 6;
+    int ABOUT_US = 7;
     int CONTACTS = 8;
 }

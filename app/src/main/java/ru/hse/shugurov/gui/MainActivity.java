@@ -8,16 +8,17 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.widget.Toast;
 
+import ru.hse.shugurov.ApplicationStructure;
 import ru.hse.shugurov.ContentTypes;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.adapters.NavigationDrawerAdapter;
+import ru.hse.shugurov.gui.placeholders.AboutUsPlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.BillboardPlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.EventsPlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragmentWithList;
 import ru.hse.shugurov.gui.placeholders.SchedulePlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.SettingPlaceholderFragment;
-import ru.hse.shugurov.model.ApplicationStructure;
 import ru.hse.shugurov.sections.MultipleAdaptersViewSection;
 import ru.hse.shugurov.sections.MultipleViewScreen;
 import ru.hse.shugurov.sections.ReferencesSection;
@@ -138,6 +139,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             case ContentTypes.SETTINGS:
             {
                 currentPlaceholder = new SettingPlaceholderFragment(this, fragmentChanged, sections[position], position);
+                break;
+            }
+            case ContentTypes.ABOUT_US:
+            {
+                currentPlaceholder = new AboutUsPlaceholderFragment(this, fragmentChanged, sections[position], position);
                 break;
             }
             default:

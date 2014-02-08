@@ -1,4 +1,4 @@
-package ru.hse.shugurov.model;
+package ru.hse.shugurov;
 
 import android.content.Context;
 import android.content.res.XmlResourceParser;
@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.hse.shugurov.ContentTypes;
-import ru.hse.shugurov.R;
+import ru.hse.shugurov.model.Icon;
+import ru.hse.shugurov.sections.AboutUsSection;
 import ru.hse.shugurov.sections.MultipleAdaptersViewSection;
 import ru.hse.shugurov.sections.MultipleViewScreen;
 import ru.hse.shugurov.sections.ReferencesSection;
@@ -155,6 +155,16 @@ public class ApplicationStructure
                 {
                     url = readUrl();
                 }
+            }
+            if (type == ContentTypes.ABOUT_US)
+            {
+                String heading = readText();
+                next();
+                String text = readText();
+                next();
+                String image = readText();
+                next();
+                return new AboutUsSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), type, heading, text, context.getResources().getIdentifier(image, "drawable", context.getPackageName()));
             }
         } catch (XmlPullParserException e)
         {
