@@ -191,15 +191,7 @@
             <url>http://app.bi.hse.ru/JSONsender.php?</url>
             <url-parameter>
                 <key>section</key>
-                <value>Raiting</value>
-            </url-parameter>
-            <url-parameter>
-                <key>F</key>
-                <value>0</value>
-            </url-parameter>
-            <url-parameter>
-                <key>L</key>
-                <value>20</value>
+                <value>Rating</value>
             </url-parameter>
         </url>
     </section>
@@ -286,19 +278,42 @@
             <default>settings</default>
             <selected>settings_selected</selected>
         </icon>
-        <url>
-            <url>тут ссылка</url>
-        </url>
     </section>
     <section>
         <title>О приложении</title>
-        <type>1</type>
+        <type>9</type>
         <icon>
             <default>about_app</default>
             <selected>about_app_selected</selected>
         </icon>
-        <url>
-            <url>тут ссылка</url>
-        </url>
+        <image>styleru</image>
+        <developers>
+            <developer>
+                <name>Шугуров Иван</name>
+                <position>Android разработчки</position>
+                <photo>raven</photo>
+            </developer>
+            <developer>
+                <name>Сидиропуло Николай</name>
+                <position>IOS разработчик</position>
+                <photo>sidiropulo</photo>
+            </developer>
+            <developer>
+                <name>Попова Александра</name>
+                <position>Дизайнер</position>
+                <photo>popova</photo>
+            </developer>
+            <developer>
+                <name>Марков Владимир</name>
+                <position>Программист/менеджер</position>
+                <photo>markov</photo>
+            </developer>
+            <developer>
+                <name>Клименко Юрий</name>
+                <position>Руководитель проекта</position>
+                <photo>klimenko</photo>
+            </developer>
+        </developers>
+
     </section>
 </structure>

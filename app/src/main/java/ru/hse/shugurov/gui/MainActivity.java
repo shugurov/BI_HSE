@@ -12,6 +12,7 @@ import ru.hse.shugurov.ApplicationStructure;
 import ru.hse.shugurov.ContentTypes;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.adapters.NavigationDrawerAdapter;
+import ru.hse.shugurov.gui.placeholders.AboutAppPlaceholder;
 import ru.hse.shugurov.gui.placeholders.AboutUsPlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.BillboardPlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.EventsPlaceholderFragment;
@@ -146,6 +147,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 currentPlaceholder = new AboutUsPlaceholderFragment(this, fragmentChanged, sections[position], position);
                 break;
             }
+            case ContentTypes.ABOUT_APP:
+                currentPlaceholder = new AboutAppPlaceholder(this, fragmentChanged, sections[position], position);
+                break;
             default:
                 currentPlaceholder = new PlaceholderFragment(this, fragmentChanged, sections[position], position);
                 break;

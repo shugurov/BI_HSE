@@ -132,7 +132,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                 {
                     if (downloader != null)
                     {
-                        downloader.cancel(false);
+                        downloader.cancel(false);//TODO а проверяю ли я отмену?
                     }
                     ((ImageView) getView().findViewById(R.id.events_announce_image)).setImageDrawable(getResources().getDrawable(R.drawable.anons_button_pressed));
                     releaseButton(lastPressedButton);

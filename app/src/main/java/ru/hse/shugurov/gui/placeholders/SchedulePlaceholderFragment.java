@@ -1,6 +1,8 @@
 package ru.hse.shugurov.gui.placeholders;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +42,31 @@ public class SchedulePlaceholderFragment extends PlaceholderFragment implements 
     @Override
     public void onClick(View view)
     {
-
+        String url = null;
+        switch (view.getId())
+        {
+            case R.id.schedule_bs1:
+                url = ((ReferencesSection) getSection()).getReference(0);
+                break;
+            case R.id.schedule_bs2:
+                url = ((ReferencesSection) getSection()).getReference(1);
+                break;
+            case R.id.schedule_bs3:
+                url = ((ReferencesSection) getSection()).getReference(2);
+                break;
+            case R.id.schedule_bs4:
+                url = ((ReferencesSection) getSection()).getReference(3);
+                break;
+            case R.id.schedule_ms1:
+                url = ((ReferencesSection) getSection()).getReference(4);
+                break;
+            case R.id.schedule_ms2:
+                url = ((ReferencesSection) getSection()).getReference(5);
+                break;
+        }
+        Uri uri = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(uri);
+        startActivity(intent);
     }
 }

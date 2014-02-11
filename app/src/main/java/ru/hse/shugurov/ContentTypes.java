@@ -14,4 +14,5 @@ public interface ContentTypes
     int SETTINGS = 6;
     int ABOUT_US = 7;
     int CONTACTS = 8;
+    int ABOUT_APP = 9;
 }

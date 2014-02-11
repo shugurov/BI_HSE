@@ -4,6 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ru.hse.shugurov.CallBack;
+import ru.hse.shugurov.Downloader;
+import ru.hse.shugurov.sections.ReferencesSection;
+
 /**
  * Created by Иван on 04.01.14.
  */
@@ -300,5 +304,28 @@ public class Parser
             }
         }
         return advertItemItems;
+    }
+
+    public static void parseSchedule(final ReferencesSection section, String url)//TODO как работает, если не удалось скачать в первый раз?
+    {
+        Downloader downloader = new Downloader(new CallBack()
+        {
+            @Override
+            public void call(String[] results)//TODO проверить, скачалось ли
+            {
+                try
+                {
+                    JSONArray jsonArray = new JSONArray(results[0]);
+                    for (int i = 0; i < jsonArray.length(); i++)
+                    {
+                        section.setReference(i, jsonArray.getString(i));
+                    }
+                } catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        });
+        downloader.execute(url);
     }
 }

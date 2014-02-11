@@ -12,7 +12,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.hse.shugurov.model.Developer;
 import ru.hse.shugurov.model.Icon;
+import ru.hse.shugurov.model.Parser;
+import ru.hse.shugurov.sections.AboutAppSection;
 import ru.hse.shugurov.sections.AboutUsSection;
 import ru.hse.shugurov.sections.MultipleAdaptersViewSection;
 import ru.hse.shugurov.sections.MultipleViewScreen;
@@ -156,16 +159,6 @@ public class ApplicationStructure
                     url = readUrl();
                 }
             }
-            if (type == ContentTypes.ABOUT_US)
-            {
-                String heading = readText();
-                next();
-                String text = readText();
-                next();
-                String image = readText();
-                next();
-                return new AboutUsSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), type, heading, text, context.getResources().getIdentifier(image, "drawable", context.getPackageName()));
-            }
         } catch (XmlPullParserException e)
         {
             e.printStackTrace();
@@ -182,6 +175,17 @@ public class ApplicationStructure
                     break;
                 case ContentTypes.SCHEDULE:
                     section = new ReferencesSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), type, 6);
+                    Parser.parseSchedule((ReferencesSection) section, url);
+                    break;
+                case ContentTypes.ABOUT_APP:
+                    section = new AboutAppSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), type, getImageID(), getDevelopers());
+                    break;
+                case ContentTypes.ABOUT_US:
+                    String heading = readText();
+                    next();
+                    String text = readText();
+                    next();
+                    section = new AboutUsSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), type, heading, text, getImageID());
                     break;
                 default:
                     section = new SingleViewSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), url, type);
@@ -308,5 +312,33 @@ public class ApplicationStructure
             e.printStackTrace();
         }
         return 0;
+    }
+
+    private Developer[] getDevelopers()
+    {
+        ArrayList<Developer> developers = new ArrayList<Developer>();
+        next();
+        while (parser.getName().equals("developer"))
+        {
+            next();
+            String name = readText();
+            next();
+            String position = readText();
+            next();
+            String lol = parser.getName();
+            developers.add(new Developer(getImageID(), name, position));
+            next();
+            lol = parser.getName();
+        }
+        next();
+        return developers.toArray(new Developer[developers.size()]);
+    }
+
+    private int getImageID()//TODO везде использовать этот метод
+    {
+        String imageName = readText();
+        int imageID = context.getResources().getIdentifier(imageName, "drawable", context.getPackageName());
+        next();
+        return imageID;
     }
 }

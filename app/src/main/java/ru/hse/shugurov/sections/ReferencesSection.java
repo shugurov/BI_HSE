@@ -7,22 +7,22 @@ public class ReferencesSection extends Section
 {
     private String[] references;
 
-    public ReferencesSection(String title, int iconDefault, int iconSelected, int type, int numberOfReferences)
+    public ReferencesSection(String title, int iconDefault, int iconSelected, int type, int size)
     {
         super(title, iconDefault, iconSelected, type);
-        references = new String[numberOfReferences];
-        for (int i = 0; i < numberOfReferences; i++)
+        this.references = new String[size];
+        for (int i = 0; i < references.length; i++)
         {
             references[i] = null;
         }
     }
 
-    private String getReference(int position)
+    public String getReference(int position)
     {
         return references[position];
     }
 
-    private void setReference(int position, String reference)
+    public void setReference(int position, String reference)//TODO сделать расширяемым массив. лист? оО
     {
         references[position] = reference;
     }
@@ -31,4 +31,5 @@ public class ReferencesSection extends Section
     {
         return references.length;
     }
+
 }
