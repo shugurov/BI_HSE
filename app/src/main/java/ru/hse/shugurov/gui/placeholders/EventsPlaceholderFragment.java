@@ -153,7 +153,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                         callBack = new CallBack()
                         {
                             @Override
-                            public void call(String[] results)
+                            public void call(String[] results)//TODO щито? куда всё делось?
                             {
                                 if (results != null)
                                 {

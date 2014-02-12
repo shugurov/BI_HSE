@@ -45,7 +45,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        String lol = getResources().getString(R.string.app_name);
         ApplicationStructure.setContext(this);
         ApplicationStructure structure = ApplicationStructure.getStructure();
         sections = structure.getSections();
