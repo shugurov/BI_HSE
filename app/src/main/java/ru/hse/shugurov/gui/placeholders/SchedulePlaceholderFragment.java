@@ -1,5 +1,6 @@
 package ru.hse.shugurov.gui.placeholders;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -65,8 +66,10 @@ public class SchedulePlaceholderFragment extends PlaceholderFragment implements 
                 break;
         }
         Uri uri = Uri.parse(url);
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(uri);
-        startActivity(intent);
+        //Intent intent = new Intent(Intent.ACTION_VIEW);
+        //intent.setData(uri);
+        //startActivity(intent);
+        DownloadManager manager = (DownloadManager) getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(new DownloadManager.Request(uri));
     }
 }
