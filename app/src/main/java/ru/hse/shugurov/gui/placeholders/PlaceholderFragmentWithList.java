@@ -36,7 +36,6 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
     private Context context;
     private LinearLayout rootView;
     private ListView listView;
-
     private View progressDialog;
 
     public PlaceholderFragmentWithList(Context context, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
