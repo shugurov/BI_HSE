@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import ru.hse.shugurov.FlexibleImageView;
 import ru.hse.shugurov.ImageLoader;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.model.NewsItem;
@@ -64,8 +63,8 @@ public class NewsAdapter extends BaseAdapter
         ((TextView) view.findViewById(R.id.news_item_text)).setText(items[position].getSummary());
         ((TextView) view.findViewById(R.id.news_item_date)).setText(items[position].getDate());
         ImageView imageView = (ImageView) view.findViewById(R.id.news_item_picture);
-        int realWidth = parent.getWidth();
-        imageLoader.displayImage(items[position].getPicture(), new FlexibleImageView(imageView, realWidth / 4));
+        imageView.setImageBitmap(null);
+        imageLoader.displayImage(items[position].getPicture(), imageView);
         return view;
     }
 }

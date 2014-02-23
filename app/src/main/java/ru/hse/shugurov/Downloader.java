@@ -77,7 +77,7 @@ public class Downloader extends AsyncTask<String, Void, String[]>
         }
     }
 
-    private InputStream openInputStream(String urlString) //TODO wtf? как и что тут происходит?(
+    private InputStream openInputStream(String urlString)
     {
         InputStream inputStream = null;
         try

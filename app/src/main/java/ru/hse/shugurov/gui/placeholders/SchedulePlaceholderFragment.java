@@ -2,12 +2,12 @@ package ru.hse.shugurov.gui.placeholders;
 
 import android.app.DownloadManager;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
@@ -21,9 +21,9 @@ public class SchedulePlaceholderFragment extends PlaceholderFragment implements 
 {
 
 
-    public SchedulePlaceholderFragment(Context context, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
+    public SchedulePlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, Section section, int sectionNumber)
     {
-        super(context, fragmentChanged, section, sectionNumber);
+        super(context, fragmentListener, section);
     }
 
     @Override
@@ -65,10 +65,12 @@ public class SchedulePlaceholderFragment extends PlaceholderFragment implements 
                 url = ((ReferencesSection) getSection()).getReference(5);
                 break;
         }
+        if (url == null)
+        {
+            Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+            return;
+        }
         Uri uri = Uri.parse(url);
-        //Intent intent = new Intent(Intent.ACTION_VIEW);
-        //intent.setData(uri);
-        //startActivity(intent);
         DownloadManager manager = (DownloadManager) getContext().getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(new DownloadManager.Request(uri));
     }

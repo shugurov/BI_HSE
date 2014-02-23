@@ -13,7 +13,7 @@
         android:id="@+id/project_item_image"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="@dimen/standard"

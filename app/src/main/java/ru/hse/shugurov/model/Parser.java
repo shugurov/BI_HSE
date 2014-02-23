@@ -313,16 +313,19 @@ public class Parser
             @Override
             public void call(String[] results)//TODO проверить, скачалось ли
             {
-                try
+                if (results != null)
                 {
-                    JSONArray jsonArray = new JSONArray(results[0]);
-                    for (int i = 0; i < jsonArray.length(); i++)
+                    try
                     {
-                        section.setReference(i, jsonArray.getString(i));
+                        JSONArray jsonArray = new JSONArray(results[0]);
+                        for (int i = 0; i < jsonArray.length(); i++)
+                        {
+                            section.setReference(i, jsonArray.getString(i));
+                        }
+                    } catch (JSONException e)
+                    {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e)
-                {
-                    e.printStackTrace();
                 }
             }
         });

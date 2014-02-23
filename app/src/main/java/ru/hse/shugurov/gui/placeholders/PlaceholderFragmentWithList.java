@@ -38,9 +38,9 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
     private ListView listView;
     private View progressDialog;
 
-    public PlaceholderFragmentWithList(Context context, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
+    public PlaceholderFragmentWithList(Context context, MainActivity.FragmentListener fragmentListener, Section section)
     {
-        super(context, fragmentChanged, section, sectionNumber);
+        super(context, fragmentListener, section);
         if (!(section instanceof SingleViewSection))
         {
             throw new IllegalArgumentException("precondition violated in PlaceHolderWithList. SingleViewSection is supposed to be hear");
@@ -145,23 +145,23 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
                 Object item = ((SingleViewSection) getSection()).getAdapter().getItem(position);
                 if (item instanceof NewsItem)
                 {
-                    NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment(context, (NewsItem) item, getFragmentChanged(), getSection(), getSectionNumber());
+                    NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment(context, (NewsItem) item, getFragmentListener(), getSection());
                     getFragmentManager().beginTransaction().replace(R.id.container, newsItemPlaceholderFragment).commit();
                 } else
                 {
                     if (item instanceof ProjectItem)
                     {
-                        ProjectItemPlaceholderFragment projectItemPlaceholderFragment = new ProjectItemPlaceholderFragment(getContext(), (ProjectItem) item, getFragmentChanged(), getSection(), getSectionNumber());
+                        ProjectItemPlaceholderFragment projectItemPlaceholderFragment = new ProjectItemPlaceholderFragment(getContext(), (ProjectItem) item, getFragmentListener(), getSection());
                         getFragmentManager().beginTransaction().replace(R.id.container, projectItemPlaceholderFragment).commit();
                     } else
                     {
                         if (item instanceof ContactItem)
                         {
-                            ContactItemPlaceholderFragment contactItemPlaceholderFragment = new ContactItemPlaceholderFragment(context, (ContactItem) item, getFragmentChanged(), getSection(), getSectionNumber());
+                            ContactItemPlaceholderFragment contactItemPlaceholderFragment = new ContactItemPlaceholderFragment(context, (ContactItem) item, getFragmentListener(), getSection());
                             getFragmentManager().beginTransaction().replace(R.id.container, contactItemPlaceholderFragment).commit();
                         } else
                         {
-                            getFragmentManager().beginTransaction().replace(R.id.container, new PlaceholderFragment(getContext(), getFragmentChanged(), getSection(), getSectionNumber())).commit();
+                            getFragmentManager().beginTransaction().replace(R.id.container, new PlaceholderFragment(getContext(), getFragmentListener(), getSection())).commit();
                         }
                     }
                 }

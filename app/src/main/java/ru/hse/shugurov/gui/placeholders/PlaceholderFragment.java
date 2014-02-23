@@ -26,22 +26,21 @@ public class PlaceholderFragment extends Fragment
      * The fragment argument representing the section number for this
      * fragment.
      */
-    private static final String ARG_SECTION_NUMBER = "section_number";
-    private int sectionNumber;
+    //private static final String ARG_SECTION_NUMBER = "section_number";
     private Context context;
     private Section section;
-    private MainActivity.FragmentChanged fragmentChanged;
+    private MainActivity.FragmentListener fragmentListener;
 
-    public PlaceholderFragment(Context context, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
+    public PlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, Section section)
     {
-        this.sectionNumber = sectionNumber;
         this.context = context;
-        this.fragmentChanged = fragmentChanged;
-        this.fragmentChanged.setCurrentFragment(this);
+        this.fragmentListener = fragmentListener;
+        this.fragmentListener.setCurrentFragment(this);
         this.section = section;
-        Bundle args = new Bundle();
+        fragmentListener.setSectionTitle(section.getTitle());
+        /*Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-        this.setArguments(args);
+        this.setArguments(args);*/
     }
 
     @Override
@@ -57,22 +56,19 @@ public class PlaceholderFragment extends Fragment
     public void onAttach(Activity activity)
     {
         super.onAttach(activity);
-        ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+        //((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+        //fragmentListener.setSectionTitle(section.getTitle());
     }
 
-    protected int getSectionNumber()
-    {
-        return sectionNumber;
-    }
 
     protected Context getContext()
     {
         return context;
     }
 
-    protected MainActivity.FragmentChanged getFragmentChanged()
+    protected MainActivity.FragmentListener getFragmentListener()
     {
-        return fragmentChanged;
+        return fragmentListener;
     }
 
     //возвращет true, если эту операцию выполняет MainActivity

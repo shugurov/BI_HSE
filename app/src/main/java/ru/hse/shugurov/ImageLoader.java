@@ -4,9 +4,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
 import android.util.LruCache;
 import android.widget.ImageView;
@@ -98,12 +96,12 @@ public class ImageLoader
         return tag == null || !tag.equals(photoToLoad.getUrl());
     }
 
-    private class LoadBitmapTask extends AsyncTask<PhotoToLoad, Void, TransitionDrawable>
+    private class LoadBitmapTask extends AsyncTask<PhotoToLoad, Void, Bitmap>
     {
         private PhotoToLoad photoToLoad;
 
         @Override
-        protected TransitionDrawable doInBackground(PhotoToLoad[] params)
+        protected Bitmap doInBackground(PhotoToLoad[] params)
         {
             photoToLoad = params[0];
             if (imageViewReused(photoToLoad))
@@ -118,25 +116,20 @@ public class ImageLoader
                 } else
                 {
                     memoryCache.put(photoToLoad.getUrl(), bitmap);
-                    Drawable[] drawables = new Drawable[2];
-                    drawables[0] = stubDrawable;
-                    drawables[1] = new BitmapDrawable(context.getResources(), bitmap);
-                    TransitionDrawable transitionDrawable = new TransitionDrawable(drawables);
-                    transitionDrawable.setCrossFadeEnabled(true);
-                    return transitionDrawable;
+                    return bitmap;
+
                 }
             }
         }
 
         @Override
-        protected void onPostExecute(TransitionDrawable transitionDrawable)
+        protected void onPostExecute(Bitmap bitmap)
         {
             if (!imageViewReused(photoToLoad))
             {
-                if (transitionDrawable != null)
+                if (bitmap != null)
                 {
-                    photoToLoad.getImageView().setImageDrawable(transitionDrawable);
-                    transitionDrawable.startTransition(200);
+                    photoToLoad.getImageView().setImageBitmap(bitmap);
                 }
             }
         }

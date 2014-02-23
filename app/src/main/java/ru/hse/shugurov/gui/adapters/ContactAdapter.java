@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import ru.hse.shugurov.FlexibleImageView;
 import ru.hse.shugurov.ImageLoader;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.model.ContactItem;
@@ -66,8 +65,8 @@ public class ContactAdapter extends BaseAdapter
         ((TextView) resultView.findViewById(R.id.contact_item_telephone)).setText(contactItems[position].getTelephone());
         ((TextView) resultView.findViewById(R.id.contact_item_email)).setText(contactItems[position].getEmail());
         ImageView imageView = (ImageView) resultView.findViewById(R.id.contact_item_picture);
+        imageView.setImageBitmap(null);
         int realWidth = parent.getWidth();
-        imageLoader.displayImage(contactItems[position].getPicture(), new FlexibleImageView(imageView, realWidth / 4));
         //imageLoader.displayImage(contactItems[position].getPicture(), ((ImageView) resultView.findViewById(R.id.contact_item_picture)));
         return resultView;
     }

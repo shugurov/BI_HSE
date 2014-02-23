@@ -19,9 +19,9 @@ public class AdvertItemPlaceholderFragment extends SpecificItemPlaceholder
 {
     private AdvertItem advertItem;
 
-    public AdvertItemPlaceholderFragment(Context context, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber, AdvertItem advertItem)
+    public AdvertItemPlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, Section section, AdvertItem advertItem)
     {
-        super(context, fragmentChanged, section, sectionNumber);
+        super(context, fragmentListener, section);
         this.advertItem = advertItem;
     }
 

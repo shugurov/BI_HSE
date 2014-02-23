@@ -84,12 +84,19 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     public void onNavigationDrawerItemSelected(final int position)
     {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentChanged fragmentChanged = new FragmentChanged()
+        FragmentListener fragmentListener = new FragmentListener()
         {
             @Override
             public void setCurrentFragment(PlaceholderFragment currentFragment)
             {
                 MainActivity.this.currentPlaceholder = currentFragment;
+            }
+
+            @Override
+            public void setSectionTitle(String title)
+            {
+                mTitle = title;
+                restoreActionBar();
             }
         };
         switch (sections[position].getType())
@@ -97,60 +104,60 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             case ContentTypes.NEWS:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
+                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentListener, sections[position]);
                 }
                 break;
             case ContentTypes.PROJECTS_VOLUNTEERING:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
+                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentListener, sections[position]);
                 }
                 break;
             case ContentTypes.CONTACTS:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
+                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentListener, sections[position]);
                 }
                 break;
             case ContentTypes.EVENTS:
                 if (sections[position] instanceof MultipleViewScreen)
                 {
-                    currentPlaceholder = new EventsPlaceholderFragment(this, fragmentChanged, (MultipleViewScreen) sections[position], position);
+                    currentPlaceholder = new EventsPlaceholderFragment(this, fragmentListener, (MultipleViewScreen) sections[position]);
                 }
                 break;
             case ContentTypes.BILLBOARD:
                 if (sections[position] instanceof MultipleAdaptersViewSection)
                 {
-                    currentPlaceholder = new BillboardPlaceholderFragment(this, fragmentChanged, (MultipleAdaptersViewSection) sections[position], position);
+                    currentPlaceholder = new BillboardPlaceholderFragment(this, fragmentListener, (MultipleAdaptersViewSection) sections[position]);
                 }
                 break;
             case ContentTypes.SCHEDULE:
                 if (sections[position] instanceof ReferencesSection)
                 {
-                    currentPlaceholder = new SchedulePlaceholderFragment(this, fragmentChanged, sections[position], position);
+                    currentPlaceholder = new SchedulePlaceholderFragment(this, fragmentListener, sections[position], position);
                 }
                 break;
             case ContentTypes.TEACHERS:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentChanged, sections[position], position);
+                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentListener, sections[position]);
                 }
                 break;
             case ContentTypes.SETTINGS:
             {
-                currentPlaceholder = new SettingPlaceholderFragment(this, fragmentChanged, sections[position], position);
+                currentPlaceholder = new SettingPlaceholderFragment(this, fragmentListener, sections[position], position);
                 break;
             }
             case ContentTypes.ABOUT_US:
             {
-                currentPlaceholder = new AboutUsPlaceholderFragment(this, fragmentChanged, sections[position], position);
+                currentPlaceholder = new AboutUsPlaceholderFragment(this, fragmentListener, sections[position], position);
                 break;
             }
             case ContentTypes.ABOUT_APP:
-                currentPlaceholder = new AboutAppPlaceholder(this, fragmentChanged, sections[position], position);
+                currentPlaceholder = new AboutAppPlaceholder(this, fragmentListener, sections[position], position);
                 break;
             default:
-                currentPlaceholder = new PlaceholderFragment(this, fragmentChanged, sections[position], position);
+                currentPlaceholder = new PlaceholderFragment(this, fragmentListener, sections[position]);
                 break;
         }
 
@@ -158,10 +165,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         fragmentManager.beginTransaction().replace(R.id.container, currentPlaceholder).commit();
     }
 
-    public void onSectionAttached(int number)
-    {
-        mTitle = sections[number].getTitle();
-    }
 
     public void restoreActionBar()
     {
@@ -182,8 +185,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         return super.onCreateOptionsMenu(menu);
     }
 
-    public interface FragmentChanged
+    public interface FragmentListener
     {
         void setCurrentFragment(PlaceholderFragment currentFragment);
+
+        void setSectionTitle(String title);
     }
 }

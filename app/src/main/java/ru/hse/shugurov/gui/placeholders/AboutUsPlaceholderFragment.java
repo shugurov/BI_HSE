@@ -18,9 +18,9 @@ import ru.hse.shugurov.sections.Section;
  */
 public class AboutUsPlaceholderFragment extends PlaceholderFragment
 {
-    public AboutUsPlaceholderFragment(Context context, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
+    public AboutUsPlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, Section section, int sectionNumber)
     {
-        super(context, fragmentChanged, section, sectionNumber);
+        super(context, fragmentListener, section);
     }
 
     @Override

@@ -25,9 +25,9 @@ public class ProjectItemPlaceholderFragment extends SpecificItemPlaceholder
 {
     private ProjectItem item;
 
-    public ProjectItemPlaceholderFragment(Context context, ProjectItem item, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
+    public ProjectItemPlaceholderFragment(Context context, ProjectItem item, MainActivity.FragmentListener fragmentListener, Section section)
     {
-        super(context, fragmentChanged, section, sectionNumber);
+        super(context, fragmentListener, section);
         this.item = item;
     }
 

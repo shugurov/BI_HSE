@@ -22,9 +22,9 @@ public class SettingPlaceholderFragment extends PlaceholderFragment
 {
     private SharedPreferences preferences;
 
-    public SettingPlaceholderFragment(Context context, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
+    public SettingPlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, Section section, int sectionNumber)
     {
-        super(context, fragmentChanged, section, sectionNumber);
+        super(context, fragmentListener, section);
         preferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
     }
 

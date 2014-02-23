@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -30,9 +31,9 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
     private LinearLayout root;
     private View currentView;
 
-    public BillboardPlaceholderFragment(Context context, MainActivity.FragmentChanged fragmentChanged, MultipleAdaptersViewSection section, int sectionNumber)//TODO а проверять ли правильность секции?
+    public BillboardPlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, MultipleAdaptersViewSection section)//TODO а проверять ли правильность секции?
     {
-        super(context, fragmentChanged, section, sectionNumber);
+        super(context, fragmentListener, section);
     }
 
     @Override
@@ -149,7 +150,10 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
                     releaseButton();
                     ((ImageView) getView().findViewById(R.id.bs1)).setImageDrawable(getResources().getDrawable(R.drawable.course1_pressed));
                     section.setCurrentState(0);
-                    ((ListView) currentView).setAdapter(section.getAdapter(0));
+                    if (!(currentView instanceof ProgressBar))
+                    {
+                        ((ListView) currentView).setAdapter(section.getAdapter(0));
+                    }
                 }
                 break;
             case R.id.bs2:
@@ -158,7 +162,10 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
                     releaseButton();
                     ((ImageView) getView().findViewById(R.id.bs2)).setImageDrawable(getResources().getDrawable(R.drawable.course2_pressed));
                     section.setCurrentState(1);
-                    ((ListView) currentView).setAdapter(section.getAdapter(1));
+                    if (!(currentView instanceof ProgressBar))
+                    {
+                        ((ListView) currentView).setAdapter(section.getAdapter(1));
+                    }
                 }
                 break;
             case R.id.bs3:
@@ -167,7 +174,10 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
                     releaseButton();
                     ((ImageView) getView().findViewById(R.id.bs3)).setImageDrawable(getResources().getDrawable(R.drawable.course3_pressed));
                     section.setCurrentState(2);
-                    ((ListView) currentView).setAdapter(section.getAdapter(2));
+                    if (!(currentView instanceof ProgressBar))
+                    {
+                        ((ListView) currentView).setAdapter(section.getAdapter(2));
+                    }
                 }
                 break;
             case R.id.bs4:
@@ -176,7 +186,10 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
                     releaseButton();
                     ((ImageView) getView().findViewById(R.id.bs4)).setImageDrawable(getResources().getDrawable(R.drawable.course4_pressed));
                     section.setCurrentState(3);
-                    ((ListView) currentView).setAdapter(section.getAdapter(3));
+                    if (!(currentView instanceof ProgressBar))
+                    {
+                        ((ListView) currentView).setAdapter(section.getAdapter(3));
+                    }
                 }
                 break;
             case R.id.ms1:
@@ -185,7 +198,10 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
                     releaseButton();
                     ((ImageView) getView().findViewById(R.id.ms1)).setImageDrawable(getResources().getDrawable(R.drawable.course1_pressed));
                     section.setCurrentState(4);
-                    ((ListView) currentView).setAdapter(section.getAdapter(4));
+                    if (!(currentView instanceof ProgressBar))
+                    {
+                        ((ListView) currentView).setAdapter(section.getAdapter(4));
+                    }
                 }
                 break;
             case R.id.ms2:
@@ -194,7 +210,10 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
                     releaseButton();
                     ((ImageView) getView().findViewById(R.id.ms2)).setImageDrawable(getResources().getDrawable(R.drawable.course2_pressed));
                     section.setCurrentState(5);
-                    ((ListView) currentView).setAdapter(section.getAdapter(5));
+                    if (!(currentView instanceof ProgressBar))
+                    {
+                        ((ListView) currentView).setAdapter(section.getAdapter(5));
+                    }
                 }
                 break;
         }
@@ -240,7 +259,7 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
         MultipleAdaptersViewSection currentSection = (MultipleAdaptersViewSection) getSection();
         AdvertAdapter adapter = (AdvertAdapter) currentSection.getAdapter(currentSection.getCurrentState()); //TODO подумать про getCurrentAdapter()
         AdvertItemPlaceholderFragment advertItemPlaceholderFragment;
-        advertItemPlaceholderFragment = new AdvertItemPlaceholderFragment(getContext(), getFragmentChanged(), getSection(), getSectionNumber(), (AdvertItem) adapter.getItem(position));
+        advertItemPlaceholderFragment = new AdvertItemPlaceholderFragment(getContext(), getFragmentListener(), getSection(), (AdvertItem) adapter.getItem(position));
         getFragmentManager().beginTransaction().replace(R.id.container, advertItemPlaceholderFragment).commit();
     }
 }

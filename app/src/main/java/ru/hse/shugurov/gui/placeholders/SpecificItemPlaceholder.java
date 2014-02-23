@@ -14,9 +14,10 @@ import ru.hse.shugurov.sections.SingleViewSection;
  */
 public class SpecificItemPlaceholder extends PlaceholderFragment
 {
-    public SpecificItemPlaceholder(Context context, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
+    public SpecificItemPlaceholder(Context context, MainActivity.FragmentListener fragmentListener, Section section)
     {
-        super(context, fragmentChanged, section, sectionNumber);
+        super(context, fragmentListener, section);
+
     }
 
     @Override
@@ -25,19 +26,19 @@ public class SpecificItemPlaceholder extends PlaceholderFragment
         if (getSection() instanceof SingleViewSection)
         {
             PlaceholderFragmentWithList placeholder;
-            placeholder = new PlaceholderFragmentWithList(getContext(), getFragmentChanged(), getSection(), getSectionNumber());
+            placeholder = new PlaceholderFragmentWithList(getContext(), getFragmentListener(), getSection());
             getFragmentManager().beginTransaction().replace(R.id.container, placeholder).commit();
         } else
         {
             if (getSection() instanceof MultipleAdaptersViewSection)
             {
                 BillboardPlaceholderFragment placeholder;
-                placeholder = new BillboardPlaceholderFragment(getContext(), getFragmentChanged(), (MultipleAdaptersViewSection) getSection(), getSectionNumber());
+                placeholder = new BillboardPlaceholderFragment(getContext(), getFragmentListener(), (MultipleAdaptersViewSection) getSection());
                 getFragmentManager().beginTransaction().replace(R.id.container, placeholder).commit();
             } else
             {
                 EventsPlaceholderFragment placeholder;
-                placeholder = new EventsPlaceholderFragment(getContext(), getFragmentChanged(), (MultipleViewScreen) getSection(), getSectionNumber());
+                placeholder = new EventsPlaceholderFragment(getContext(), getFragmentListener(), (MultipleViewScreen) getSection());
                 getFragmentManager().beginTransaction().replace(R.id.container, placeholder).commit();
             }
         }

@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import ru.hse.shugurov.FlexibleImageView;
 import ru.hse.shugurov.ImageLoader;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
@@ -29,9 +28,9 @@ public class ContactItemPlaceholderFragment extends SpecificItemPlaceholder
     private ContactItem contactItem;
     private Context context;
 
-    public ContactItemPlaceholderFragment(Context context, ContactItem contactItem, MainActivity.FragmentChanged fragmentChanged, Section section, int sectionNumber)
+    public ContactItemPlaceholderFragment(Context context, ContactItem contactItem, MainActivity.FragmentListener fragmentListener, Section section)
     {
-        super(context, fragmentChanged, section, sectionNumber);
+        super(context, fragmentListener, section);
         this.contactItem = contactItem;
         this.context = context;
     }
@@ -47,11 +46,8 @@ public class ContactItemPlaceholderFragment extends SpecificItemPlaceholder
         ((TextView) resultView.findViewById(R.id.contact_layout_department)).setText(contactItem.getDepartment());
         ((TextView) resultView.findViewById(R.id.contact_layout_address)).setText(getResources().getString(R.string.address_prefix) + contactItem.getAddress());
         ImageView imageView = (ImageView) resultView.findViewById(R.id.contact_layout_photo);
-        float margin = getContext().getResources().getDimension(R.dimen.activity_horizontal_margin);
-        int realWidth = (int) (container.getWidth() - 2 * margin);
         ImageLoader imageLoader = ((ContactAdapter) ((SingleViewSection) getSection()).getAdapter()).getImageLoader();
-        //imageLoader.displayImage(contactItem.getPicture(), (ImageView) resultView.findViewById(R.id.contact_layout_photo));
-        imageLoader.displayImage(contactItem.getPicture(), new FlexibleImageView(imageView, realWidth / 2));
+        imageLoader.displayImage(contactItem.getPicture(), imageView);
         resultView.findViewById(R.id.contact_layout_send_email).setOnClickListener(new View.OnClickListener()
         {
             @Override

@@ -34,9 +34,9 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
     private View progress;
     private Downloader downloader;
 
-    public EventsPlaceholderFragment(Context context, MainActivity.FragmentChanged fragmentChanged, MultipleViewScreen currentScreen, int sectionNumber)
+    public EventsPlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, MultipleViewScreen currentScreen)
     {
-        super(context, fragmentChanged, currentScreen, sectionNumber);
+        super(context, fragmentListener, currentScreen);
         this.currentScreen = currentScreen;
         if (currentScreen.getAdaptersNumber() != 3 || currentScreen.getUrlsNumber() != 3)
         {
@@ -87,6 +87,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                 break;
         }
         progress = inflater.inflate(R.layout.progress, root, false);
+        currentView = progress;
         root.addView(progress, 0);
         list = (ListView) inflater.inflate(R.layout.list, root, false);
         list.setOnItemClickListener(this);
@@ -99,19 +100,26 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                 {
                     root.removeView(progress);
                     ListAdapter adapter = new NewsAdapter(getContext(), Parser.parseNews(results[0]));
-                    currentScreen.setAdapter(0, adapter);
+                    currentScreen.setAdapter(currentScreen.getCurrentState(), adapter);
                     list.setAdapter(adapter);
                     root.addView(list, 0);
                     currentView = list;
+                    downloader = null;
                 } else
                 {
                     Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        if (currentScreen.getCurrentState() != 1)
+        if (currentScreen.getCurrentState() != 1 && currentScreen.getAdapter(currentScreen.getCurrentState()) == null)
         {
             downloader.execute(currentScreen.getUrl(currentScreen.getCurrentState()));
+        } else
+        {
+            root.removeView(progress);
+            list.setAdapter(currentScreen.getAdapter(currentScreen.getCurrentState()));
+            currentView = list;
+            root.addView(list, 0);
         }
         return root;
     }
@@ -153,7 +161,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                         callBack = new CallBack()
                         {
                             @Override
-                            public void call(String[] results)//TODO щито? куда всё делось?
+                            public void call(String[] results)
                             {
                                 if (results != null)
                                 {
@@ -240,6 +248,10 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
         }
         if (callBack != null)
         {
+            if (currentView != null)
+            {
+                root.removeView(currentView);
+            }
             currentView = progress;
             downloader = new Downloader(callBack);
             root.addView(progress, 0);
@@ -270,7 +282,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
         Object item = adapter.getItem(position);
         if (item instanceof NewsItem)
         {
-            NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment(getContext(), (NewsItem) item, getFragmentChanged(), getSection(), getSectionNumber());
+            NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment(getContext(), (NewsItem) item, getFragmentListener(), getSection());
             getFragmentManager().beginTransaction().replace(R.id.container, newsItemPlaceholderFragment).commit();
         }
     }

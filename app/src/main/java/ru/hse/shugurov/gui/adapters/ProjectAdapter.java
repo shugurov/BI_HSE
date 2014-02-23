@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import ru.hse.shugurov.FlexibleImageView;
 import ru.hse.shugurov.ImageLoader;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.model.ProjectItem;
@@ -63,9 +62,8 @@ public class ProjectAdapter extends BaseAdapter
         }
         ((TextView) resultViews.findViewById(R.id.project_item_headline)).setText(items[position].getHeadline());
         ImageView imageView = (ImageView) resultViews.findViewById(R.id.project_item_image);
-        int realWidth = parent.getWidth();
-        imageLoader.displayImage(items[position].getPictureUrl(), new FlexibleImageView(imageView, realWidth / 4));
-        //imageLoader.displayImage(items[position].getPictureUrl(), (ImageView) resultViews.findViewById(R.id.project_item_image));
+        imageView.setImageBitmap(null);
+        imageLoader.displayImage(items[position].getPictureUrl(), (ImageView) resultViews.findViewById(R.id.project_item_image));
         return resultViews;
     }
 }
