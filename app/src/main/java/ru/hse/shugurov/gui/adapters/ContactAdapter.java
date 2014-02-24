@@ -63,11 +63,10 @@ public class ContactAdapter extends BaseAdapter
         ((TextView) resultView.findViewById(R.id.contact_item_name)).setText(contactItems[position].getName());
         ((TextView) resultView.findViewById(R.id.contact_item_department)).setText(contactItems[position].getDepartment());
         ((TextView) resultView.findViewById(R.id.contact_item_telephone)).setText(contactItems[position].getTelephone());
-        ((TextView) resultView.findViewById(R.id.contact_item_email)).setText(contactItems[position].getEmail());
+        ((TextView) resultView.findViewById(R.id.contact_item_email)).setText("E-Mail: " + contactItems[position].getEmail());
         ImageView imageView = (ImageView) resultView.findViewById(R.id.contact_item_picture);
         imageView.setImageBitmap(null);
-        int realWidth = parent.getWidth();
-        //imageLoader.displayImage(contactItems[position].getPicture(), ((ImageView) resultView.findViewById(R.id.contact_item_picture)));
+        imageLoader.displayImage(contactItems[position].getPicture(), ((ImageView) resultView.findViewById(R.id.contact_item_picture)));
         return resultView;
     }
 }

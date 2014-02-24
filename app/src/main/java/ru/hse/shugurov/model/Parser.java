@@ -239,7 +239,7 @@ public class Parser
                     }
                     try
                     {
-                        department = jsonObject.getString("departmentContacts");
+                        department = jsonObject.getString("department");
                     } catch (JSONException e)
                     {
                         e.printStackTrace();

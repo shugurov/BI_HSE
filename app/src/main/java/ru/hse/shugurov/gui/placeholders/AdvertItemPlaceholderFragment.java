@@ -23,6 +23,7 @@ public class AdvertItemPlaceholderFragment extends SpecificItemPlaceholder
     {
         super(context, fragmentListener, section);
         this.advertItem = advertItem;
+        fragmentListener.setSectionTitle(advertItem.getTitle());
     }
 
     @Override
