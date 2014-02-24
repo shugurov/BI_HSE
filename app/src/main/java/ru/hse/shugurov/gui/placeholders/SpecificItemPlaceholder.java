@@ -17,7 +17,6 @@ public class SpecificItemPlaceholder extends PlaceholderFragment
     public SpecificItemPlaceholder(Context context, MainActivity.FragmentListener fragmentListener, Section section)
     {
         super(context, fragmentListener, section);
-
     }
 
 
