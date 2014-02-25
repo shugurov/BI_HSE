@@ -15,7 +15,7 @@ import ru.hse.shugurov.model.NewsItem;
 /**
  * Created by Иван on 01.01.14.
  */
-public class NewsAdapter extends BaseAdapter
+public class NewsAdapter extends BaseAdapter//TODO при отсутствии интернета падать может тут
 {
     private NewsItem[] items;
     private LayoutInflater inflater;

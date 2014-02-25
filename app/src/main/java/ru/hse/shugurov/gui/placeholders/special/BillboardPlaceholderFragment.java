@@ -1,4 +1,4 @@
-package ru.hse.shugurov.gui.placeholders;
+package ru.hse.shugurov.gui.placeholders.special;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -19,6 +19,8 @@ import ru.hse.shugurov.Downloader;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.gui.adapters.AdvertAdapter;
+import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
+import ru.hse.shugurov.gui.placeholders.items.AdvertItemPlaceholderFragment;
 import ru.hse.shugurov.model.AdvertItem;
 import ru.hse.shugurov.model.Parser;
 import ru.hse.shugurov.sections.MultipleAdaptersViewSection;

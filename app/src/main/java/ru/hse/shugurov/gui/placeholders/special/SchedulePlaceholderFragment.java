@@ -1,4 +1,4 @@
-package ru.hse.shugurov.gui.placeholders;
+package ru.hse.shugurov.gui.placeholders.special;
 
 import android.app.DownloadManager;
 import android.content.Context;
@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
+import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
 import ru.hse.shugurov.sections.ReferencesSection;
 import ru.hse.shugurov.sections.Section;
 

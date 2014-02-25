@@ -1,4 +1,4 @@
-package ru.hse.shugurov.gui.placeholders;
+package ru.hse.shugurov.gui.placeholders.items;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import ru.hse.shugurov.ImageLoader;
 import ru.hse.shugurov.R;
+import ru.hse.shugurov.gui.FlexibleImageView;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.gui.adapters.NewsAdapter;
 import ru.hse.shugurov.model.NewsItem;
@@ -54,7 +55,11 @@ public class NewsItemPlaceholderFragment extends SpecificItemPlaceholder
             imageLoader = ((NewsAdapter) ((MultipleViewScreen) getSection()).getAdapter(((MultipleViewScreen) getSection()).getCurrentState())).getImageLoader();
         }
         ImageView imageView = (ImageView) rootView.findViewById(R.id.news_layout_picture);
-        imageLoader.displayImage(item.getPicture(), imageView);
+        View newsContainer = rootView.findViewById(R.id.news_layout_container);
+        int paddingLeft = newsContainer.getPaddingLeft();
+        int paddingRight = newsContainer.getPaddingRight();
+        int width = container.getWidth() - paddingLeft - paddingRight;
+        imageLoader.displayImage(item.getPicture(), new FlexibleImageView(imageView, width));
         return rootView;
     }
 

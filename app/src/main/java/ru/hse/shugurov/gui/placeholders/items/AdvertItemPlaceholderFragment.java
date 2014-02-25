@@ -1,4 +1,4 @@
-package ru.hse.shugurov.gui.placeholders;
+package ru.hse.shugurov.gui.placeholders.items;
 
 import android.content.Context;
 import android.os.Bundle;

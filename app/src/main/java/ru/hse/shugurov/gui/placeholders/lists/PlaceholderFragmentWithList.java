@@ -1,4 +1,4 @@
-package ru.hse.shugurov.gui.placeholders;
+package ru.hse.shugurov.gui.placeholders.lists;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -21,6 +21,10 @@ import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.gui.adapters.ContactAdapter;
 import ru.hse.shugurov.gui.adapters.NewsAdapter;
 import ru.hse.shugurov.gui.adapters.ProjectAdapter;
+import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
+import ru.hse.shugurov.gui.placeholders.items.ContactItemPlaceholderFragment;
+import ru.hse.shugurov.gui.placeholders.items.NewsItemPlaceholderFragment;
+import ru.hse.shugurov.gui.placeholders.items.ProjectItemPlaceholderFragment;
 import ru.hse.shugurov.model.ContactItem;
 import ru.hse.shugurov.model.NewsItem;
 import ru.hse.shugurov.model.Parser;

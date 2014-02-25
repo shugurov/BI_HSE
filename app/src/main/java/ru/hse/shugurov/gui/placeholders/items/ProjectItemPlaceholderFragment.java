@@ -1,4 +1,4 @@
-package ru.hse.shugurov.gui.placeholders;
+package ru.hse.shugurov.gui.placeholders.items;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import ru.hse.shugurov.ImageLoader;
 import ru.hse.shugurov.R;
+import ru.hse.shugurov.gui.FlexibleImageView;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.gui.adapters.ProjectAdapter;
 import ru.hse.shugurov.model.ProjectItem;
@@ -46,7 +47,12 @@ public class ProjectItemPlaceholderFragment extends SpecificItemPlaceholder
             }
         });
         ImageLoader imageLoader = ((ProjectAdapter) ((SingleViewSection) getSection()).getAdapter()).getImageLoader();
-        imageLoader.displayImage(item.getPictureUrl(), (ImageView) rootView.findViewById(R.id.project_layout_picture));
+        ImageView imageView = ((ImageView) rootView.findViewById(R.id.project_layout_picture));
+        int paddingLeft = imageView.getPaddingLeft();
+        int paddingRight = imageView.getPaddingRight();
+        int width = container.getWidth() - paddingLeft - paddingRight;
+        //imageLoader.displayImage(item.getPictureUrl(), (ImageView) rootView.findViewById(R.id.project_layout_picture));
+        imageLoader.displayImage(item.getPictureUrl(), new FlexibleImageView(imageView, width));
         return rootView;
     }
 }

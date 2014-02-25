@@ -1,9 +1,13 @@
-package ru.hse.shugurov.gui.placeholders;
+package ru.hse.shugurov.gui.placeholders.items;
 
 import android.content.Context;
 
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
+import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
+import ru.hse.shugurov.gui.placeholders.lists.EventsPlaceholderFragment;
+import ru.hse.shugurov.gui.placeholders.lists.PlaceholderFragmentWithList;
+import ru.hse.shugurov.gui.placeholders.special.BillboardPlaceholderFragment;
 import ru.hse.shugurov.sections.MultipleAdaptersViewSection;
 import ru.hse.shugurov.sections.MultipleViewScreen;
 import ru.hse.shugurov.sections.Section;
