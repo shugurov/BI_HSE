@@ -129,7 +129,7 @@ public class ApplicationStructure
 
     private Section readSection()
     {
-        Section section = null;
+        Section section;
         String title = "";
         Icon icon = null;
         String url = null;

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import ru.hse.shugurov.CallBack;
 import ru.hse.shugurov.Downloader;
+import ru.hse.shugurov.FileCache;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.gui.adapters.AdvertAdapter;
@@ -57,63 +58,35 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
                     setAdapter(inflater, 0);
                 } else
                 {
-                    Downloader downloader = new Downloader(new CallBack()//TODO скачиваю только в одном из случаев. может во всех проверять?
+                    final FileCache fileCache = FileCache.instance();
+                    if (fileCache != null)
                     {
-                        @Override
-                        public void call(String[] results)
+                        String value = fileCache.get(getSection().getTitle());
+                        if (value == null)
                         {
-                            if (results != null)
+                            Downloader downloader = new Downloader(new CallBack()//TODO скачиваю только в одном из случаев. может во всех проверять?
                             {
-                                AdvertItem[] advertItems = Parser.parseAdverts(results[0]);
-                                ArrayList<AdvertItem> bs1 = new ArrayList<AdvertItem>();
-                                ArrayList<AdvertItem> bs2 = new ArrayList<AdvertItem>();
-                                ArrayList<AdvertItem> bs3 = new ArrayList<AdvertItem>();
-                                ArrayList<AdvertItem> bs4 = new ArrayList<AdvertItem>();
-                                ArrayList<AdvertItem> ms1 = new ArrayList<AdvertItem>();
-                                ArrayList<AdvertItem> ms2 = new ArrayList<AdvertItem>();
-
-                                for (AdvertItem advert : advertItems)
+                                @Override
+                                public void call(String[] results)
                                 {
-                                    switch (advert.getCourse())
+                                    if (results != null && results[0] != null)
                                     {
-                                        case 1:
-                                            bs1.add(advert);
-                                            break;
-                                        case 2:
-                                            bs2.add(advert);
-                                            break;
-                                        case 3:
-                                            bs3.add(advert);
-                                            break;
-                                        case 4:
-                                            bs4.add(advert);
-                                            break;
-                                        case 5:
-                                            ms1.add(advert);
-                                            break;
-                                        case 6:
-                                            ms2.add(advert);
-                                            break;
+                                        fileCache.add(getSection().getTitle(), results[0]);//TODO далить этот позор
+                                        setAdapters(results[0], inflater);
+                                    } else
+                                    {
+                                        Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                                     }
                                 }
-                                MultipleAdaptersViewSection section = (MultipleAdaptersViewSection) getSection();
-                                section.setAdapter(new AdvertAdapter(getContext(), bs1), 0);
-                                section.setAdapter(new AdvertAdapter(getContext(), bs2), 1);
-                                section.setAdapter(new AdvertAdapter(getContext(), bs3), 2);
-                                section.setAdapter(new AdvertAdapter(getContext(), bs4), 3);
-                                section.setAdapter(new AdvertAdapter(getContext(), ms1), 4);
-                                section.setAdapter(new AdvertAdapter(getContext(), ms2), 5);
-                                root.removeView(currentView);
-                                setAdapter(inflater, 0);
-                            } else
-                            {
-                                Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
-                            }
+                            });
+                            currentView = inflater.inflate(R.layout.progress, root, false);
+                            root.addView(currentView, 0);
+                            downloader.execute(((MultipleAdaptersViewSection) getSection()).getUrl());
+                        } else
+                        {
+                            setAdapters(value, inflater);
                         }
-                    });
-                    currentView = inflater.inflate(R.layout.progress, root, false);
-                    root.addView(currentView, 0);
-                    downloader.execute(((MultipleAdaptersViewSection) getSection()).getUrl());
+                    }//TODO что делать, если FileCache не существует
                 }
                 break;
             case 1:
@@ -263,5 +236,50 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
         AdvertItemPlaceholderFragment advertItemPlaceholderFragment;
         advertItemPlaceholderFragment = new AdvertItemPlaceholderFragment(getContext(), getFragmentListener(), getSection(), (AdvertItem) adapter.getItem(position));
         getFragmentManager().beginTransaction().replace(R.id.container, advertItemPlaceholderFragment).commit();
+    }
+
+    private void setAdapters(String result, LayoutInflater inflater)//TODO а может не надо тут это делать?(
+    {
+        AdvertItem[] advertItems = Parser.parseAdverts(result);
+        ArrayList<AdvertItem> bs1 = new ArrayList<AdvertItem>();
+        ArrayList<AdvertItem> bs2 = new ArrayList<AdvertItem>();
+        ArrayList<AdvertItem> bs3 = new ArrayList<AdvertItem>();
+        ArrayList<AdvertItem> bs4 = new ArrayList<AdvertItem>();
+        ArrayList<AdvertItem> ms1 = new ArrayList<AdvertItem>();
+        ArrayList<AdvertItem> ms2 = new ArrayList<AdvertItem>();
+
+        for (AdvertItem advert : advertItems)
+        {
+            switch (advert.getCourse())
+            {
+                case 1:
+                    bs1.add(advert);
+                    break;
+                case 2:
+                    bs2.add(advert);
+                    break;
+                case 3:
+                    bs3.add(advert);
+                    break;
+                case 4:
+                    bs4.add(advert);
+                    break;
+                case 5:
+                    ms1.add(advert);
+                    break;
+                case 6:
+                    ms2.add(advert);
+                    break;
+            }
+        }
+        MultipleAdaptersViewSection section = (MultipleAdaptersViewSection) getSection();
+        section.setAdapter(new AdvertAdapter(getContext(), bs1), 0);
+        section.setAdapter(new AdvertAdapter(getContext(), bs2), 1);
+        section.setAdapter(new AdvertAdapter(getContext(), bs3), 2);
+        section.setAdapter(new AdvertAdapter(getContext(), bs4), 3);
+        section.setAdapter(new AdvertAdapter(getContext(), ms1), 4);
+        section.setAdapter(new AdvertAdapter(getContext(), ms2), 5);
+        root.removeView(currentView);
+        setAdapter(inflater, 0);
     }
 }

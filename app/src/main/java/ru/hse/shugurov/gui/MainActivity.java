@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import ru.hse.shugurov.ApplicationStructure;
 import ru.hse.shugurov.ContentTypes;
+import ru.hse.shugurov.FileCache;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.adapters.NavigationDrawerAdapter;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
@@ -45,6 +46,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        FileCache.init(this);
         ApplicationStructure.setContext(this);
         ApplicationStructure structure = ApplicationStructure.getStructure();
         sections = structure.getSections();

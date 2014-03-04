@@ -16,6 +16,7 @@ import android.widget.Toast;
 import ru.hse.shugurov.CallBack;
 import ru.hse.shugurov.ContentTypes;
 import ru.hse.shugurov.Downloader;
+import ru.hse.shugurov.FileCache;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.gui.adapters.ContactAdapter;
@@ -73,72 +74,108 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
             }
             listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
             listView.setAdapter(adapter);
-            selListener();
+            setListener();
         } else
         {
-            progressDialog = inflater.inflate(R.layout.progress, rootView, false);
-            rootView.addView(progressDialog, 0);
-            downloader = new Downloader(new CallBack()
+            final FileCache fileCache = FileCache.instance();
+            if (fileCache != null)
             {
-                @Override
-                public void call(String[] results)
+                String value = fileCache.get(getSection().getTitle());
+                if (value == null)
                 {
-                    if (results != null)
+                    progressDialog = inflater.inflate(R.layout.progress, rootView, false);
+                    rootView.addView(progressDialog, 0);
+                    downloader = new Downloader(new CallBack()
                     {
-                        rootView.removeView(progressDialog);
-                        listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
-                        selListener();
-                        switch (getSection().getType())
+                        @Override
+                        public void call(String[] results)
                         {
-                            case ContentTypes.NEWS:
-                                NewsItem[] newsItems = Parser.parseNews(results[0]);
-                                NewsAdapter newsAdapter = new NewsAdapter(getContext(), newsItems);
-                                ((SingleViewSection) getSection()).setAdapter(newsAdapter);
-                                listView.setAdapter(newsAdapter);
-                                break;
-                            case ContentTypes.PROJECTS_VOLUNTEERING:
-                                ProjectItem[] projectItems = Parser.parseProjects(results[0]);
-                                ProjectAdapter projectAdapter = new ProjectAdapter(getContext(), projectItems);
-                                ((SingleViewSection) getSection()).setAdapter(projectAdapter);
-                                listView.setAdapter(projectAdapter);
-                                break;
-                            case ContentTypes.CONTACTS:
-                            case ContentTypes.TEACHERS:
-                                ContactItem[] contactItems = Parser.parseContacts(results[0]);
-                                ContactAdapter contactAdapter = new ContactAdapter(getContext(), contactItems);
-                                ((SingleViewSection) getSection()).setAdapter(contactAdapter);
-                                listView.setAdapter(contactAdapter);
-                                break;
+                            if (results != null && results[0] != null)
+                            {
+                                fileCache.add(getSection().getTitle(), results[0]);
+                                rootView.removeView(progressDialog);
+                                listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
+                                setListener();
+                                switch (getSection().getType())
+                                {
+                                    case ContentTypes.NEWS:
+                                        NewsItem[] newsItems = Parser.parseNews(results[0]);
+                                        NewsAdapter newsAdapter = new NewsAdapter(getContext(), newsItems);
+                                        ((SingleViewSection) getSection()).setAdapter(newsAdapter);
+                                        listView.setAdapter(newsAdapter);
+                                        break;
+                                    case ContentTypes.PROJECTS_VOLUNTEERING:
+                                        ProjectItem[] projectItems = Parser.parseProjects(results[0]);
+                                        ProjectAdapter projectAdapter = new ProjectAdapter(getContext(), projectItems);
+                                        ((SingleViewSection) getSection()).setAdapter(projectAdapter);
+                                        listView.setAdapter(projectAdapter);
+                                        break;
+                                    case ContentTypes.CONTACTS:
+                                    case ContentTypes.TEACHERS:
+                                        ContactItem[] contactItems = Parser.parseContacts(results[0]);
+                                        ContactAdapter contactAdapter = new ContactAdapter(getContext(), contactItems);
+                                        ((SingleViewSection) getSection()).setAdapter(contactAdapter);
+                                        listView.setAdapter(contactAdapter);
+                                        break;
+                                }
+                            } else
+                            {
+                                Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    if (getSection().getType() == ContentTypes.NEWS)
+                    {
+                        String filter = getFilter();
+                        SharedPreferences.Editor editor = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE).edit();
+                        editor.putString("filter", filter);
+                        editor.commit();
+                        if (filter.length() == 8)
+                        {
+                            downloader.execute(((SingleViewSection) getSection()).getUrl());
+                        } else
+                        {
+                            downloader.execute(((SingleViewSection) getSection()).getUrl() + filter);
                         }
                     } else
                     {
-                        Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                        downloader.execute(((SingleViewSection) getSection()).getUrl());
+                    }
+                } else//TODO тут тупо копирую код(
+                {
+                    rootView.removeView(progressDialog);
+                    listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
+                    setListener();
+                    switch (getSection().getType())
+                    {
+                        case ContentTypes.NEWS:
+                            NewsItem[] newsItems = Parser.parseNews(value);
+                            NewsAdapter newsAdapter = new NewsAdapter(getContext(), newsItems);
+                            ((SingleViewSection) getSection()).setAdapter(newsAdapter);
+                            listView.setAdapter(newsAdapter);
+                            break;
+                        case ContentTypes.PROJECTS_VOLUNTEERING:
+                            ProjectItem[] projectItems = Parser.parseProjects(value);
+                            ProjectAdapter projectAdapter = new ProjectAdapter(getContext(), projectItems);
+                            ((SingleViewSection) getSection()).setAdapter(projectAdapter);
+                            listView.setAdapter(projectAdapter);
+                            break;
+                        case ContentTypes.CONTACTS:
+                        case ContentTypes.TEACHERS:
+                            ContactItem[] contactItems = Parser.parseContacts(value);
+                            ContactAdapter contactAdapter = new ContactAdapter(getContext(), contactItems);
+                            ((SingleViewSection) getSection()).setAdapter(contactAdapter);
+                            listView.setAdapter(contactAdapter);
+                            break;
                     }
                 }
-            });
-            if (getSection().getType() == ContentTypes.NEWS)
-            {
-                String filter = getFilter();
-                SharedPreferences.Editor editor = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE).edit();
-                editor.putString("filter", filter);
-                editor.commit();
-                if (filter.length() == 8)
-                {
-                    downloader.execute(((SingleViewSection) getSection()).getUrl());
-                } else
-                {
-                    downloader.execute(((SingleViewSection) getSection()).getUrl() + filter);
-                }
-            } else
-            {
-                downloader.execute(((SingleViewSection) getSection()).getUrl());
-            }
+            }//TODO что делать если fileCache не найден
         }
 
         return rootView;
     }
 
-    private void selListener()
+    private void setListener()
     {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
