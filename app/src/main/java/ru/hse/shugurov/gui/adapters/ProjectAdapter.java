@@ -6,10 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ru.hse.shugurov.ImageLoader;
 import ru.hse.shugurov.R;
+import ru.hse.shugurov.gui.FlexibleImageView;
 import ru.hse.shugurov.model.ProjectItem;
 
 /**
@@ -25,7 +27,7 @@ public class ProjectAdapter extends BaseAdapter
     {
         this.items = items;
         inflater = LayoutInflater.from(context);
-        imageLoader = new ImageLoader(context, context.getResources().getDrawable(R.drawable.ic_launcher));
+        imageLoader = new ImageLoader(context);
     }
 
     public ImageLoader getImageLoader()
@@ -63,7 +65,10 @@ public class ProjectAdapter extends BaseAdapter
         ((TextView) resultViews.findViewById(R.id.project_item_headline)).setText(items[position].getHeadline());
         ImageView imageView = (ImageView) resultViews.findViewById(R.id.project_item_image);
         imageView.setImageBitmap(null);
-        imageLoader.displayImage(items[position].getPictureUrl(), (ImageView) resultViews.findViewById(R.id.project_item_image));
+        float weightSum = ((LinearLayout) resultViews).getWeightSum();
+        int width = (int) ((parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight()) * (1 / weightSum));
+        imageLoader.displayImage(items[position].getPictureUrl(), new FlexibleImageView(imageView, width));
+        //imageLoader.displayImage(items[position].getPictureUrl(), (ImageView) resultViews.findViewById(R.id.project_item_image));
         return resultViews;
     }
 }

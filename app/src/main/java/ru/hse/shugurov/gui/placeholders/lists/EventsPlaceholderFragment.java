@@ -109,7 +109,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                         {
                             if (results != null && results[0] != null)
                             {
-                                root.removeView(progress);
+                                root.removeView(currentView);
                                 ListAdapter adapter = new NewsAdapter(getContext(), Parser.parseNews(results[0]));
                                 currentScreen.setAdapter(currentScreen.getCurrentState(), adapter);
                                 fileCache.add(getSection().getTitle() + "_events", results[0]);
@@ -136,7 +136,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
 
         } else
         {
-            root.removeView(progress);
+            root.removeView(currentView);
             list.setAdapter(currentScreen.getAdapter(currentScreen.getCurrentState()));
             currentView = list;
             root.addView(list, 0);
@@ -165,19 +165,20 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                     if (currentView != null)
                     {
                         root.removeView(currentView);
+                        currentView = null;
                     }
                     ((ImageView) getView().findViewById(R.id.events_announce_image)).setImageDrawable(getResources().getDrawable(R.drawable.anons_button_pressed));
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_announce_image;
                     currentScreen.setCurrentState(0);
                     adapter = currentScreen.getAdapter(0);
-                    root.removeView(currentView);
                     if (adapter != null)
                     {
                         if (list != null)
                         {
                             list.setAdapter(adapter);
                             root.addView(list, 0);
+                            currentView = list;
                         }
                     } else
                     {
@@ -231,12 +232,12 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                     if (currentView != null)
                     {
                         root.removeView(currentView);
+                        currentView = null;
                     }
                     ((ImageView) getView().findViewById(R.id.events_calendar_image)).setImageDrawable(getResources().getDrawable(R.drawable.calendar_button_pressed));
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_calendar_image;
                     currentScreen.setCurrentState(1);
-                    root.removeView(currentView);
                 }
                 break;
             case R.id.events_archives_image:
@@ -249,6 +250,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                     {
                         downloader.cancel(false);
                     }
+                    //root.removeView(progress);
                     if (currentView != null)
                     {
                         root.removeView(currentView);
@@ -314,7 +316,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
         {
             currentView = progress;
             downloader = new Downloader(callBack);
-            root.addView(progress, 0);
+            root.addView(currentView, 0);
             downloader.execute(url);
         }
     }

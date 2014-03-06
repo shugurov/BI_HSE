@@ -26,5 +26,30 @@ public class FlexibleImageView extends ImageView
         int height = (int) Math.round(width * aspectRatio);
         realImage.getLayoutParams().height = height;
         realImage.setImageBitmap(bitmap);
+        realImage.postInvalidate();
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (o instanceof FlexibleImageView)
+        {
+            return realImage.equals(((FlexibleImageView) o).realImage);
+        } else
+        {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return realImage.hashCode() + 15;
+    }
+
+    @Override
+    public void invalidate()
+    {
+        realImage.invalidate();
     }
 }

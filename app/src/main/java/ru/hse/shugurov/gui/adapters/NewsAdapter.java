@@ -6,10 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ru.hse.shugurov.ImageLoader;
 import ru.hse.shugurov.R;
+import ru.hse.shugurov.gui.FlexibleImageView;
 import ru.hse.shugurov.model.NewsItem;
 
 /**
@@ -25,7 +27,7 @@ public class NewsAdapter extends BaseAdapter//TODO при отсутствии �
     {
         this.items = items;
         inflater = LayoutInflater.from(context);
-        imageLoader = new ImageLoader(context, context.getResources().getDrawable(R.drawable.ic_launcher));
+        imageLoader = new ImageLoader(context);
     }
 
     public ImageLoader getImageLoader()
@@ -64,7 +66,9 @@ public class NewsAdapter extends BaseAdapter//TODO при отсутствии �
         ((TextView) view.findViewById(R.id.news_item_date)).setText(items[position].getDate());
         ImageView imageView = (ImageView) view.findViewById(R.id.news_item_picture);
         imageView.setImageBitmap(null);
-        imageLoader.displayImage(items[position].getPicture(), imageView);
+        float weightSum = ((LinearLayout) view).getWeightSum();
+        int width = (int) ((parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight()) * (1 / weightSum));
+        imageLoader.displayImage(items[position].getPicture(), new FlexibleImageView(imageView, width));
         return view;
     }
 }

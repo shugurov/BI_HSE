@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.LruCache;
 import android.widget.ImageView;
@@ -26,13 +25,9 @@ public class ImageLoader
 {
     private LruCache<String, Bitmap> memoryCache;
     private Map<ImageView, String> imageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
-    private Context context;
-    private Drawable stubDrawable;
 
-    public ImageLoader(Context context, Drawable stubDrawable)
+    public ImageLoader(Context context)
     {
-        this.context = context;
-        this.stubDrawable = stubDrawable;
         int memoryClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
         int cacheSize = 1024 * 1024 * memoryClass / 8;
         memoryCache = new LruCache(cacheSize);
@@ -45,6 +40,7 @@ public class ImageLoader
         if (bitmap != null)
         {
             imageView.setImageBitmap(bitmap);
+            imageView.invalidate();
         } else
         {
             queuePhoto(url, imageView);

@@ -25,7 +25,7 @@ public class ContactAdapter extends BaseAdapter
     {
         this.contactItems = contactItems;
         inflater = LayoutInflater.from(context);
-        imageLoader = new ImageLoader(context, context.getResources().getDrawable(R.drawable.ic_launcher));
+        imageLoader = new ImageLoader(context);
     }
 
     @Override
