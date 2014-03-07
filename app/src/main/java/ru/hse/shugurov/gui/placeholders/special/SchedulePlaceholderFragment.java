@@ -1,7 +1,7 @@
 package ru.hse.shugurov.gui.placeholders.special;
 
-import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,6 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.io.File;
+
+import ru.hse.shugurov.CallBack;
+import ru.hse.shugurov.Downloader;
+import ru.hse.shugurov.FileCache;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
@@ -71,8 +76,28 @@ public class SchedulePlaceholderFragment extends PlaceholderFragment implements 
             Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
             return;
         }
-        Uri uri = Uri.parse(url);
-        DownloadManager manager = (DownloadManager) getContext().getSystemService(Context.DOWNLOAD_SERVICE);
-        manager.enqueue(new DownloadManager.Request(uri));
+        //final Uri uri = Uri.parse(url);
+        //DownloadManager manager = (DownloadManager) getContext().getSystemService(Context.DOWNLOAD_SERVICE);
+        //manager.enqueue(new DownloadManager.Request(uri));
+        Downloader downloader = new Downloader(new CallBack()
+        {
+            @Override
+            public void call(String[] results)
+            {
+                FileCache fileCache = FileCache.instance();
+                fileCache.add("lol.xlsx", results[0]);
+                File file = new File(getContext().getCacheDir(), "lol.xlsx");
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(file.getAbsolutePath()));
+                try
+                {
+                    startActivity(intent);
+                } catch (Exception e)
+                {
+                    Toast.makeText(getContext(), "Не получилось открыть файл", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        downloader.execute(url);
     }
 }

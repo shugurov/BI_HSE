@@ -307,6 +307,11 @@
                 <photo>markov</photo>
             </developer>
             <developer>
+                <name>Пискунов Антон</name>
+                <position>менеджер</position>
+                <photo>piskunov</photo>
+            </developer>
+            <developer>
                 <name>Клименко Юрий</name>
                 <position>Руководитель проекта</position>
                 <photo>klimenko</photo>

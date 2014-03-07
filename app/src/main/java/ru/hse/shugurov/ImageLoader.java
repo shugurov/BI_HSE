@@ -1,5 +1,6 @@
 package ru.hse.shugurov;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -23,24 +24,49 @@ import java.util.WeakHashMap;
  */
 public class ImageLoader
 {
+    private Activity activity;
+    private static ImageLoader imageLoader;
     private LruCache<String, Bitmap> memoryCache;
     private Map<ImageView, String> imageViews = Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
 
-    public ImageLoader(Context context)
+    private ImageLoader(Activity activity)
     {
-        int memoryClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
+        this.activity = activity;
+        int memoryClass = ((ActivityManager) activity.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
         int cacheSize = 1024 * 1024 * memoryClass / 8;
         memoryCache = new LruCache(cacheSize);
     }
 
-    public void displayImage(String url, ImageView imageView)
+    public static void init(Activity activity)
+    {
+        imageLoader = new ImageLoader(activity);
+    }
+
+    public static boolean isInitiated()
+    {
+        return imageLoader != null;
+    }
+
+    public static ImageLoader instance()
+    {
+        return imageLoader;
+    }
+
+    public void displayImage(String url, final ImageView imageView)
     {
         imageViews.put(imageView, url);
-        Bitmap bitmap = memoryCache.get(url);
+        final Bitmap bitmap = memoryCache.get(url);
         if (bitmap != null)
         {
-            imageView.setImageBitmap(bitmap);
-            imageView.invalidate();
+            activity.runOnUiThread(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    imageView.setImageBitmap(bitmap);
+                    imageView.invalidate();
+                }
+            });
         } else
         {
             queuePhoto(url, imageView);
@@ -119,13 +145,21 @@ public class ImageLoader
         }
 
         @Override
-        protected void onPostExecute(Bitmap bitmap)
+        protected void onPostExecute(final Bitmap bitmap)
         {
             if (!imageViewReused(photoToLoad))
             {
                 if (bitmap != null)
                 {
-                    photoToLoad.getImageView().setImageBitmap(bitmap);
+                    activity.runOnUiThread(new Runnable()
+                    {
+                        @Override
+                        public void run()
+                        {
+                            photoToLoad.getImageView().setImageBitmap(bitmap);
+                            photoToLoad.getImageView().invalidate();
+                        }
+                    });
                 }
             }
         }

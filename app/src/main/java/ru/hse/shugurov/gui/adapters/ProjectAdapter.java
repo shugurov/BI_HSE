@@ -27,7 +27,7 @@ public class ProjectAdapter extends BaseAdapter
     {
         this.items = items;
         inflater = LayoutInflater.from(context);
-        imageLoader = new ImageLoader(context);
+        imageLoader = ImageLoader.instance();
     }
 
     public ImageLoader getImageLoader()
