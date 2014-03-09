@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:layout_weight="1">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:gravity="left|top"
+        android:height="60sp"
+        android:orientation="horizontal"
+        android:background="@color/reference_color">
+
+
+        <ImageView
+            android:id="@+id/previous_month"
+            android:layout_width="20sp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_marginLeft="10sp"
+            android:src="@drawable/calendar_left_arrow_selector">
+        </ImageView>
+
+        <TextView
+            android:id="@+id/current_month"
+            android:layout_width="fill_parent"
+            android:layout_height="60sp"
+            android:layout_weight="0.6"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#FFFFFF">
+        </TextView>
+
+        <ImageView
+            android:id="@+id/next_month"
+            android:layout_width="20sp"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"
+            android:layout_marginRight="10sp"
+            android:src="@drawable/calendar_right_arrow_selector">
+        </ImageView>
+
+    </LinearLayout>
+
+
+    <ru.hse.shugurov.gui.NonScrollableGridView
+        android:id="@+id/calendar"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:numColumns="7">
+    </ru.hse.shugurov.gui.NonScrollableGridView>
+
+</LinearLayout>

@@ -1,6 +1,8 @@
 package ru.hse.shugurov.gui.placeholders.items;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +21,7 @@ import ru.hse.shugurov.sections.Section;
  */
 public class AboutUsPlaceholderFragment extends PlaceholderFragment
 {
-    public AboutUsPlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, Section section, int sectionNumber)
+    public AboutUsPlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, Section section)
     {
         super(context, fragmentListener, section);
     }
@@ -29,7 +31,13 @@ public class AboutUsPlaceholderFragment extends PlaceholderFragment
     {
         View rootView = inflater.inflate(R.layout.about_us, container, false);
         AboutUsSection section = (AboutUsSection) getSection();
-        ((ImageView) rootView.findViewById(R.id.about_us_image)).setImageDrawable(getResources().getDrawable(section.getImage()));
+        ImageView imageView = (ImageView) rootView.findViewById(R.id.about_us_image);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), ((AboutUsSection) getSection()).getImage());
+        double aspectRatio = ((double) bitmap.getHeight()) / bitmap.getWidth();
+        int height = (int) Math.round(container.getWidth() * aspectRatio);
+        imageView.getLayoutParams().height = height;
+        imageView.getLayoutParams().width = container.getWidth() / 2;
+        imageView.setImageBitmap(bitmap);
         ((TextView) rootView.findViewById(R.id.about_us_heading)).setText(section.getHeading());
         ((TextView) rootView.findViewById(R.id.about_us_text)).setText(section.getText());
         return rootView;

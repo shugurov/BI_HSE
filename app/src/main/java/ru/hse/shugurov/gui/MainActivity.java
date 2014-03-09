@@ -64,6 +64,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         // Set up the drawer.
         NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(this, sections);
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), adapter);
+
     }
 
     @Override
@@ -154,7 +155,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             }
             case ContentTypes.ABOUT_US:
             {
-                currentPlaceholder = new AboutUsPlaceholderFragment(this, fragmentListener, sections[position], position);
+                currentPlaceholder = new AboutUsPlaceholderFragment(this, fragmentListener, sections[position]);
                 break;
             }
             case ContentTypes.ABOUT_APP:

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
@@ -17,6 +18,7 @@ import ru.hse.shugurov.Downloader;
 import ru.hse.shugurov.FileCache;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
+import ru.hse.shugurov.gui.adapters.CalendarAdapter;
 import ru.hse.shugurov.gui.adapters.NewsAdapter;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.items.NewsItemPlaceholderFragment;
@@ -238,6 +240,11 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_calendar_image;
                     currentScreen.setCurrentState(1);
+                    ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);
+                    expandableListView.setAdapter(new CalendarAdapter(getContext()));
+                    root.addView(expandableListView, 0);
+                    currentView = expandableListView;
+
                 }
                 break;
             case R.id.events_archives_image:
@@ -266,6 +273,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                         if (list != null)
                         {
                             list.setAdapter(adapter);
+                            currentView = list;
                             root.addView(list, 0);
                         }
                     } else
