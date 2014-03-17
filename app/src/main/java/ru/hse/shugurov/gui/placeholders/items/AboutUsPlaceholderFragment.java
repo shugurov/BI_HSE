@@ -32,7 +32,7 @@ public class AboutUsPlaceholderFragment extends PlaceholderFragment
         View rootView = inflater.inflate(R.layout.about_us, container, false);
         AboutUsSection section = (AboutUsSection) getSection();
         ImageView imageView = (ImageView) rootView.findViewById(R.id.about_us_image);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), ((AboutUsSection) getSection()).getImage());
+        Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), ((AboutUsSection) getSection()).getImage());
         double aspectRatio = ((double) bitmap.getHeight()) / bitmap.getWidth();
         int height = (int) Math.round(container.getWidth() * aspectRatio);
         imageView.getLayoutParams().height = height;

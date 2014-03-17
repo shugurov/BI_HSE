@@ -16,12 +16,4 @@
         android:textColor="#FFFFFF">
     </Button>
 
-    <TextView
-        android:id="@+id/num_events_per_day"
-        style="@style/calendar_event_style"
-        android:layout_width="10dp"
-        android:layout_height="10dp"
-        android:layout_gravity="right">
-    </TextView>
-
 </RelativeLayout>

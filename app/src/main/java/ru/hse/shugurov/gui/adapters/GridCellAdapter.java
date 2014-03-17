@@ -1,13 +1,12 @@
 package ru.hse.shugurov.gui.adapters;
 
 import android.content.Context;
-import android.util.Log;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,50 +14,44 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ru.hse.shugurov.R;
+import ru.hse.shugurov.model.DayDescription;
 
 /**
  * Created by Иван on 09.03.14.
  */
 public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
 {
-    private static final String tag = "GridCellAdapter";
-    private final Context _context;
-    private final List<String> list;
     private static final int DAY_OFFSET = 1;
+    private final Context context;
+    private final List<DayDescription> listOfDaysOnScreen;
     private final String[] months = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
     private final int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yyyy");
     private int daysInMonth;
     private int currentDayOfMonth;
     private int currentWeekDay;
+    private int currentMonth; //using traditional numeration. January - 1
+    private int currentYear;
     private Button gridcell;
-    private TextView num_events_per_day;
-    private final HashMap<String, Integer> eventsPerMonthMap;
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yyyy");
+    private Map<DayDescription, String> events;
 
-    // Days in Current Month
-    public GridCellAdapter(Context context, int textViewResourceId, int month, int year)
+    public GridCellAdapter(Context context, int month, int year, Map<DayDescription, String> events)
     {
         super();
-        this._context = context;
-        this.list = new ArrayList<String>();
+        this.context = context;
+        this.listOfDaysOnScreen = new ArrayList<DayDescription>();
+        this.events = events;
         Calendar calendar = Calendar.getInstance();
-        setCurrentDayOfMonth(calendar.get(Calendar.DAY_OF_MONTH));
-        setCurrentWeekDay(calendar.get(Calendar.DAY_OF_WEEK));
-
-        // Print Month
+        currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        currentWeekDay =  calendar.get(Calendar.DAY_OF_WEEK);
+        currentMonth = calendar.get(Calendar.MONTH) + 1;
+        currentYear = calendar.get(Calendar.YEAR);
         printMonth(month, year);
 
-        // Find Number of Events
-        eventsPerMonthMap = findNumberOfEventsPerMonth(year, month);
-    }
-
-    private String getMonthAsString(int i)
-    {
-        return months[i];
     }
 
 
@@ -67,66 +60,49 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         return daysOfMonth[i];
     }
 
-    public String getItem(int position)
+    public DayDescription getItem(int position)
     {
-        return list.get(position);
+        return listOfDaysOnScreen.get(position);
     }
 
     @Override
     public int getCount()
     {
-        return list.size();
+        return listOfDaysOnScreen.size();
     }
 
-    /**
-     * Prints Month
-     *
-     * @param mm
-     * @param yy
-     */
+
     private void printMonth(int mm, int yy)
     {
-        Log.d(tag, "==> printMonth: mm: " + mm + " " + "yy: " + yy);
-        int trailingSpaces = 0;
-        int daysInPrevMonth = 0;
-        int prevMonth = 0;
-        int prevYear = 0;
-        int nextMonth = 0;
-        int nextYear = 0;
+        int trailingSpaces;
+        int daysInPrevMonth;
+        int prevMonth;
+        int prevYear;
+        int nextYear;
 
         int currentMonth = mm - 1;
-        String currentMonthName = getMonthAsString(currentMonth);
         daysInMonth = getNumberOfDaysOfMonth(currentMonth);
 
-        Log.d(tag, "Current Month: " + " " + currentMonthName + " having " + daysInMonth + " days.");
-
         GregorianCalendar cal = new GregorianCalendar(yy, currentMonth, 1);
-        Log.d(tag, "Gregorian Calendar:= " + cal.getTime().toString());
 
         if (currentMonth == 11)
         {
             prevMonth = currentMonth - 1;
             daysInPrevMonth = getNumberOfDaysOfMonth(prevMonth);
-            nextMonth = 0;
             prevYear = yy;
             nextYear = yy + 1;
-            Log.d(tag, "*->PrevYear: " + prevYear + " PrevMonth:" + prevMonth + " NextMonth: " + nextMonth + " NextYear: " + nextYear);
         } else if (currentMonth == 0)
         {
             prevMonth = 11;
             prevYear = yy - 1;
             nextYear = yy;
             daysInPrevMonth = getNumberOfDaysOfMonth(prevMonth);
-            nextMonth = 1;
-            Log.d(tag, "**--> PrevYear: " + prevYear + " PrevMonth:" + prevMonth + " NextMonth: " + nextMonth + " NextYear: " + nextYear);
         } else
         {
             prevMonth = currentMonth - 1;
-            nextMonth = currentMonth + 1;
             nextYear = yy;
             prevYear = yy;
             daysInPrevMonth = getNumberOfDaysOfMonth(prevMonth);
-            Log.d(tag, "***---> PrevYear: " + prevYear + " PrevMonth:" + prevMonth + " NextMonth: " + nextMonth + " NextYear: " + nextYear);
         }
 
         int currentWeekDay = cal.get(Calendar.DAY_OF_WEEK) - 1;
@@ -146,47 +122,28 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         // Trailing Month days
         for (int i = 0; i < trailingSpaces; i++)
         {
-            Log.d(tag, "PREV MONTH:= " + prevMonth + " => " + getMonthAsString(prevMonth) + " " + String.valueOf((daysInPrevMonth - trailingSpaces + DAY_OFFSET) + i));
-            list.add(String.valueOf((daysInPrevMonth - trailingSpaces + DAY_OFFSET) + i) + "-GREY" + "-" + getMonthAsString(prevMonth) + "-" + prevYear);
+            listOfDaysOnScreen.add(new DayDescription(daysInPrevMonth - trailingSpaces + DAY_OFFSET, months[prevMonth], prevYear, R.color.lightgray));
         }
 
         // Current Month Days
         for (int i = 1; i <= daysInMonth; i++)
         {
-            Log.d(currentMonthName, String.valueOf(i) + " " + getMonthAsString(currentMonth) + " " + yy);
-            if (i == getCurrentDayOfMonth())
+            if (i == currentDayOfMonth && this.currentMonth == mm && currentYear == yy)
             {
-                list.add(String.valueOf(i) + "-BLUE" + "-" + getMonthAsString(currentMonth) + "-" + yy);
+                listOfDaysOnScreen.add(new DayDescription(i, months[currentMonth], yy, R.color.orrange));
             } else
             {
-                list.add(String.valueOf(i) + "-WHITE" + "-" + getMonthAsString(currentMonth) + "-" + yy);
+                listOfDaysOnScreen.add(new DayDescription(i, months[currentMonth], yy, R.color.lightgray02));
             }
         }
 
         // Leading Month days
-        for (int i = 0; i < list.size() % 7; i++)
+        for (int i = 0; i < listOfDaysOnScreen.size() % 7; i++)
         {
-            Log.d(tag, "NEXT MONTH:= " + getMonthAsString(nextMonth));
-            list.add(String.valueOf(i + 1) + "-GREY" + "-" + getMonthAsString(nextMonth) + "-" + nextYear);
+            listOfDaysOnScreen.add(new DayDescription(i, months[currentMonth], nextYear, R.color.lightgray));
         }
     }
 
-    /**
-     * NOTE: YOU NEED TO IMPLEMENT THIS PART Given the YEAR, MONTH, retrieve
-     * ALL entries from a SQLite database for that month. Iterate over the
-     * List of All entries, and get the dateCreated, which is converted into
-     * day.
-     *
-     * @param year
-     * @param month
-     * @return
-     */
-    private HashMap<String, Integer> findNumberOfEventsPerMonth(int year, int month)
-    {
-        HashMap<String, Integer> map = new HashMap<String, Integer>();
-
-        return map;
-    }
 
     @Override
     public long getItemId(int position)
@@ -200,48 +157,28 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         View row = convertView;
         if (row == null)
         {
-            LayoutInflater inflater = (LayoutInflater) _context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = inflater.inflate(R.layout.screen_gridcell, parent, false);
         }
 
-        // Get a reference to the Day gridcell
         gridcell = (Button) row.findViewById(R.id.calendar_day_gridcell);
         gridcell.setOnClickListener(this);
 
-        // ACCOUNT FOR SPACING
+        DayDescription dayToBeShown = listOfDaysOnScreen.get(position);
 
-        Log.d(tag, "Current Day: " + getCurrentDayOfMonth());
-        String[] day_color = list.get(position).split("-");
-        String theday = day_color[0];
-        String themonth = day_color[2];
-        String theyear = day_color[3];
-        if ((!eventsPerMonthMap.isEmpty()) && (eventsPerMonthMap != null))
+        if (!events.isEmpty())
         {
-            if (eventsPerMonthMap.containsKey(theday))
+            if (events.containsKey(currentWeekDay))
             {
-                num_events_per_day = (TextView) row.findViewById(R.id.num_events_per_day);
-                Integer numEvents = (Integer) eventsPerMonthMap.get(theday);
-                num_events_per_day.setText(numEvents.toString());
+                events.remove(Integer.toString(dayToBeShown.getDay()));
+                gridcell.setBackgroundColor(Color.RED);
             }
         }
 
         // Set the Day GridCell
-        gridcell.setText(theday);
-        gridcell.setTag(theday + "-" + themonth + "-" + theyear);
-        Log.d(tag, "Setting GridCell " + theday + "-" + themonth + "-" + theyear);
-
-        if (day_color[1].equals("GREY"))
-        {
-            gridcell.setTextColor(_context.getResources().getColor(R.color.lightgray));
-        }
-        if (day_color[1].equals("WHITE"))
-        {
-            gridcell.setTextColor(_context.getResources().getColor(R.color.lightgray02));
-        }
-        if (day_color[1].equals("BLUE"))
-        {
-            gridcell.setTextColor(_context.getResources().getColor(R.color.orrange));
-        }
+        gridcell.setText(Integer.toString(dayToBeShown.getDay()));
+        gridcell.setTag(Integer.toString(dayToBeShown.getDay()) + "-" + dayToBeShown.getMonth() + "-" + Integer.toString(dayToBeShown.getYear()));
+        gridcell.setTextColor(context.getResources().getColor(dayToBeShown.getColor()));
         return row;
     }
 
@@ -249,11 +186,9 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     public void onClick(View view)
     {
         String date_month_year = (String) view.getTag();
-        Log.e("Selected date", date_month_year);
         try
         {
             Date parsedDate = dateFormatter.parse(date_month_year);
-            Log.d(tag, "Parsed Date: " + parsedDate.toString());
 
         } catch (ParseException e)
         {
@@ -261,23 +196,6 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         }
     }
 
-    public int getCurrentDayOfMonth()
-    {
-        return currentDayOfMonth;
-    }
-
-    private void setCurrentDayOfMonth(int currentDayOfMonth)
-    {
-        this.currentDayOfMonth = currentDayOfMonth;
-    }
-
-    public void setCurrentWeekDay(int currentWeekDay)
-    {
-        this.currentWeekDay = currentWeekDay;
-    }
-
-    public int getCurrentWeekDay()
-    {
-        return currentWeekDay;
-    }
 }
+
+

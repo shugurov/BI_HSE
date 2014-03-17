@@ -12,9 +12,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
 
 import ru.hse.shugurov.R;
+import ru.hse.shugurov.model.DayDescription;
 
 /**
  * Created by Иван on 09.03.14.
@@ -98,7 +100,7 @@ public class CalendarAdapter extends BaseExpandableListAdapter
             year = calendar.get(Calendar.YEAR);
             convertView = inflater.inflate(R.layout.calendar_layout, parent, false);
             final GridView calendarView = (GridView) convertView.findViewById(R.id.calendar);
-            GridCellAdapter adapter = new GridCellAdapter(context, R.id.calendar_day_gridcell, month, year);
+            GridCellAdapter adapter = new GridCellAdapter(context, month, year, new HashMap<DayDescription, String>());
             adapter.notifyDataSetChanged();
             calendarView.setAdapter(adapter);
             final TextView currentMonth = (TextView) convertView.findViewById(R.id.current_month);
@@ -135,7 +137,7 @@ public class CalendarAdapter extends BaseExpandableListAdapter
                         default:
                             return;
                     }
-                    GridCellAdapter adapter = new GridCellAdapter(context, R.id.calendar_day_gridcell, month, year);
+                    GridCellAdapter adapter = new GridCellAdapter(context, month, year, new HashMap<DayDescription, String>());
                     calendar.set(year, month - 1, calendar.get(Calendar.DAY_OF_MONTH));
                     currentMonth.setText(DateFormat.format("MMMM yyyy", calendar.getTime()));
                     adapter.notifyDataSetChanged();
