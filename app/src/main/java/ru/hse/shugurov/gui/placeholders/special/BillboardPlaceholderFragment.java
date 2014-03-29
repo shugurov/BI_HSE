@@ -42,12 +42,7 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         root = (LinearLayout) inflater.inflate(R.layout.billboard, container, false);
-        root.findViewById(R.id.bs1).setOnClickListener(this);
-        root.findViewById(R.id.bs2).setOnClickListener(this);
-        root.findViewById(R.id.bs3).setOnClickListener(this);
-        root.findViewById(R.id.bs4).setOnClickListener(this);
-        root.findViewById(R.id.ms1).setOnClickListener(this);
-        root.findViewById(R.id.ms2).setOnClickListener(this);
+        setOnClickListeners();
         switch (((MultipleAdaptersViewSection) getSection()).getCurrentState())
         {
             case 0:
@@ -57,35 +52,7 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
                     setAdapter(inflater, 0);
                 } else
                 {
-                    final FileCache fileCache = FileCache.instance();
-                    if (fileCache != null)
-                    {
-                        String value = fileCache.get(getSection().getTitle());
-                        if (value == null)
-                        {
-                            Downloader downloader = new Downloader(new CallBack()//TODO скачиваю только в одном из случаев. может во всех проверять?
-                            {
-                                @Override
-                                public void call(String[] results)
-                                {
-                                    if (results != null && results[0] != null)
-                                    {
-                                        fileCache.add(getSection().getTitle(), results[0]);//TODO далить этот позор
-                                        setAdapters(results[0], inflater);
-                                    } else
-                                    {
-                                        Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                            currentView = inflater.inflate(R.layout.progress, root, false);
-                            root.addView(currentView, 0);
-                            downloader.execute(((MultipleAdaptersViewSection) getSection()).getUrl());
-                        } else
-                        {
-                            setAdapters(value, inflater);
-                        }
-                    }//TODO что делать, если FileCache не существует
+                    loadContent(inflater);
                 }
                 break;
             case 1:
@@ -237,7 +204,7 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
         getFragmentManager().beginTransaction().replace(R.id.container, advertItemPlaceholderFragment).commit();
     }
 
-    private void setAdapters(String result, LayoutInflater inflater)//TODO а может не надо тут это делать?(
+    private void setAdapters(String result, final LayoutInflater inflater)//TODO а может не надо тут это делать?(
     {
         AdvertItem[] advertItems = Parser.parseAdverts(result);
         ArrayList<AdvertItem> bs1 = new ArrayList<AdvertItem>();
@@ -278,7 +245,63 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
         section.setAdapter(new AdvertAdapter(getActivity(), bs4), 3);
         section.setAdapter(new AdvertAdapter(getActivity(), ms1), 4);
         section.setAdapter(new AdvertAdapter(getActivity(), ms2), 5);
-        root.removeView(currentView);
-        setAdapter(inflater, 0);
+        getActivity().runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                root.removeView(currentView);
+                setAdapter(inflater, 0);
+            }
+        });
+    }
+
+    private void setOnClickListeners()
+    {
+        root.findViewById(R.id.bs1).setOnClickListener(this);
+        root.findViewById(R.id.bs2).setOnClickListener(this);
+        root.findViewById(R.id.bs3).setOnClickListener(this);
+        root.findViewById(R.id.bs4).setOnClickListener(this);
+        root.findViewById(R.id.ms1).setOnClickListener(this);
+        root.findViewById(R.id.ms2).setOnClickListener(this);
+    }
+
+    private void loadContent(final LayoutInflater inflater)
+    {
+        currentView = inflater.inflate(R.layout.progress, root, false);
+        root.addView(currentView, 0);
+        Runnable loadAdverts = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                final FileCache fileCache = FileCache.instance();
+                String data = fileCache.get(getSection().getTitle());
+                if (data == null)
+                {
+                    Downloader downloader = new Downloader(new CallBack()//TODO скачиваю только в одном из случаев. может во всех проверять?
+                    {
+                        @Override
+                        public void call(String[] results)
+                        {
+                            if (results != null && results[0] != null)
+                            {
+                                fileCache.add(getSection().getTitle(), results[0]);//TODO далить этот позор
+                                setAdapters(results[0], inflater);
+                            } else
+                            {
+                                Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+                    downloader.execute(((MultipleAdaptersViewSection) getSection()).getUrl());
+                } else
+                {
+                    setAdapters(data, inflater);
+                }
+            }
+        };
+        new Thread(loadAdverts).start();
     }
 }
