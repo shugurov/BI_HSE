@@ -30,7 +30,7 @@ public class NewsItemPlaceholderFragment extends SpecificItemPlaceholder
 
     public NewsItemPlaceholderFragment(Context context, NewsItem item, MainActivity.FragmentListener fragmentListener, Section section)
     {
-        super(context, fragmentListener, section);
+        super(fragmentListener, section);
         this.item = item;
         fragmentListener.setSectionTitle(item.getTitle());
     }

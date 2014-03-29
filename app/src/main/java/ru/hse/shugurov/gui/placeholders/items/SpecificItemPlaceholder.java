@@ -1,7 +1,5 @@
 package ru.hse.shugurov.gui.placeholders.items;
 
-import android.content.Context;
-
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
@@ -18,9 +16,9 @@ import ru.hse.shugurov.sections.SingleViewSection;
  */
 public class SpecificItemPlaceholder extends PlaceholderFragment
 {
-    public SpecificItemPlaceholder(Context context, MainActivity.FragmentListener fragmentListener, Section section)
+    public SpecificItemPlaceholder(MainActivity.FragmentListener fragmentListener, Section section)
     {
-        super(context, fragmentListener, section);
+        super(fragmentListener, section);
     }
 
 
@@ -30,19 +28,19 @@ public class SpecificItemPlaceholder extends PlaceholderFragment
         if (getSection() instanceof SingleViewSection)
         {
             PlaceholderFragmentWithList placeholder;
-            placeholder = new PlaceholderFragmentWithList(getContext(), getFragmentListener(), getSection());
+            placeholder = new PlaceholderFragmentWithList(getFragmentListener(), getSection());
             getFragmentManager().beginTransaction().replace(R.id.container, placeholder).commit();
         } else
         {
             if (getSection() instanceof MultipleAdaptersViewSection)
             {
                 BillboardPlaceholderFragment placeholder;
-                placeholder = new BillboardPlaceholderFragment(getContext(), getFragmentListener(), (MultipleAdaptersViewSection) getSection());
+                placeholder = new BillboardPlaceholderFragment(getFragmentListener(), (MultipleAdaptersViewSection) getSection());
                 getFragmentManager().beginTransaction().replace(R.id.container, placeholder).commit();
             } else
             {
                 EventsPlaceholderFragment placeholder;
-                placeholder = new EventsPlaceholderFragment(getContext(), getFragmentListener(), (MultipleViewScreen) getSection());
+                placeholder = new EventsPlaceholderFragment(getFragmentListener(), (MultipleViewScreen) getSection());
                 getFragmentManager().beginTransaction().replace(R.id.container, placeholder).commit();
             }
         }

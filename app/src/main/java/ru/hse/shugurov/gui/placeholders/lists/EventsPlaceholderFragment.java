@@ -1,6 +1,5 @@
 package ru.hse.shugurov.gui.placeholders.lists;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,9 +38,9 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
     private View progress;
     private Downloader downloader;
 
-    public EventsPlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, MultipleViewScreen currentScreen)
+    public EventsPlaceholderFragment(MainActivity.FragmentListener fragmentListener, MultipleViewScreen currentScreen)
     {
-        super(context, fragmentListener, currentScreen);
+        super(fragmentListener, currentScreen);
         this.currentScreen = currentScreen;
         if (currentScreen.getAdaptersNumber() != 3 || currentScreen.getUrlsNumber() != 3)
         {
@@ -112,7 +111,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                             if (results != null && results[0] != null)
                             {
                                 root.removeView(currentView);
-                                ListAdapter adapter = new NewsAdapter(getContext(), Parser.parseNews(results[0]));
+                                ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(results[0]));
                                 currentScreen.setAdapter(currentScreen.getCurrentState(), adapter);
                                 fileCache.add(getSection().getTitle() + "_events", results[0]);
                                 list.setAdapter(adapter);
@@ -121,14 +120,14 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                                 downloader = null;
                             } else
                             {
-                                Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
                     downloader.execute(currentScreen.getUrl(currentScreen.getCurrentState()));
                 } else
                 {
-                    ListAdapter adapter = new NewsAdapter(getContext(), Parser.parseNews(value));
+                    ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(value));
                     currentScreen.setAdapter(currentScreen.getCurrentState(), adapter);
                     list.setAdapter(adapter);
                     root.addView(list, 0);
@@ -198,7 +197,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                                         if (results != null && results[0] != null)
                                         {
                                             root.removeView(progress);
-                                            ListAdapter adapter = new NewsAdapter(getContext(), Parser.parseNews(results[0]));
+                                            ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(results[0]));
                                             fileCache.add(getSection().getTitle() + "_events", results[0]);
                                             currentScreen.setAdapter(0, adapter);
                                             list.setAdapter(adapter);
@@ -207,14 +206,14 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                                             downloader = null;
                                         } else
                                         {
-                                            Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 };
                                 url = currentScreen.getUrl(0);
                             } else
                             {
-                                adapter = new NewsAdapter(getContext(), Parser.parseNews(value));
+                                adapter = new NewsAdapter(getActivity(), Parser.parseNews(value));
                                 currentScreen.setAdapter(0, adapter);
                                 list.setAdapter(adapter);
                                 root.addView(list, 0);
@@ -241,7 +240,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                     lastPressedButton = R.id.events_calendar_image;
                     currentScreen.setCurrentState(1);
                     ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);
-                    expandableListView.setAdapter(new CalendarAdapter(getContext()));
+                    expandableListView.setAdapter(new CalendarAdapter(getActivity()));
                     root.addView(expandableListView, 0);
                     currentView = expandableListView;
 
@@ -292,7 +291,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                                         if (results != null && results[0] != null)
                                         {
                                             root.removeView(progress);
-                                            ListAdapter adapter = new NewsAdapter(getContext(), Parser.parseNews(results[0]));
+                                            ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(results[0]));
                                             fileCache.add(getSection().getTitle() + "_archive", results[0]);
                                             currentScreen.setAdapter(2, adapter);
                                             list.setAdapter(adapter);
@@ -301,14 +300,14 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                                             downloader = null;
                                         } else
                                         {
-                                            Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 };
                                 url = currentScreen.getUrl(2);
                             } else
                             {
-                                adapter = new NewsAdapter(getContext(), Parser.parseNews(value));
+                                adapter = new NewsAdapter(getActivity(), Parser.parseNews(value));
                                 currentScreen.setAdapter(2, adapter);
                                 list.setAdapter(adapter);
                                 root.addView(list, 0);
@@ -352,7 +351,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
         Object item = adapter.getItem(position);
         if (item instanceof NewsItem)
         {
-            NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment(getContext(), (NewsItem) item, getFragmentListener(), getSection());
+            NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment(getActivity(), (NewsItem) item, getFragmentListener(), getSection());
             getFragmentManager().beginTransaction().replace(R.id.container, newsItemPlaceholderFragment).commit();
         }
     }

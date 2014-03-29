@@ -1,6 +1,5 @@
 package ru.hse.shugurov.gui.placeholders.special;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,9 +33,9 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
     private LinearLayout root;
     private View currentView;
 
-    public BillboardPlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, MultipleAdaptersViewSection section)//TODO а проверять ли правильность секции?
+    public BillboardPlaceholderFragment(MainActivity.FragmentListener fragmentListener, MultipleAdaptersViewSection section)
     {
-        super(context, fragmentListener, section);
+        super(fragmentListener, section);
     }
 
     @Override
@@ -75,7 +74,7 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
                                         setAdapters(results[0], inflater);
                                     } else
                                     {
-                                        Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -234,7 +233,7 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
         MultipleAdaptersViewSection currentSection = (MultipleAdaptersViewSection) getSection();
         AdvertAdapter adapter = (AdvertAdapter) currentSection.getAdapter(currentSection.getCurrentState()); //TODO подумать про getCurrentAdapter()
         AdvertItemPlaceholderFragment advertItemPlaceholderFragment;
-        advertItemPlaceholderFragment = new AdvertItemPlaceholderFragment(getContext(), getFragmentListener(), getSection(), (AdvertItem) adapter.getItem(position));
+        advertItemPlaceholderFragment = new AdvertItemPlaceholderFragment(getFragmentListener(), getSection(), (AdvertItem) adapter.getItem(position));
         getFragmentManager().beginTransaction().replace(R.id.container, advertItemPlaceholderFragment).commit();
     }
 
@@ -273,12 +272,12 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
             }
         }
         MultipleAdaptersViewSection section = (MultipleAdaptersViewSection) getSection();
-        section.setAdapter(new AdvertAdapter(getContext(), bs1), 0);
-        section.setAdapter(new AdvertAdapter(getContext(), bs2), 1);
-        section.setAdapter(new AdvertAdapter(getContext(), bs3), 2);
-        section.setAdapter(new AdvertAdapter(getContext(), bs4), 3);
-        section.setAdapter(new AdvertAdapter(getContext(), ms1), 4);
-        section.setAdapter(new AdvertAdapter(getContext(), ms2), 5);
+        section.setAdapter(new AdvertAdapter(getActivity(), bs1), 0);
+        section.setAdapter(new AdvertAdapter(getActivity(), bs2), 1);
+        section.setAdapter(new AdvertAdapter(getActivity(), bs3), 2);
+        section.setAdapter(new AdvertAdapter(getActivity(), bs4), 3);
+        section.setAdapter(new AdvertAdapter(getActivity(), ms1), 4);
+        section.setAdapter(new AdvertAdapter(getActivity(), ms2), 5);
         root.removeView(currentView);
         setAdapter(inflater, 0);
     }

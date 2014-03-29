@@ -7,16 +7,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.GridView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.model.DayDescription;
+import ru.hse.shugurov.model.NewsItem;
 
 /**
  * Created by Иван on 09.03.14.
@@ -24,12 +26,12 @@ import ru.hse.shugurov.model.DayDescription;
 public class CalendarAdapter extends BaseExpandableListAdapter
 {
     private String[] groupNames = {"Календарь", "Мероприятия"};
-    private LinearLayout calendarWrapper;
-    private ListView listView;
     private LayoutInflater inflater;
     private Context context;
     private int year;
     private int month;
+    private NewsAdapter eventsAdapter;
+    private ListView eventsView;
 
     public CalendarAdapter(Context context)
     {
@@ -46,7 +48,21 @@ public class CalendarAdapter extends BaseExpandableListAdapter
     @Override
     public int getChildrenCount(int groupPosition)
     {
-        return 1;
+        int childrenCount;
+        if (groupPosition == 0)
+        {
+            childrenCount = 1;
+        } else
+        {
+            if (eventsAdapter != null)
+            {
+                childrenCount = eventsAdapter.getCount();
+            } else
+            {
+                childrenCount = 0;
+            }
+        }
+        return childrenCount;
     }
 
     @Override
@@ -100,7 +116,10 @@ public class CalendarAdapter extends BaseExpandableListAdapter
             year = calendar.get(Calendar.YEAR);
             convertView = inflater.inflate(R.layout.calendar_layout, parent, false);
             final GridView calendarView = (GridView) convertView.findViewById(R.id.calendar);
-            GridCellAdapter adapter = new GridCellAdapter(context, month, year, new HashMap<DayDescription, String>());
+            DayDescription exampleEvent = new DayDescription(1, "Март", 2014, R.color.lightgray02);
+            final Map<DayDescription, String> exampleEventsMap = new HashMap();
+            exampleEventsMap.put(exampleEvent, "sdsdsds");
+            GridCellAdapter adapter = new GridCellAdapter(context, month, year, exampleEventsMap, new CalendarAdapterCallback());
             adapter.notifyDataSetChanged();
             calendarView.setAdapter(adapter);
             final TextView currentMonth = (TextView) convertView.findViewById(R.id.current_month);
@@ -137,7 +156,7 @@ public class CalendarAdapter extends BaseExpandableListAdapter
                         default:
                             return;
                     }
-                    GridCellAdapter adapter = new GridCellAdapter(context, month, year, new HashMap<DayDescription, String>());
+                    GridCellAdapter adapter = new GridCellAdapter(context, month, year, exampleEventsMap, new CalendarAdapterCallback());
                     calendar.set(year, month - 1, calendar.get(Calendar.DAY_OF_MONTH));
                     currentMonth.setText(DateFormat.format("MMMM yyyy", calendar.getTime()));
                     adapter.notifyDataSetChanged();
@@ -148,8 +167,15 @@ public class CalendarAdapter extends BaseExpandableListAdapter
             nextMonth.setOnClickListener(listener);
         } else
         {
-            convertView = inflater.inflate(R.layout.group_name, parent, false);
-            ((TextView) convertView).setText("child view");
+            if (eventsView == null)
+            {
+                eventsView = (ListView) inflater.inflate(R.layout.group_name, parent, false);
+                convertView = eventsView;
+            } else
+            {
+                convertView = eventsView;
+            }
+
         }
         return convertView;
     }
@@ -158,5 +184,24 @@ public class CalendarAdapter extends BaseExpandableListAdapter
     public boolean isChildSelectable(int groupPosition, int childPosition)
     {
         return true;
+    }
+
+    public class CalendarAdapterCallback
+    {
+        public void setEventListAdapter(List<String> events)
+        {
+            if (events == null)
+            {
+                eventsAdapter = null;
+            } else
+            {
+                eventsAdapter = new NewsAdapter(context, new NewsItem[]{new NewsItem("sdsds", "sdsds", "sdsfsd", "asdasd", "sadasd", 0)});
+                if (eventsView != null)
+                {
+                    eventsView.setAdapter(eventsAdapter);
+                    //eventsAdapter.notifyDataSetChanged();
+                }
+            }
+        }
     }
 }

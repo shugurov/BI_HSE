@@ -1,6 +1,5 @@
 package ru.hse.shugurov.gui.placeholders.special;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,16 +26,15 @@ public class SchedulePlaceholderFragment extends PlaceholderFragment implements 
 {
 
 
-    public SchedulePlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, Section section, int sectionNumber)
+    public SchedulePlaceholderFragment(MainActivity.FragmentListener fragmentListener, Section section)
     {
-        super(context, fragmentListener, section);
+        super(fragmentListener, section);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.schedule, container, false);
-        ReferencesSection referencesSection = (ReferencesSection) getSection();
         rootView.findViewById(R.id.schedule_bs1).setOnClickListener(this);
         rootView.findViewById(R.id.schedule_bs2).setOnClickListener(this);
         rootView.findViewById(R.id.schedule_bs3).setOnClickListener(this);
@@ -73,7 +71,7 @@ public class SchedulePlaceholderFragment extends PlaceholderFragment implements 
         }
         if (url == null)
         {
-            Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
             return;
         }
         //final Uri uri = Uri.parse(url);
@@ -83,10 +81,10 @@ public class SchedulePlaceholderFragment extends PlaceholderFragment implements 
         {
             @Override
             public void call(String[] results)
-            {
+            {//TODO тут много бреда(
                 FileCache fileCache = FileCache.instance();
                 fileCache.add("lol.xlsx", results[0]);
-                File file = new File(getContext().getCacheDir(), "lol.xlsx");
+                File file = new File(getActivity().getCacheDir(), "lol.xlsx");
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(file.getAbsolutePath()));
                 try
@@ -94,7 +92,7 @@ public class SchedulePlaceholderFragment extends PlaceholderFragment implements 
                     startActivity(intent);
                 } catch (Exception e)
                 {
-                    Toast.makeText(getContext(), "Не получилось открыть файл", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Не получилось открыть файл", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -1,6 +1,5 @@
 package ru.hse.shugurov.gui.placeholders.items;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -21,9 +20,9 @@ import ru.hse.shugurov.sections.Section;
  */
 public class AboutUsPlaceholderFragment extends PlaceholderFragment
 {
-    public AboutUsPlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, Section section)
+    public AboutUsPlaceholderFragment(MainActivity.FragmentListener fragmentListener, Section section)
     {
-        super(context, fragmentListener, section);
+        super(fragmentListener, section);
     }
 
     @Override
@@ -32,7 +31,7 @@ public class AboutUsPlaceholderFragment extends PlaceholderFragment
         View rootView = inflater.inflate(R.layout.about_us, container, false);
         AboutUsSection section = (AboutUsSection) getSection();
         ImageView imageView = (ImageView) rootView.findViewById(R.id.about_us_image);
-        Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), ((AboutUsSection) getSection()).getImage());
+        Bitmap bitmap = BitmapFactory.decodeResource(getActivity().getResources(), ((AboutUsSection) getSection()).getImage());
         double aspectRatio = ((double) bitmap.getHeight()) / bitmap.getWidth();
         int height = (int) Math.round(container.getWidth() * aspectRatio);
         imageView.getLayoutParams().height = height;

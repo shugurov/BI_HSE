@@ -1,6 +1,5 @@
 package ru.hse.shugurov.gui.placeholders.items;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,9 +25,9 @@ public class ProjectItemPlaceholderFragment extends SpecificItemPlaceholder
 {
     private ProjectItem item;
 
-    public ProjectItemPlaceholderFragment(Context context, ProjectItem item, MainActivity.FragmentListener fragmentListener, Section section)
+    public ProjectItemPlaceholderFragment(ProjectItem item, MainActivity.FragmentListener fragmentListener, Section section)
     {
-        super(context, fragmentListener, section);
+        super(fragmentListener, section);
         this.item = item;
     }
 
@@ -51,7 +50,6 @@ public class ProjectItemPlaceholderFragment extends SpecificItemPlaceholder
         int paddingLeft = imageView.getPaddingLeft();
         int paddingRight = imageView.getPaddingRight();
         int width = container.getWidth() - paddingLeft - paddingRight;
-        //imageLoader.displayImage(item.getPictureUrl(), (ImageView) rootView.findViewById(R.id.project_layout_picture));
         imageLoader.displayImage(item.getPictureUrl(), new FlexibleImageView(imageView, width));
         return rootView;
     }

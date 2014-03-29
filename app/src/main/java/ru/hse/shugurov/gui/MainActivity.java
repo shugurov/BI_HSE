@@ -109,60 +109,57 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             case ContentTypes.NEWS:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentListener, sections[position]);
+                    currentPlaceholder = new PlaceholderFragmentWithList(fragmentListener, sections[position]);
                 }
                 break;
             case ContentTypes.PROJECTS_VOLUNTEERING:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentListener, sections[position]);
+                    currentPlaceholder = new PlaceholderFragmentWithList(fragmentListener, sections[position]);
                 }
                 break;
             case ContentTypes.CONTACTS:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentListener, sections[position]);
+                    currentPlaceholder = new PlaceholderFragmentWithList(fragmentListener, sections[position]);
                 }
                 break;
             case ContentTypes.EVENTS:
                 if (sections[position] instanceof MultipleViewScreen)
                 {
-                    currentPlaceholder = new EventsPlaceholderFragment(this, fragmentListener, (MultipleViewScreen) sections[position]);
+                    currentPlaceholder = new EventsPlaceholderFragment(fragmentListener, (MultipleViewScreen) sections[position]);
                 }
                 break;
             case ContentTypes.BILLBOARD:
                 if (sections[position] instanceof MultipleAdaptersViewSection)
                 {
-                    currentPlaceholder = new BillboardPlaceholderFragment(this, fragmentListener, (MultipleAdaptersViewSection) sections[position]);
+                    currentPlaceholder = new BillboardPlaceholderFragment(fragmentListener, (MultipleAdaptersViewSection) sections[position]);
                 }
                 break;
             case ContentTypes.SCHEDULE:
                 if (sections[position] instanceof ReferencesSection)
                 {
-                    currentPlaceholder = new SchedulePlaceholderFragment(this, fragmentListener, sections[position], position);
+                    currentPlaceholder = new SchedulePlaceholderFragment(fragmentListener, sections[position]);
                 }
                 break;
             case ContentTypes.TEACHERS:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    currentPlaceholder = new PlaceholderFragmentWithList(this, fragmentListener, sections[position]);
+                    currentPlaceholder = new PlaceholderFragmentWithList(fragmentListener, sections[position]);
                 }
                 break;
             case ContentTypes.SETTINGS:
             {
-                currentPlaceholder = new SettingPlaceholderFragment(this, fragmentListener, sections[position], position);
+                currentPlaceholder = new SettingPlaceholderFragment(fragmentListener, sections[position]);
                 break;
             }
             case ContentTypes.ABOUT_US:
             {
-                currentPlaceholder = new AboutUsPlaceholderFragment(this, fragmentListener, sections[position]);
+                currentPlaceholder = new AboutUsPlaceholderFragment(fragmentListener, sections[position]);
                 break;
             }
             case ContentTypes.ABOUT_APP:
-                currentPlaceholder = new AboutAppPlaceholder(this, fragmentListener, sections[position], position);
-                break;
-            default:
-                currentPlaceholder = new PlaceholderFragment(this, fragmentListener, sections[position]);
+                currentPlaceholder = new AboutAppPlaceholder(fragmentListener, sections[position]);
                 break;
         }
 

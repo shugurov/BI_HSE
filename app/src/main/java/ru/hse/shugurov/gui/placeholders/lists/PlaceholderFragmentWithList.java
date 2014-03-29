@@ -38,32 +38,31 @@ import ru.hse.shugurov.sections.SingleViewSection;
  */
 public class PlaceholderFragmentWithList extends PlaceholderFragment
 {
-    private Context context;
     private LinearLayout rootView;
     private ListView listView;
     private View progressDialog;
+    private ViewGroup container;
 
-    public PlaceholderFragmentWithList(Context context, MainActivity.FragmentListener fragmentListener, Section section)
+    public PlaceholderFragmentWithList(MainActivity.FragmentListener fragmentListener, Section section)
     {
-        super(context, fragmentListener, section);
+        super(fragmentListener, section);
         if (!(section instanceof SingleViewSection))
         {
             throw new IllegalArgumentException("precondition violated in PlaceHolderWithList. SingleViewSection is supposed to be hear");
         }
-        this.context = context;
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
     {
-        final Downloader downloader;
+        this.container = container;
         rootView = (LinearLayout) inflater.inflate(R.layout.fragment_list, container, false);
         ListAdapter adapter = ((SingleViewSection) getSection()).getAdapter();
         if (adapter != null)
         {
             if (getSection().getType() == ContentTypes.NEWS)
             {
-                SharedPreferences preferences = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
+                SharedPreferences preferences = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
                 String existedFilter = preferences.getString("filter", "&filter=");
                 String filter = getFilter();
                 if (!existedFilter.equals(filter))
@@ -77,99 +76,61 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
             setListener();
         } else
         {
-            final FileCache fileCache = FileCache.instance();
-            if (fileCache != null)
+            progressDialog = inflater.inflate(R.layout.progress, rootView, false);
+            rootView.addView(progressDialog);
+            Runnable loadContent = new Runnable()
             {
-                String value = fileCache.get(getSection().getTitle());
-                if (value == null)
+                @Override
+                public void run()
                 {
-                    progressDialog = inflater.inflate(R.layout.progress, rootView, false);
-                    rootView.addView(progressDialog, 0);
-                    downloader = new Downloader(new CallBack()
+                    Downloader downloader;
+                    final FileCache fileCache = FileCache.instance();
+                    if (fileCache != null)
                     {
-                        @Override
-                        public void call(String[] results)
+                        final String data = fileCache.get(getSection().getTitle());
+                        if (data == null)
                         {
-                            if (results != null && results[0] != null)
+                            downloader = new Downloader(new CallBack()
                             {
-                                fileCache.add(getSection().getTitle(), results[0]);
-                                rootView.removeView(progressDialog);
-                                listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
-                                setListener();
-                                switch (getSection().getType())
+                                @Override
+                                public void call(String[] results)
                                 {
-                                    case ContentTypes.NEWS:
-                                        NewsItem[] newsItems = Parser.parseNews(results[0]);
-                                        NewsAdapter newsAdapter = new NewsAdapter(getContext(), newsItems);
-                                        ((SingleViewSection) getSection()).setAdapter(newsAdapter);
-                                        listView.setAdapter(newsAdapter);
-                                        break;
-                                    case ContentTypes.PROJECTS_VOLUNTEERING:
-                                        ProjectItem[] projectItems = Parser.parseProjects(results[0]);
-                                        ProjectAdapter projectAdapter = new ProjectAdapter(getContext(), projectItems);
-                                        ((SingleViewSection) getSection()).setAdapter(projectAdapter);
-                                        listView.setAdapter(projectAdapter);
-                                        break;
-                                    case ContentTypes.CONTACTS:
-                                    case ContentTypes.TEACHERS:
-                                        ContactItem[] contactItems = Parser.parseContacts(results[0]);
-                                        ContactAdapter contactAdapter = new ContactAdapter(getContext(), contactItems);
-                                        ((SingleViewSection) getSection()).setAdapter(contactAdapter);
-                                        listView.setAdapter(contactAdapter);
-                                        break;
+                                    if (results != null && results[0] != null)
+                                    {
+                                        fileCache.add(getSection().getTitle(), results[0]);
+                                        fillList(results[0]);
+                                    } else
+                                    {
+                                        Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                            if (getSection().getType() == ContentTypes.NEWS)
+                            {
+                                String filter = getFilter();
+                                SharedPreferences.Editor editor = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE).edit();
+                                editor.putString("filter", filter);
+                                editor.commit();
+                                if (filter.length() == 8)
+                                {
+                                    downloader.execute(((SingleViewSection) getSection()).getUrl());
+                                } else
+                                {
+                                    downloader.execute(((SingleViewSection) getSection()).getUrl() + filter);
                                 }
                             } else
                             {
-                                Toast.makeText(getContext(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                                downloader.execute(((SingleViewSection) getSection()).getUrl());
                             }
-                        }
-                    });
-                    if (getSection().getType() == ContentTypes.NEWS)
-                    {
-                        String filter = getFilter();
-                        SharedPreferences.Editor editor = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE).edit();
-                        editor.putString("filter", filter);
-                        editor.commit();
-                        if (filter.length() == 8)
-                        {
-                            downloader.execute(((SingleViewSection) getSection()).getUrl());
                         } else
                         {
-                            downloader.execute(((SingleViewSection) getSection()).getUrl() + filter);
+                            fillList(data);
                         }
-                    } else
-                    {
-                        downloader.execute(((SingleViewSection) getSection()).getUrl());
                     }
-                } else//TODO тут тупо копирую код(
-                {
-                    rootView.removeView(progressDialog);
-                    listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
-                    setListener();
-                    switch (getSection().getType())
-                    {
-                        case ContentTypes.NEWS:
-                            NewsItem[] newsItems = Parser.parseNews(value);
-                            NewsAdapter newsAdapter = new NewsAdapter(getContext(), newsItems);
-                            ((SingleViewSection) getSection()).setAdapter(newsAdapter);
-                            listView.setAdapter(newsAdapter);
-                            break;
-                        case ContentTypes.PROJECTS_VOLUNTEERING:
-                            ProjectItem[] projectItems = Parser.parseProjects(value);
-                            ProjectAdapter projectAdapter = new ProjectAdapter(getContext(), projectItems);
-                            ((SingleViewSection) getSection()).setAdapter(projectAdapter);
-                            listView.setAdapter(projectAdapter);
-                            break;
-                        case ContentTypes.CONTACTS:
-                        case ContentTypes.TEACHERS:
-                            ContactItem[] contactItems = Parser.parseContacts(value);
-                            ContactAdapter contactAdapter = new ContactAdapter(getContext(), contactItems);
-                            ((SingleViewSection) getSection()).setAdapter(contactAdapter);
-                            listView.setAdapter(contactAdapter);
-                            break;
-                    }
+
                 }
-            }//TODO что делать если fileCache не найден
+            };
+            new Thread(loadContent).start();
         }
 
         return rootView;
@@ -186,23 +147,20 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
                 Object item = ((SingleViewSection) getSection()).getAdapter().getItem(position);
                 if (item instanceof NewsItem)
                 {
-                    NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment(context, (NewsItem) item, getFragmentListener(), getSection());
+                    NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment(getActivity(), (NewsItem) item, getFragmentListener(), getSection());
                     getFragmentManager().beginTransaction().replace(R.id.container, newsItemPlaceholderFragment).commit();
                 } else
                 {
                     if (item instanceof ProjectItem)
                     {
-                        ProjectItemPlaceholderFragment projectItemPlaceholderFragment = new ProjectItemPlaceholderFragment(getContext(), (ProjectItem) item, getFragmentListener(), getSection());
+                        ProjectItemPlaceholderFragment projectItemPlaceholderFragment = new ProjectItemPlaceholderFragment((ProjectItem) item, getFragmentListener(), getSection());
                         getFragmentManager().beginTransaction().replace(R.id.container, projectItemPlaceholderFragment).commit();
                     } else
                     {
                         if (item instanceof ContactItem)
                         {
-                            ContactItemPlaceholderFragment contactItemPlaceholderFragment = new ContactItemPlaceholderFragment(context, (ContactItem) item, getFragmentListener(), getSection());
+                            ContactItemPlaceholderFragment contactItemPlaceholderFragment = new ContactItemPlaceholderFragment((ContactItem) item, getFragmentListener(), getSection());
                             getFragmentManager().beginTransaction().replace(R.id.container, contactItemPlaceholderFragment).commit();
-                        } else
-                        {
-                            getFragmentManager().beginTransaction().replace(R.id.container, new PlaceholderFragment(getContext(), getFragmentListener(), getSection())).commit();
                         }
                     }
                 }
@@ -213,7 +171,7 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
     private String getFilter()
     {
         String filter = "&filter=";
-        SharedPreferences preferences = getContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
+        SharedPreferences preferences = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
         if (preferences.getBoolean("enrolee", false))
         {
             filter += "1";
@@ -231,5 +189,50 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
             filter += "4";
         }
         return filter;
+    }
+
+    /*have to be run on GUI thread*/
+    private void setAdapterInsteadProgressDialog(final ListAdapter adapter)
+    {
+        listView.setAdapter(adapter);
+        rootView.removeView(progressDialog);
+        rootView.addView(listView);
+        progressDialog = null;
+    }
+
+    private void fillList(String data)
+    {
+        final ListAdapter adapter;
+        switch (getSection().getType())
+        {
+            case ContentTypes.NEWS:
+                NewsItem[] newsItems = Parser.parseNews(data);
+                adapter = new NewsAdapter(getActivity(), newsItems);
+                break;
+            case ContentTypes.PROJECTS_VOLUNTEERING:
+                ProjectItem[] projectItems = Parser.parseProjects(data);
+                adapter = new ProjectAdapter(getActivity(), projectItems);
+                break;
+            case ContentTypes.CONTACTS:
+            case ContentTypes.TEACHERS:
+                ContactItem[] contactItems = Parser.parseContacts(data);
+                adapter = new ContactAdapter(getActivity(), contactItems);
+
+                break;
+            default:
+                return;
+        }
+        ((SingleViewSection) getSection()).setAdapter(adapter);
+        Runnable listCreation = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                listView = (ListView) getLayoutInflater(getArguments()).inflate(R.layout.list, container, false);
+                setListener();
+                setAdapterInsteadProgressDialog(adapter);
+            }
+        };
+        getActivity().runOnUiThread(listCreation);
     }
 }

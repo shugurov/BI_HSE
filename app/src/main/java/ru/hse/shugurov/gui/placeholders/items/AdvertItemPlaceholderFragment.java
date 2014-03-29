@@ -1,6 +1,5 @@
 package ru.hse.shugurov.gui.placeholders.items;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +18,9 @@ public class AdvertItemPlaceholderFragment extends SpecificItemPlaceholder
 {
     private AdvertItem advertItem;
 
-    public AdvertItemPlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, Section section, AdvertItem advertItem)
+    public AdvertItemPlaceholderFragment(MainActivity.FragmentListener fragmentListener, Section section, AdvertItem advertItem)
     {
-        super(context, fragmentListener, section);
+        super(fragmentListener, section);
         this.advertItem = advertItem;
         fragmentListener.setSectionTitle(advertItem.getTitle());
     }

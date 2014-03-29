@@ -1,18 +1,19 @@
 package ru.hse.shugurov.gui.adapters;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -30,24 +31,23 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     private final List<DayDescription> listOfDaysOnScreen;
     private final String[] months = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
     private final int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd-MMM-yyyy");
     private int daysInMonth;
     private int currentDayOfMonth;
-    private int currentWeekDay;
     private int currentMonth; //using traditional numeration. January - 1
     private int currentYear;
-    private Button gridcell;
     private Map<DayDescription, String> events;
+    private View currentlySelectedView;
+    private CalendarAdapter.CalendarAdapterCallback callback;
 
-    public GridCellAdapter(Context context, int month, int year, Map<DayDescription, String> events)
+    public GridCellAdapter(Context context, int month, int year, Map<DayDescription, String> events, CalendarAdapter.CalendarAdapterCallback callback)
     {
         super();
         this.context = context;
         this.listOfDaysOnScreen = new ArrayList<DayDescription>();
         this.events = events;
+        this.callback = callback;
         Calendar calendar = Calendar.getInstance();
         currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-        currentWeekDay =  calendar.get(Calendar.DAY_OF_WEEK);
         currentMonth = calendar.get(Calendar.MONTH) + 1;
         currentYear = calendar.get(Calendar.YEAR);
         printMonth(month, year);
@@ -72,7 +72,7 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     }
 
 
-    private void printMonth(int mm, int yy)
+    private void printMonth(int givenMonth, int givenYear)
     {
         int trailingSpaces;
         int daysInPrevMonth;
@@ -80,28 +80,28 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         int prevYear;
         int nextYear;
 
-        int currentMonth = mm - 1;
+        int currentMonth = givenMonth - 1;
         daysInMonth = getNumberOfDaysOfMonth(currentMonth);
 
-        GregorianCalendar cal = new GregorianCalendar(yy, currentMonth, 1);
+        GregorianCalendar cal = new GregorianCalendar(givenYear, currentMonth, 1);
 
         if (currentMonth == 11)
         {
             prevMonth = currentMonth - 1;
             daysInPrevMonth = getNumberOfDaysOfMonth(prevMonth);
-            prevYear = yy;
-            nextYear = yy + 1;
+            prevYear = givenYear;
+            nextYear = givenYear + 1;
         } else if (currentMonth == 0)
         {
             prevMonth = 11;
-            prevYear = yy - 1;
-            nextYear = yy;
+            prevYear = givenYear - 1;
+            nextYear = givenYear;
             daysInPrevMonth = getNumberOfDaysOfMonth(prevMonth);
         } else
         {
             prevMonth = currentMonth - 1;
-            nextYear = yy;
-            prevYear = yy;
+            nextYear = givenYear;
+            prevYear = givenYear;
             daysInPrevMonth = getNumberOfDaysOfMonth(prevMonth);
         }
 
@@ -110,10 +110,10 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
 
         if (cal.isLeapYear(cal.get(Calendar.YEAR)))
         {
-            if (mm == 2)
+            if (givenMonth == 2)
             {
                 ++daysInMonth;
-            } else if (mm == 3)
+            } else if (givenMonth == 3)
             {
                 ++daysInPrevMonth;
             }
@@ -128,12 +128,12 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         // Current Month Days
         for (int i = 1; i <= daysInMonth; i++)
         {
-            if (i == currentDayOfMonth && this.currentMonth == mm && currentYear == yy)
+            if (i == currentDayOfMonth && this.currentMonth == givenMonth && currentYear == givenYear)
             {
-                listOfDaysOnScreen.add(new DayDescription(i, months[currentMonth], yy, R.color.orrange));
+                listOfDaysOnScreen.add(new DayDescription(i, months[currentMonth], givenYear, R.color.black));
             } else
             {
-                listOfDaysOnScreen.add(new DayDescription(i, months[currentMonth], yy, R.color.lightgray02));
+                listOfDaysOnScreen.add(new DayDescription(i, months[currentMonth], givenYear, R.color.lightgray02));
             }
         }
 
@@ -161,39 +161,68 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
             row = inflater.inflate(R.layout.screen_gridcell, parent, false);
         }
 
-        gridcell = (Button) row.findViewById(R.id.calendar_day_gridcell);
-        gridcell.setOnClickListener(this);
+        Button gridCell = (Button) row.findViewById(R.id.calendar_day_gridcell);
+        gridCell.setOnClickListener(this);
 
         DayDescription dayToBeShown = listOfDaysOnScreen.get(position);
 
         if (!events.isEmpty())
         {
-            if (events.containsKey(currentWeekDay))
+            if (events.containsKey(dayToBeShown))
             {
-                events.remove(Integer.toString(dayToBeShown.getDay()));
-                gridcell.setBackgroundColor(Color.RED);
+                gridCell.setBackgroundColor(Color.RED);
             }
         }
 
         // Set the Day GridCell
-        gridcell.setText(Integer.toString(dayToBeShown.getDay()));
-        gridcell.setTag(Integer.toString(dayToBeShown.getDay()) + "-" + dayToBeShown.getMonth() + "-" + Integer.toString(dayToBeShown.getYear()));
-        gridcell.setTextColor(context.getResources().getColor(dayToBeShown.getColor()));
+        gridCell.setText(Integer.toString(dayToBeShown.getDay()));
+        gridCell.setTag(dayToBeShown);
+        gridCell.setTextColor(context.getResources().getColor(dayToBeShown.getColor()));
         return row;
     }
 
     @Override
     public void onClick(View view)
     {
-        String date_month_year = (String) view.getTag();
-        try
+        if (currentlySelectedView != null)
         {
-            Date parsedDate = dateFormatter.parse(date_month_year);
-
-        } catch (ParseException e)
-        {
-            e.printStackTrace();
+            if (Build.VERSION.SDK_INT >= 16)
+            {
+                setBackgroundV16Plus(currentlySelectedView, context.getResources().getDrawable(R.drawable.calendar_button_selector));
+            }
         }
+        DayDescription selectedDay = (DayDescription) view.getTag();
+        if (events.containsKey(selectedDay))
+        {
+            String event = events.get(selectedDay);
+            callback.setEventListAdapter(Arrays.asList(new String[]{"sdsds"}));
+        } else
+        {
+            callback.setEventListAdapter(null);
+        }
+        Drawable newBackground = context.getResources().getDrawable(R.drawable.calendar_bg_orange);
+        if (Build.VERSION.SDK_INT >= 16)
+        {
+            setBackgroundV16Plus(view, newBackground);
+        } else
+        {
+            setBackgroundV16Minus(view, newBackground);
+        }
+        currentlySelectedView = view;
+
+    }
+
+    @TargetApi(16)
+    private void setBackgroundV16Plus(View view, Drawable drawable)
+    {
+        view.setBackground(drawable);
+
+    }
+
+    @SuppressWarnings("deprecation")
+    private void setBackgroundV16Minus(View view, Drawable drawable)
+    {
+        view.setBackgroundDrawable(drawable);
     }
 
 }

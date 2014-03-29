@@ -21,21 +21,19 @@ import ru.hse.shugurov.sections.Section;
  */
 public class SettingPlaceholderFragment extends PlaceholderFragment
 {
-    private SharedPreferences preferences;
-
-    public SettingPlaceholderFragment(Context context, MainActivity.FragmentListener fragmentListener, Section section, int sectionNumber)
+    public SettingPlaceholderFragment(MainActivity.FragmentListener fragmentListener, Section section)
     {
-        super(context, fragmentListener, section);
-        preferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
+        super(fragmentListener, section);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
+        final SharedPreferences preferences = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
         final ListView listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(), R.array.settings, android.R.layout.simple_list_item_multiple_choice);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.settings, android.R.layout.simple_list_item_multiple_choice);
         listView.setAdapter(adapter);
         listView.setItemChecked(0, preferences.getBoolean("enrolee", false));
         listView.setItemChecked(1, preferences.getBoolean("bs", false));

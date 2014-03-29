@@ -1,6 +1,5 @@
 package ru.hse.shugurov.gui.placeholders.items;
 
-import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,9 +20,9 @@ import ru.hse.shugurov.sections.Section;
 
 public class AboutAppPlaceholder extends PlaceholderFragment
 {
-    public AboutAppPlaceholder(Context context, MainActivity.FragmentListener fragmentListener, Section section, int sectionNumber)
+    public AboutAppPlaceholder(MainActivity.FragmentListener fragmentListener, Section section)
     {
-        super(context, fragmentListener, section);
+        super(fragmentListener, section);
     }
 
     @Override
@@ -40,7 +39,7 @@ public class AboutAppPlaceholder extends PlaceholderFragment
         {
             Developer developer = ((AboutAppSection) getSection()).getDeveloper(i);
             View developerView = inflater.inflate(R.layout.developer, developersContainer, false);
-            ((ImageView) developerView.findViewById(R.id.developer_photo)).setImageDrawable(getContext().getResources().getDrawable(developer.getPhoto()));
+            ((ImageView) developerView.findViewById(R.id.developer_photo)).setImageDrawable(getActivity().getResources().getDrawable(developer.getPhoto()));
             ((TextView) developerView.findViewById(R.id.developer_name)).setText(developer.getName());
             ((TextView) developerView.findViewById(R.id.developer_position)).setText(developer.getPosition());
             developersContainer.addView(developerView, i);

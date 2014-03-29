@@ -1,7 +1,6 @@
 package ru.hse.shugurov.gui.placeholders.items;
 
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,13 +25,11 @@ import ru.hse.shugurov.sections.SingleViewSection;
 public class ContactItemPlaceholderFragment extends SpecificItemPlaceholder
 {
     private ContactItem contactItem;
-    private Context context;
 
-    public ContactItemPlaceholderFragment(Context context, ContactItem contactItem, MainActivity.FragmentListener fragmentListener, Section section)
+    public ContactItemPlaceholderFragment(ContactItem contactItem, MainActivity.FragmentListener fragmentListener, Section section)
     {
-        super(context, fragmentListener, section);
+        super(fragmentListener, section);
         this.contactItem = contactItem;
-        this.context = context;
     }
 
     @Override
@@ -62,7 +59,7 @@ public class ContactItemPlaceholderFragment extends SpecificItemPlaceholder
                     startActivity(mailer);
                 } else
                 {
-                    Toast.makeText(context, "Не получается отправить email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Не получается отправить email", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -78,7 +75,7 @@ public class ContactItemPlaceholderFragment extends SpecificItemPlaceholder
                     startActivity(callIntent);
                 } catch (ActivityNotFoundException e)
                 {
-                    Toast.makeText(getContext(), "Невозможно позвонить", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Невозможно позвонить", Toast.LENGTH_SHORT).show();
                 }
 
             }
