@@ -4,7 +4,11 @@ package ru.hse.shugurov.gui.placeholders;
  * Created by Иван on 29.12.13.
  */
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.sections.Section;
@@ -44,5 +48,12 @@ public abstract class PlaceholderFragment extends Fragment
     public Section getSection()
     {
         return section;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        container.removeAllViews();
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 }

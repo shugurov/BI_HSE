@@ -57,7 +57,7 @@
             </url-parameter>
             <url-parameter>
                 <key>subsection</key>
-                <value>calendarInfo</value>
+                <value>calendarDates</value>
             </url-parameter>
             <url-parameter>
                 <key>F</key>

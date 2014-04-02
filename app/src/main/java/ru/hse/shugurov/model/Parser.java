@@ -15,7 +15,7 @@ public class Parser
 {
     public static NewsItem[] parseNews(String str)
     {
-        str = str.replaceAll("News\":", "\":");
+        str = str.replaceAll("News\":", "\":");//replace with regex
         str = str.replaceAll("Activity\":", "\":");
         JSONArray array;
         try
@@ -330,5 +330,16 @@ public class Parser
             }
         });
         downloader.execute(url);
+    }
+
+    public static String[] parseEventDates(String json) throws JSONException
+    {
+        JSONArray datesJSON = new JSONArray(json);
+        String[] dates = new String[datesJSON.length()];
+        for (int i = 0; i < dates.length; i++)
+        {
+            dates[i] = datesJSON.getString(i);
+        }
+        return dates;
     }
 }
