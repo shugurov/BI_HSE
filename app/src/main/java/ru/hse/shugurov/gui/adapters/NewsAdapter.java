@@ -30,11 +30,6 @@ public class NewsAdapter extends BaseAdapter//TODO при отсутствии �
         imageLoader = ImageLoader.instance();
     }
 
-    public ImageLoader getImageLoader()
-    {
-        return imageLoader;
-    }
-
     @Override
     public int getCount()
     {

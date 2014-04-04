@@ -12,6 +12,11 @@
     <string name="bs_enrolee">Абитуриент</string>
     <string name="ms">Магистратура</string>
     <string name="ms_enrolee">Абитуриент магистратуры</string>
+    <string-array name="day_info_request">
+        <item>http://app.bi.hse.ru/JSONsender.php?section=Activity</item>
+        <item>subsection=calendarInfo</item>
+        <item>date=</item>
+    </string-array>
 
     <string-array name="settings">
         <item>Абитуриент</item>

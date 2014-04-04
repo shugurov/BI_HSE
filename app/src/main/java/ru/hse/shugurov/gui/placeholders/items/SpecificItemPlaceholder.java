@@ -6,8 +6,8 @@ import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.lists.EventsPlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.lists.PlaceholderFragmentWithList;
 import ru.hse.shugurov.gui.placeholders.special.BillboardPlaceholderFragment;
+import ru.hse.shugurov.sections.EventsScreen;
 import ru.hse.shugurov.sections.MultipleAdaptersViewSection;
-import ru.hse.shugurov.sections.MultipleViewScreen;
 import ru.hse.shugurov.sections.Section;
 import ru.hse.shugurov.sections.SingleViewSection;
 
@@ -40,7 +40,7 @@ public class SpecificItemPlaceholder extends PlaceholderFragment
             } else
             {
                 EventsPlaceholderFragment placeholder;
-                placeholder = new EventsPlaceholderFragment(getFragmentListener(), (MultipleViewScreen) getSection());
+                placeholder = new EventsPlaceholderFragment(getFragmentListener(), (EventsScreen) getSection());
                 getFragmentManager().beginTransaction().replace(R.id.container, placeholder).commit();
             }
         }

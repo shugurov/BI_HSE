@@ -17,8 +17,8 @@ import ru.hse.shugurov.model.Icon;
 import ru.hse.shugurov.model.Parser;
 import ru.hse.shugurov.sections.AboutAppSection;
 import ru.hse.shugurov.sections.AboutUsSection;
+import ru.hse.shugurov.sections.EventsScreen;
 import ru.hse.shugurov.sections.MultipleAdaptersViewSection;
-import ru.hse.shugurov.sections.MultipleViewScreen;
 import ru.hse.shugurov.sections.ReferencesSection;
 import ru.hse.shugurov.sections.Section;
 import ru.hse.shugurov.sections.SingleViewSection;
@@ -193,7 +193,7 @@ public class ApplicationStructure
             }
         } else
         {
-            section = new MultipleViewScreen(title, icon.getDefaultIcon(), icon.getSelectedIcon(), urls.toArray(new String[urls.size()]), type);
+            section = new EventsScreen(title, icon.getDefaultIcon(), icon.getSelectedIcon(), urls.toArray(new String[urls.size()]), type);
 
         }
 

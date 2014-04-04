@@ -25,37 +25,32 @@ import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.items.NewsItemPlaceholderFragment;
 import ru.hse.shugurov.model.NewsItem;
 import ru.hse.shugurov.model.Parser;
-import ru.hse.shugurov.sections.MultipleViewScreen;
+import ru.hse.shugurov.sections.EventsScreen;
 
 /**
  * Created by Иван on 09.01.14.
  */
-public class EventsPlaceholderFragment extends PlaceholderFragment implements View.OnClickListener, AdapterView.OnItemClickListener
+public class EventsPlaceholderFragment extends PlaceholderFragment implements View.OnClickListener, AdapterView.OnItemClickListener//TODO календаря нету в кэше
 {
     private int lastPressedButton;
-    private MultipleViewScreen currentScreen;
+    private EventsScreen currentScreen;
     private LinearLayout root;
     private ListView list;
     private View currentView;
-    private Downloader downloader;
 
-    public EventsPlaceholderFragment(MainActivity.FragmentListener fragmentListener, MultipleViewScreen currentScreen)
+    public EventsPlaceholderFragment(MainActivity.FragmentListener fragmentListener, EventsScreen currentScreen)
     {
         super(fragmentListener, currentScreen);
         this.currentScreen = currentScreen;
-        if (currentScreen.getAdaptersNumber() != 3 || currentScreen.getUrlsNumber() != 3)
-        {
-            throw new IllegalArgumentException("precondition violated in EventsPlaceHolder. Incorrect MultipleViewScreen");
-        }
         switch (currentScreen.getCurrentState())
         {
-            case 0:
+            case ANNOUNCES:
                 lastPressedButton = R.id.events_announce_image;
                 break;
-            case 1:
+            case CALENDAR:
                 lastPressedButton = R.id.events_calendar_image;
                 break;
-            case 2:
+            case ARCHIVE:
                 lastPressedButton = R.id.events_archives_image;
                 break;
         }
@@ -81,7 +76,6 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.calendar_button_pressed));
                 root.findViewById(R.id.events_announce_image).setOnClickListener(this);
                 root.findViewById(R.id.events_archives_image).setOnClickListener(this);
-
                 break;
             case R.id.events_archives_image:
                 root.findViewById(R.id.events_calendar_image).setOnClickListener(this);
@@ -93,17 +87,38 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
         }
         list = (ListView) inflater.inflate(R.layout.list, root, false);
         list.setOnItemClickListener(this);
-        if (currentScreen.getCurrentState() != 1 && currentScreen.getAdapter(currentScreen.getCurrentState()) == null)
+        switch (currentScreen.getCurrentState())
         {
-            loadAnnounces();
-        } else
-        {
-            if (currentScreen.getCurrentState() != 1)
-            {
-                list.setAdapter(currentScreen.getAdapter(currentScreen.getCurrentState()));
-                currentView = list;
-                root.addView(list, 0);
-            }
+            case ANNOUNCES:
+                if (currentScreen.getAnnounceAdapter() == null)
+                {
+                    loadAnnounces();
+                } else
+                {
+                    setAdapterToList(currentScreen.getAnnounceAdapter());
+                }
+                break;
+            case CALENDAR:
+                if (currentScreen.getCalendarAdapter() == null)
+                {
+                    loadCalendar();
+                } else
+                {
+                    ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);//TODO копипаст(
+                    expandableListView.setAdapter(new CalendarAdapter(getActivity()));
+                    root.addView(expandableListView, 0);
+                    currentView = expandableListView;
+                }
+                break;
+            case ARCHIVE:
+                if (currentScreen.getArchiveAdapter() == null)
+                {
+                    loadArchive();
+                } else
+                {
+                    setAdapterToList(currentScreen.getArchiveAdapter());
+                }
+                break;
         }
         return root;
     }
@@ -123,17 +138,12 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                     ((ImageView) getView().findViewById(R.id.events_announce_image)).setImageDrawable(getResources().getDrawable(R.drawable.anons_button_pressed));
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_announce_image;
-                    currentScreen.setCurrentState(0);
-                    adapter = currentScreen.getAdapter(0);
+                    currentScreen.setCurrentState(EventsScreen.EventScreenState.ANNOUNCES);
+                    adapter = currentScreen.getAnnounceAdapter();
                     removeCurrentView();
                     if (adapter != null)
                     {
-                        if (list != null)
-                        {
-                            list.setAdapter(adapter);
-                            root.addView(list, 0);
-                            currentView = list;
-                        }
+                        setAdapterToList(adapter);
                     } else
                     {
                         loadAnnounces();
@@ -149,9 +159,9 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                     ((ImageView) getView().findViewById(R.id.events_calendar_image)).setImageDrawable(getResources().getDrawable(R.drawable.calendar_button_pressed));
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_calendar_image;
-                    currentScreen.setCurrentState(1);
+                    currentScreen.setCurrentState(EventsScreen.EventScreenState.CALENDAR);
                     removeCurrentView();
-                    if (currentScreen.getAdapter(1) != null)
+                    if (currentScreen.getCalendarAdapter() != null)
                     {
 
                         ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);
@@ -170,16 +180,12 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                     return;
                 } else
                 {
-                    if (downloader != null)
-                    {
-                        downloader.cancel(false);
-                    }
                     removeCurrentView();
                     ((ImageView) getView().findViewById(R.id.events_archives_image)).setImageDrawable(getResources().getDrawable(R.drawable.archive_button_pressed));
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_archives_image;
-                    currentScreen.setCurrentState(2);
-                    adapter = currentScreen.getAdapter(2);
+                    currentScreen.setCurrentState(EventsScreen.EventScreenState.ARCHIVE);
+                    adapter = currentScreen.getArchiveAdapter();
                     if (adapter != null)
                     {
                         if (list != null)
@@ -216,11 +222,22 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        NewsAdapter adapter = (NewsAdapter) currentScreen.getAdapter(currentScreen.getCurrentState());
+        NewsAdapter adapter;
+        switch (currentScreen.getCurrentState())
+        {
+            case ANNOUNCES:
+                adapter = (NewsAdapter) currentScreen.getAnnounceAdapter();
+                break;
+            case ARCHIVE:
+                adapter = (NewsAdapter) currentScreen.getArchiveAdapter();
+                break;
+            default:
+                return;
+        }
         Object item = adapter.getItem(position);
         if (item instanceof NewsItem)
         {
-            NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment(getActivity(), (NewsItem) item, getFragmentListener(), getSection());
+            NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment((NewsItem) item, getFragmentListener(), getSection());
             getFragmentManager().beginTransaction().replace(R.id.container, newsItemPlaceholderFragment).commit();
         }
     }
@@ -239,29 +256,19 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                 String value = fileCache.get(getSection().getTitle() + "_events");
                 if (value == null)
                 {
-                    downloader = new Downloader(new CallBack()
+                    Downloader downloader = new Downloader(new CallBack()
                     {
                         @Override
                         public void call(String[] results)
                         {
                             if (results != null && results[0] != null)
                             {
-                                ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(results[0]));
-                                currentScreen.setAdapter(currentScreen.getCurrentState(), adapter);
+                                final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(results[0]));
+                                currentScreen.setAnnounceAdapter(adapter);
                                 fileCache.add(getSection().getTitle() + "_events", results[0]);
-                                list.setAdapter(adapter);
-                                if (currentScreen.getCurrentState() == 0)
+                                if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ANNOUNCES)
                                 {
-                                    getActivity().runOnUiThread(new Runnable()
-                                    {
-                                        @Override
-                                        public void run()
-                                        {
-                                            removeCurrentView();
-                                            root.addView(list, 0);
-                                            currentView = list;
-                                        }
-                                    });
+                                    changeAdapters(adapter);
                                 }
                             } else
                             {
@@ -269,24 +276,14 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                             }
                         }
                     });
-                    downloader.execute(currentScreen.getUrl(currentScreen.getCurrentState()));
+                    downloader.execute(currentScreen.getAnnouncesURL());
                 } else
                 {
-                    final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(value));
-                    currentScreen.setAdapter(currentScreen.getCurrentState(), adapter);
-                    if (currentScreen.getCurrentState() == 0)
+                    ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(value));
+                    currentScreen.setAnnounceAdapter(adapter);
+                    if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ANNOUNCES)
                     {
-                        getActivity().runOnUiThread(new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                removeCurrentView();
-                                currentView = list;
-                                list.setAdapter(adapter);
-                                root.addView(list, 0);
-                            }
-                        });
+                        changeAdapters(adapter);
                     }
                 }
             }
@@ -297,10 +294,10 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
     private void loadCalendar()
     {
         final ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);
-        if (currentScreen.getAdapter(currentScreen.getCurrentState()) != null)
+        if (currentScreen.getCalendarAdapter() != null)
         {
             removeCurrentView();
-            expandableListView.setAdapter(currentScreen.getAdapter(currentScreen.getCurrentState()));
+            expandableListView.setAdapter(currentScreen.getCalendarAdapter());
             root.addView(expandableListView);
         } else
         {
@@ -319,7 +316,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                         downloadEventsForDates(eventDates);
                     } else
                     {
-                        downloader = new Downloader(new CallBack()
+                        Downloader downloader = new Downloader(new CallBack()
                         {
                             @Override
                             public void call(String[] results)
@@ -342,7 +339,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
 
                             }
                         });
-                        downloader.execute(currentScreen.getUrl(1));
+                        downloader.execute(currentScreen.getCalendarURL());
                     }
                 }
             };
@@ -353,27 +350,54 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
 
     private void downloadEventsForDates(String[] eventDates)
     {
-        downloader = new Downloader(new CallBack()
+        Downloader downloader = new Downloader(new CallBack()
         {
             @Override
             public void call(String[] results)
             {
                 if (results != null)
                 {
-                    ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);
-                    expandableListView.setAdapter(new CalendarAdapter(getActivity()));
-                    root.addView(expandableListView, 0);
-                    currentView = expandableListView;
-                    expandableListView.setAdapter(new CalendarAdapter(getActivity()));
-                    root.addView(expandableListView, 0);
-                    currentView = expandableListView;
+                    removeCurrentView();
+                    CalendarAdapter adapter = new CalendarAdapter(getActivity());
+                    currentScreen.setCalendarAdapter(adapter);
+                    if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.CALENDAR)
+                    {
+                        ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);
+                        expandableListView.setAdapter(adapter);
+                        root.addView(expandableListView, 0);//TODO почему тут не в главном потоке добавляю?
+                        currentView = expandableListView;
+                    }
                 } else
                 {
                     Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        downloader.execute(eventDates);
+        downloader.execute(formRequests(eventDates));
+    }
+
+    private String[] formRequests(String[] dates)
+    {
+        String[] requests = new String[dates.length];
+        String requestBeginning = getRequestBeginning();
+        for (int i = 0; i < requests.length; i++)
+        {
+            requests[i] = requestBeginning + dates[i];
+        }
+        return requests;
+    }
+
+    private String getRequestBeginning()
+    {
+        String[] requestParts = getActivity().getResources().getStringArray(R.array.day_info_request);
+        StringBuilder requestBuilder = new StringBuilder();
+        for (int i = 0; i < requestParts.length - 1; i++)
+        {
+            requestBuilder.append(requestParts[i]);
+            requestBuilder.append('&');
+        }
+        requestBuilder.append(requestParts[requestParts.length - 1]);
+        return requestBuilder.toString();
     }
 
 
@@ -390,29 +414,19 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                 String value = fileCache.get(getSection().getTitle() + "_archive");
                 if (value == null)
                 {
-                    downloader = new Downloader(new CallBack()
+                    Downloader downloader = new Downloader(new CallBack()
                     {
                         @Override
                         public void call(String[] results)
                         {
                             if (results != null && results[0] != null)
                             {
-                                ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(results[0]));
+                                final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(results[0]));
                                 fileCache.add(getSection().getTitle() + "_archive", results[0]);
-                                currentScreen.setAdapter(2, adapter);
-                                list.setAdapter(adapter);
-                                if (currentScreen.getCurrentState() == 2)
+                                currentScreen.setArchiveAdapter(adapter);
+                                if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ARCHIVE)
                                 {
-                                    getActivity().runOnUiThread(new Runnable()
-                                    {
-                                        @Override
-                                        public void run()
-                                        {
-                                            removeCurrentView();
-                                            root.addView(list, 0);
-                                            currentView = list;
-                                        }
-                                    });
+                                    changeAdapters(adapter);
                                 }
                             } else
                             {
@@ -420,29 +434,41 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                             }
                         }
                     });
-                    downloader.execute(currentScreen.getUrl(2));
+                    downloader.execute(currentScreen.getArchiveURL());
                 } else
                 {
+
+                    //TODO что делать если есть кэшированный файл с календарём?
                     ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(value));
-                    currentScreen.setAdapter(2, adapter);
-                    list.setAdapter(adapter);
-                    if (currentScreen.getCurrentState() == 2)
+                    currentScreen.setArchiveAdapter(adapter);
+                    if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ARCHIVE)
                     {
-                        getActivity().runOnUiThread(new Runnable()
-                        {
-                            @Override
-                            public void run()
-                            {
-                                removeCurrentView();
-                                root.addView(list, 0);
-                                currentView = list;
-                            }
-                        });
+                        changeAdapters(adapter);
                     }
                 }
             }
         };
         new Thread(loading).start();
+    }
+
+    private void changeAdapters(final ListAdapter adapter)
+    {
+        getActivity().runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                setAdapterToList(adapter);
+            }
+        });
+    }
+
+    private void setAdapterToList(ListAdapter adapter)//TODO а зачем постоянно удалять список?(
+    {
+        removeCurrentView();
+        list.setAdapter(adapter);
+        root.addView(list, 0);
+        currentView = list;
     }
 
     private void removeCurrentView()

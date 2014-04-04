@@ -1,6 +1,5 @@
 package ru.hse.shugurov.gui.placeholders.items;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -15,11 +14,8 @@ import ru.hse.shugurov.ImageLoader;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.FlexibleImageView;
 import ru.hse.shugurov.gui.MainActivity;
-import ru.hse.shugurov.gui.adapters.NewsAdapter;
 import ru.hse.shugurov.model.NewsItem;
-import ru.hse.shugurov.sections.MultipleViewScreen;
 import ru.hse.shugurov.sections.Section;
-import ru.hse.shugurov.sections.SingleViewSection;
 
 /**
  * Created by Иван on 06.01.14.
@@ -28,7 +24,7 @@ public class NewsItemPlaceholderFragment extends SpecificItemPlaceholder
 {
     private NewsItem item;
 
-    public NewsItemPlaceholderFragment(Context context, NewsItem item, MainActivity.FragmentListener fragmentListener, Section section)
+    public NewsItemPlaceholderFragment(NewsItem item, MainActivity.FragmentListener fragmentListener, Section section)
     {
         super(fragmentListener, section);
         this.item = item;
@@ -44,16 +40,8 @@ public class NewsItemPlaceholderFragment extends SpecificItemPlaceholder
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         SpannableString spannedString = new SpannableString(item.getText());
         Linkify.addLinks(spannedString, Linkify.ALL);
-        //textView.setText(item.getText());
         textView.setText(spannedString);
-        ImageLoader imageLoader;
-        if (getSection() instanceof SingleViewSection)
-        {
-            imageLoader = ((NewsAdapter) ((SingleViewSection) getSection()).getAdapter()).getImageLoader();
-        } else
-        {
-            imageLoader = ((NewsAdapter) ((MultipleViewScreen) getSection()).getAdapter(((MultipleViewScreen) getSection()).getCurrentState())).getImageLoader();
-        }
+        ImageLoader imageLoader = ImageLoader.instance();
         ImageView imageView = (ImageView) rootView.findViewById(R.id.news_layout_picture);
         View newsContainer = rootView.findViewById(R.id.news_layout_container);
         int paddingLeft = newsContainer.getPaddingLeft();

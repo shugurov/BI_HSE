@@ -22,8 +22,8 @@ import ru.hse.shugurov.gui.placeholders.lists.PlaceholderFragmentWithList;
 import ru.hse.shugurov.gui.placeholders.special.BillboardPlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.special.SchedulePlaceholderFragment;
 import ru.hse.shugurov.gui.placeholders.special.SettingPlaceholderFragment;
+import ru.hse.shugurov.sections.EventsScreen;
 import ru.hse.shugurov.sections.MultipleAdaptersViewSection;
-import ru.hse.shugurov.sections.MultipleViewScreen;
 import ru.hse.shugurov.sections.ReferencesSection;
 import ru.hse.shugurov.sections.Section;
 import ru.hse.shugurov.sections.SingleViewSection;
@@ -125,9 +125,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 }
                 break;
             case ContentTypes.EVENTS:
-                if (sections[position] instanceof MultipleViewScreen)
+                if (sections[position] instanceof EventsScreen)
                 {
-                    currentPlaceholder = new EventsPlaceholderFragment(fragmentListener, (MultipleViewScreen) sections[position]);
+                    currentPlaceholder = new EventsPlaceholderFragment(fragmentListener, (EventsScreen) sections[position]);
                 }
                 break;
             case ContentTypes.BILLBOARD:

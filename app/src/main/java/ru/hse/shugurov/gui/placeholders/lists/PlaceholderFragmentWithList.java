@@ -48,7 +48,7 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
         super(fragmentListener, section);
         if (!(section instanceof SingleViewSection))
         {
-            throw new IllegalArgumentException("precondition violated in PlaceHolderWithList. SingleViewSection is supposed to be hear");
+            throw new IllegalArgumentException("precondition violated in PlaceHolderWithList. SingleViewSection is supposed to be here");
         }
     }
 
@@ -67,6 +67,7 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
                 String filter = getFilter();
                 if (!existedFilter.equals(filter))
                 {
+                    writePreferences(filter);
                     ((SingleViewSection) getSection()).setAdapter(null);
                     return onCreateView(inflater, container, savedInstanceState);
                 }
@@ -83,49 +84,44 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
                 @Override
                 public void run()
                 {
-                    Downloader downloader;
+
                     final FileCache fileCache = FileCache.instance();
-                    if (fileCache != null)
+                    final String data = fileCache.get(getSection().getTitle());
+                    if (data == null)
                     {
-                        final String data = fileCache.get(getSection().getTitle());
-                        if (data == null)
+                        Downloader downloader = new Downloader(new CallBack()
                         {
-                            downloader = new Downloader(new CallBack()
+                            @Override
+                            public void call(String[] results)
                             {
-                                @Override
-                                public void call(String[] results)
+                                if (results != null && results[0] != null)
                                 {
-                                    if (results != null && results[0] != null)
-                                    {
-                                        fileCache.add(getSection().getTitle(), results[0]);
-                                        fillList(results[0]);
-                                    } else
-                                    {
-                                        Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                            if (getSection().getType() == ContentTypes.NEWS)
-                            {
-                                String filter = getFilter();
-                                SharedPreferences.Editor editor = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE).edit();
-                                editor.putString("filter", filter);
-                                editor.commit();
-                                if (filter.length() == 8)
-                                {
-                                    downloader.execute(((SingleViewSection) getSection()).getUrl());
+                                    fileCache.add(getSection().getTitle(), results[0]);
+                                    fillList(results[0]);
                                 } else
                                 {
-                                    downloader.execute(((SingleViewSection) getSection()).getUrl() + filter);
+                                    Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                                 }
-                            } else
+                            }
+                        });
+                        if (getSection().getType() == ContentTypes.NEWS)
+                        {
+                            String filter = getFilter();
+                            writePreferences(filter);
+                            if (filter.length() == 8)
                             {
                                 downloader.execute(((SingleViewSection) getSection()).getUrl());
+                            } else
+                            {
+                                downloader.execute(((SingleViewSection) getSection()).getUrl() + filter);
                             }
                         } else
                         {
-                            fillList(data);
+                            downloader.execute(((SingleViewSection) getSection()).getUrl());
                         }
+                    } else
+                    {
+                        fillList(data);
                     }
 
                 }
@@ -134,6 +130,13 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
         }
 
         return rootView;
+    }
+
+    private void writePreferences(String filter)
+    {
+        SharedPreferences.Editor editor = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE).edit();
+        editor.putString("filter", filter);
+        editor.commit();
     }
 
     private void setListener()
@@ -147,7 +150,7 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
                 Object item = ((SingleViewSection) getSection()).getAdapter().getItem(position);
                 if (item instanceof NewsItem)
                 {
-                    NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment(getActivity(), (NewsItem) item, getFragmentListener(), getSection());
+                    NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment((NewsItem) item, getFragmentListener(), getSection());
                     getFragmentManager().beginTransaction().replace(R.id.container, newsItemPlaceholderFragment).commit();
                 } else
                 {
