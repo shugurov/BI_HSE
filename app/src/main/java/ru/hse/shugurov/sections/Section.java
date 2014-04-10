@@ -1,9 +1,11 @@
 package ru.hse.shugurov.sections;
 
+import java.io.Serializable;
+
 /**
  * Created by Иван on 02.01.14.
  */
-public class Section
+public class Section implements Serializable
 {
     private final String title;
     private final int iconDefault;

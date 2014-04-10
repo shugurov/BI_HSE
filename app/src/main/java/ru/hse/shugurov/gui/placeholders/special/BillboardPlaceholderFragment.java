@@ -1,6 +1,7 @@
 package ru.hse.shugurov.gui.placeholders.special;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -199,9 +200,8 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
     {
         MultipleAdaptersViewSection currentSection = (MultipleAdaptersViewSection) getSection();
         AdvertAdapter adapter = (AdvertAdapter) currentSection.getAdapter(currentSection.getCurrentState()); //TODO подумать про getCurrentAdapter()
-        AdvertItemPlaceholderFragment advertItemPlaceholderFragment;
-        advertItemPlaceholderFragment = new AdvertItemPlaceholderFragment(getFragmentListener(), getSection(), (AdvertItem) adapter.getItem(position));
-        getFragmentManager().beginTransaction().replace(R.id.container, advertItemPlaceholderFragment).commit();
+        Fragment advertItemPlaceholderFragment = new AdvertItemPlaceholderFragment(getFragmentListener(), getSection(), (AdvertItem) adapter.getItem(position));
+        showChildFragment(advertItemPlaceholderFragment);
     }
 
     private void setAdapters(String result, final LayoutInflater inflater)//TODO а может не надо тут это делать?(

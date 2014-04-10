@@ -8,13 +8,14 @@ import android.widget.TextView;
 
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
+import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
 import ru.hse.shugurov.model.AdvertItem;
 import ru.hse.shugurov.sections.Section;
 
 /**
  * Created by Иван on 20.01.14.
  */
-public class AdvertItemPlaceholderFragment extends SpecificItemPlaceholder
+public class AdvertItemPlaceholderFragment extends PlaceholderFragment
 {
     private AdvertItem advertItem;
 

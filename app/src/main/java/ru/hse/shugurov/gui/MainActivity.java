@@ -6,7 +6,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
-import android.widget.Toast;
+
+import java.io.Serializable;
 
 import ru.hse.shugurov.ApplicationStructure;
 import ru.hse.shugurov.ContentTypes;
@@ -47,12 +48,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        //this.getSupportFragmentManager().findFragmentById()  //TODO что делает byTag?
         FileCache.init(this);
         ImageLoader.init(this);
         ApplicationStructure.setContext(this);
         ApplicationStructure structure = ApplicationStructure.getStructure();
         sections = structure.getSections();
-        fragments = new PlaceholderFragment[sections.length];
+        fragments = new PlaceholderFragment[sections.length]; //TODO зачем создаю массив??(
         for (int i = 0; i < fragments.length; i++)
         {
             fragments[i] = null;
@@ -68,20 +70,19 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+        Bundle fragmentArguments = currentPlaceholder.getArguments();
+        outState.putAll(fragmentArguments);
+        super.onSaveInstanceState(outState);
+    }
+
+
+    @Override
     public void onBackPressed()
     {
-        //TODO обдумать, что делать, если открыт drawer
-        if (currentPlaceholder != null)
-        {
-            if (!currentPlaceholder.moveBack())
-            {
-                return;
-            }
-        } else
-        {
-            Toast.makeText(this, "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
-        }
-        super.onBackPressed();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.popBackStack();
 
     }
 
@@ -187,10 +188,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         return super.onCreateOptionsMenu(menu);
     }
 
-    public interface FragmentListener
+    public abstract class FragmentListener implements Serializable
     {
-        void setCurrentFragment(PlaceholderFragment currentFragment);
+        public abstract void setCurrentFragment(PlaceholderFragment currentFragment);
 
-        void setSectionTitle(String title);
+        public abstract void setSectionTitle(String title);
     }
 }

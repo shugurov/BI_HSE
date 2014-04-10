@@ -1,6 +1,7 @@
 package ru.hse.shugurov.gui.placeholders.lists;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import org.json.JSONException;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import ru.hse.shugurov.CallBack;
 import ru.hse.shugurov.Downloader;
@@ -105,9 +113,15 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                 } else
                 {
                     ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);//TODO копипаст(
-                    expandableListView.setAdapter(new CalendarAdapter(getActivity()));
-                    root.addView(expandableListView, 0);
-                    currentView = expandableListView;
+                    if (currentScreen.getCalendarAdapter() == null)
+                    {
+                        loadCalendar();
+                    } else
+                    {
+                        expandableListView.setAdapter(currentScreen.getCalendarAdapter());
+                        root.addView(expandableListView, 0);
+                        currentView = expandableListView;
+                    }
                 }
                 break;
             case ARCHIVE:
@@ -165,7 +179,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                     {
 
                         ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);
-                        expandableListView.setAdapter(new CalendarAdapter(getActivity()));
+                        expandableListView.setAdapter(currentScreen.getCalendarAdapter());
                         root.addView(expandableListView, 0);
                         currentView = expandableListView;
                     } else
@@ -237,8 +251,8 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
         Object item = adapter.getItem(position);
         if (item instanceof NewsItem)
         {
-            NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment((NewsItem) item, getFragmentListener(), getSection());
-            getFragmentManager().beginTransaction().replace(R.id.container, newsItemPlaceholderFragment).commit();
+            Fragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment((NewsItem) item, getFragmentListener(), getSection());
+            showChildFragment(newsItemPlaceholderFragment);
         }
     }
 
@@ -306,41 +320,42 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
             Runnable loading = new Runnable()
             {
                 @Override
-                public void run()
+                public void run()//TODO в чём смысл запускать поток в отдельном потоке?
                 {
-                    final FileCache fileCache = FileCache.instance();
-                    String datesString = fileCache.get(getSection().getTitle() + "_calendar_dates");
-                    if (datesString != null)
+                    Downloader downloader = new Downloader(new CallBack()
                     {
-                        String[] eventDates = datesString.split(" ");
-                        downloadEventsForDates(eventDates);
-                    } else
-                    {
-                        Downloader downloader = new Downloader(new CallBack()
+                        @Override
+                        public void call(String[] results)
                         {
-                            @Override
-                            public void call(String[] results)
+                            if (results != null && results[0] != null)
                             {
-                                if (results != null && results[0] != null)
+                                try
                                 {
-                                    try
+                                    String[] datesInStringFormat = Parser.parseEventDates(results[0]);
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd.M.yy");
+                                    Date[] eventDates = new Date[datesInStringFormat.length];
+                                    for (int i = 0; i < datesInStringFormat.length; i++)
                                     {
-                                        String[] eventsDates = Parser.parseEventDates(results[0]);
-                                        downloadEventsForDates(eventsDates);
-
-                                    } catch (JSONException e)
-                                    {
-                                        Toast.makeText(getActivity(), "Ошибка в ходе загрузки данных", Toast.LENGTH_SHORT).show();
+                                        eventDates[i] = dateFormat.parse(datesInStringFormat[i]);
                                     }
-                                } else
-                                {
-                                    Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
-                                }
+                                    downloadEventsForDates(eventDates);
 
+                                } catch (JSONException e)
+                                {
+                                    Toast.makeText(getActivity(), "Ошибка в ходе загрузки данных", Toast.LENGTH_SHORT).show();
+                                } catch (ParseException e)
+                                {
+                                    Toast.makeText(getActivity(), "Ошибка в ходе загрузки данных", Toast.LENGTH_SHORT).show();
+                                }
+                            } else
+                            {
+                                Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                             }
-                        });
-                        downloader.execute(currentScreen.getCalendarURL());
-                    }
+
+                        }
+                    });
+                    downloader.execute(currentScreen.getCalendarURL());
+
                 }
             };
             new Thread(loading).start();
@@ -348,7 +363,7 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
     }
 
 
-    private void downloadEventsForDates(String[] eventDates)
+    private void downloadEventsForDates(final Date[] eventDates)
     {
         Downloader downloader = new Downloader(new CallBack()
         {
@@ -358,13 +373,23 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
                 if (results != null)
                 {
                     removeCurrentView();
-                    CalendarAdapter adapter = new CalendarAdapter(getActivity());
+                    Map<Calendar, NewsItem[]> dateToNews = new HashMap<Calendar, NewsItem[]>(results.length);
+                    for (int i = 0; i < results.length; i++)
+                    {
+                        if (results[i] != null)
+                        {
+                            Calendar currentCalendar = Calendar.getInstance();
+                            currentCalendar.setTime(eventDates[i]);
+                            dateToNews.put(currentCalendar, Parser.parseNews(results[i]));
+                        }
+                    }
+                    CalendarAdapter adapter = new CalendarAdapter(getActivity(), dateToNews);
                     currentScreen.setCalendarAdapter(adapter);
                     if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.CALENDAR)
                     {
                         ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);
                         expandableListView.setAdapter(adapter);
-                        root.addView(expandableListView, 0);//TODO почему тут не в главном потоке добавляю?
+                        root.addView(expandableListView, 0);
                         currentView = expandableListView;
                     }
                 } else
@@ -376,13 +401,14 @@ public class EventsPlaceholderFragment extends PlaceholderFragment implements Vi
         downloader.execute(formRequests(eventDates));
     }
 
-    private String[] formRequests(String[] dates)
+    private String[] formRequests(Date[] dates)
     {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String[] requests = new String[dates.length];
         String requestBeginning = getRequestBeginning();
         for (int i = 0; i < requests.length; i++)
         {
-            requests[i] = requestBeginning + dates[i];
+            requests[i] = requestBeginning + dateFormat.format(dates[i]);
         }
         return requests;
     }

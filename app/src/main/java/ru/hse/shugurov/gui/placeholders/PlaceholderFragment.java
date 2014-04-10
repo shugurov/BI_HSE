@@ -10,23 +10,42 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.sections.Section;
 
-/**
- * A placeholder fragment containing a simple view.
- */
+
 public abstract class PlaceholderFragment extends Fragment
 {
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
-    //private static final String ARG_SECTION_NUMBER = "section_number";
+
+    private final static String FRAGMENT_TAG = "fragment_listener";
+    private final static String SECTION_TAG = "section";
     private Section section;
     private MainActivity.FragmentListener fragmentListener;
 
+    public PlaceholderFragment()
+    {
+        Bundle arguments = getArguments();//TODO delete
+        setArguments(new Bundle());
+    }
+
     public PlaceholderFragment(MainActivity.FragmentListener fragmentListener, Section section)
+    {
+        this();
+        initParent(fragmentListener, section);
+    }
+
+    protected MainActivity.FragmentListener getFragmentListener()
+    {
+        return fragmentListener;
+    }//TODO перенести интерфейс сюда
+
+    public Section getSection()
+    {
+        return section;
+    }
+
+    protected void initParent(MainActivity.FragmentListener fragmentListener, Section section)
     {
         this.fragmentListener = fragmentListener;
         this.fragmentListener.setCurrentFragment(this);
@@ -34,26 +53,28 @@ public abstract class PlaceholderFragment extends Fragment
         fragmentListener.setSectionTitle(section.getTitle());
     }
 
-    protected MainActivity.FragmentListener getFragmentListener()
-    {
-        return fragmentListener;
-    }
-
-    //возвращет true, если эту операцию выполняет MainActivity
-    public boolean moveBack()
-    {
-        return true;
-    }
-
-    public Section getSection()
-    {
-        return section;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        container.removeAllViews();
+        if (section == null)
+        {
+            MainActivity.FragmentListener listener = (MainActivity.FragmentListener) savedInstanceState.get(FRAGMENT_TAG);
+            Section currentSection = (Section) savedInstanceState.get(SECTION_TAG);
+            initParent(listener, currentSection);
+        } else//TODO  надо ли это делать тут?(
+        {
+            Bundle arguments = getArguments();
+            arguments.putSerializable(FRAGMENT_TAG, fragmentListener);
+            arguments.putSerializable(SECTION_TAG, section);
+        }
         return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
+    protected void showChildFragment(Fragment childFragment)
+    {
+        android.support.v4.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.addToBackStack(null);
+        transaction.replace(R.id.container, childFragment);
+        transaction.commit();
     }
 }

@@ -12,7 +12,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -20,6 +19,7 @@ import java.util.Map;
 
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.model.DayDescription;
+import ru.hse.shugurov.model.NewsItem;
 
 /**
  * Created by Иван on 09.03.14.
@@ -35,11 +35,11 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     private int currentDayOfMonth;
     private int currentMonth; //using traditional numeration. January - 1
     private int currentYear;
-    private Map<DayDescription, String> events;
+    private Map<Calendar, NewsItem[]> events;
     private View currentlySelectedView;
     private CalendarAdapter.CalendarAdapterCallback callback;
 
-    public GridCellAdapter(Context context, int month, int year, Map<DayDescription, String> events, CalendarAdapter.CalendarAdapterCallback callback)
+    public GridCellAdapter(Context context, int month, int year, Map<Calendar, NewsItem[]> events, CalendarAdapter.CalendarAdapterCallback callback)
     {
         super();
         this.context = context;
@@ -122,7 +122,7 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         // Trailing Month days
         for (int i = 0; i < trailingSpaces; i++)
         {
-            listOfDaysOnScreen.add(new DayDescription(daysInPrevMonth - trailingSpaces + DAY_OFFSET, months[prevMonth], prevYear, R.color.lightgray));
+            listOfDaysOnScreen.add(new DayDescription(daysInPrevMonth - trailingSpaces + DAY_OFFSET, prevMonth, prevYear, R.color.lightgray));
         }
 
         // Current Month Days
@@ -130,17 +130,17 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         {
             if (i == currentDayOfMonth && this.currentMonth == givenMonth && currentYear == givenYear)
             {
-                listOfDaysOnScreen.add(new DayDescription(i, months[currentMonth], givenYear, R.color.black));
+                listOfDaysOnScreen.add(new DayDescription(i, currentMonth, givenYear, R.color.black));
             } else
             {
-                listOfDaysOnScreen.add(new DayDescription(i, months[currentMonth], givenYear, R.color.lightgray02));
+                listOfDaysOnScreen.add(new DayDescription(i, currentMonth, givenYear, R.color.lightgray02));
             }
         }
 
         // Leading Month days
         for (int i = 0; i < listOfDaysOnScreen.size() % 7; i++)
         {
-            listOfDaysOnScreen.add(new DayDescription(i, months[currentMonth], nextYear, R.color.lightgray));
+            listOfDaysOnScreen.add(new DayDescription(i, currentMonth, nextYear, R.color.lightgray));
         }
     }
 
@@ -194,8 +194,8 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         DayDescription selectedDay = (DayDescription) view.getTag();
         if (events.containsKey(selectedDay))
         {
-            String event = events.get(selectedDay);
-            callback.setEventListAdapter(Arrays.asList(new String[]{"sdsds"}));
+            /*String event = events.get(selectedDay); TODO тут говорю о нажатие
+            callback.setEventListAdapter(Arrays.asList(new String[]{"sdsds"}));*/
         } else
         {
             callback.setEventListAdapter(null);
@@ -226,5 +226,6 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     }
 
 }
+
 
 

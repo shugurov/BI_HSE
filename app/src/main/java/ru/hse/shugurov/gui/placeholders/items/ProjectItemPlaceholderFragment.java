@@ -14,6 +14,7 @@ import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.FlexibleImageView;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.gui.adapters.ProjectAdapter;
+import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
 import ru.hse.shugurov.model.ProjectItem;
 import ru.hse.shugurov.sections.Section;
 import ru.hse.shugurov.sections.SingleViewSection;
@@ -21,7 +22,7 @@ import ru.hse.shugurov.sections.SingleViewSection;
 /**
  * Created by Иван on 06.01.14.
  */
-public class ProjectItemPlaceholderFragment extends SpecificItemPlaceholder
+public class ProjectItemPlaceholderFragment extends PlaceholderFragment
 {
     private ProjectItem item;
 

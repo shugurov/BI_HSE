@@ -1,41 +1,45 @@
 package ru.hse.shugurov.model;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 /**
  * Created by Иван on 17.03.14.
  */
 public class DayDescription
 {
-    private final int day;
-    private final String month;
-    private final int color;
-    private final int year;
+    private Calendar calendar;
+    private int color;
 
-    public DayDescription(int day, String month, int year, int color)
+    public DayDescription(int day, int month, int year, int color)
     {
-        this.day = day;
-        this.month = month;
         this.color = color;
-        this.year = year;
+        calendar = new GregorianCalendar(year, month, day);
     }
 
     public int getYear()
     {
-        return year;
+        return calendar.get(Calendar.YEAR);
     }
 
     public int getDay()
     {
-        return day;
+        return calendar.get(Calendar.DATE);
     }
 
-    public String getMonth()
+    public int getMonth()
     {
-        return month;
+        return calendar.get(Calendar.MONTH);
     }
 
     public int getColor()
     {
         return color;
+    }
+
+    public Calendar getCalendar()
+    {
+        return calendar;
     }
 
     @Override
@@ -56,15 +60,7 @@ public class DayDescription
         {
             return false;
         }
-        if (day != that.day)
-        {
-            return false;
-        }
-        if (year != that.year)
-        {
-            return false;
-        }
-        if (month != null ? !month.equals(that.month) : that.month != null)
+        if (calendar != null ? !calendar.equals(that.calendar) : that.calendar != null)
         {
             return false;
         }
@@ -75,10 +71,8 @@ public class DayDescription
     @Override
     public int hashCode()
     {
-        int result = day;
-        result = 31 * result + (month != null ? month.hashCode() : 0);
+        int result = calendar != null ? calendar.hashCode() : 0;
         result = 31 * result + color;
-        result = 31 * result + year;
         return result;
     }
 }

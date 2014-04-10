@@ -3,6 +3,7 @@ package ru.hse.shugurov.gui.placeholders.lists;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,11 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
     private View progressDialog;
     private ViewGroup container;
 
+    public PlaceholderFragmentWithList()
+    {
+
+    }
+
     public PlaceholderFragmentWithList(MainActivity.FragmentListener fragmentListener, Section section)
     {
         super(fragmentListener, section);
@@ -55,6 +61,7 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
     {
+        super.onCreateView(inflater, container, savedInstanceState);
         this.container = container;
         rootView = (LinearLayout) inflater.inflate(R.layout.fragment_list, container, false);
         ListAdapter adapter = ((SingleViewSection) getSection()).getAdapter();
@@ -147,26 +154,25 @@ public class PlaceholderFragmentWithList extends PlaceholderFragment
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                Object item = ((SingleViewSection) getSection()).getAdapter().getItem(position);
+                Object item = ((SingleViewSection) getSection()).getAdapter().getItem(position);//TODO вот это мне не нравится(
+                Fragment nextFragment = null;
                 if (item instanceof NewsItem)
                 {
-                    NewsItemPlaceholderFragment newsItemPlaceholderFragment = new NewsItemPlaceholderFragment((NewsItem) item, getFragmentListener(), getSection());
-                    getFragmentManager().beginTransaction().replace(R.id.container, newsItemPlaceholderFragment).commit();
+                    nextFragment = new NewsItemPlaceholderFragment((NewsItem) item, getFragmentListener(), getSection());
                 } else
                 {
                     if (item instanceof ProjectItem)
                     {
-                        ProjectItemPlaceholderFragment projectItemPlaceholderFragment = new ProjectItemPlaceholderFragment((ProjectItem) item, getFragmentListener(), getSection());
-                        getFragmentManager().beginTransaction().replace(R.id.container, projectItemPlaceholderFragment).commit();
+                        nextFragment = new ProjectItemPlaceholderFragment((ProjectItem) item, getFragmentListener(), getSection());
                     } else
                     {
                         if (item instanceof ContactItem)
                         {
-                            ContactItemPlaceholderFragment contactItemPlaceholderFragment = new ContactItemPlaceholderFragment((ContactItem) item, getFragmentListener(), getSection());
-                            getFragmentManager().beginTransaction().replace(R.id.container, contactItemPlaceholderFragment).commit();
+                            nextFragment = new ContactItemPlaceholderFragment((ContactItem) item, getFragmentListener(), getSection());
                         }
                     }
                 }
+                showChildFragment(nextFragment);
             }
         });
     }

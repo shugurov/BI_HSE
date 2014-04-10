@@ -1,6 +1,7 @@
 package ru.hse.shugurov.gui.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,13 +12,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import ru.hse.shugurov.R;
-import ru.hse.shugurov.model.DayDescription;
 import ru.hse.shugurov.model.NewsItem;
 
 /**
@@ -32,11 +31,13 @@ public class CalendarAdapter extends BaseExpandableListAdapter
     private int month;
     private NewsAdapter eventsAdapter;
     private ListView eventsView;
+    private Map<Calendar, NewsItem[]> dateToEvents;
 
-    public CalendarAdapter(Context context)
+    public CalendarAdapter(Context context, Map<Calendar, NewsItem[]> dateToEvents)
     {
         this.context = context;
         inflater = LayoutInflater.from(context);
+        this.dateToEvents = dateToEvents;
     }
 
     @Override
@@ -116,10 +117,7 @@ public class CalendarAdapter extends BaseExpandableListAdapter
             year = calendar.get(Calendar.YEAR);
             convertView = inflater.inflate(R.layout.calendar_layout, parent, false);
             final GridView calendarView = (GridView) convertView.findViewById(R.id.calendar);
-            DayDescription exampleEvent = new DayDescription(1, "Март", 2014, R.color.lightgray02);
-            final Map<DayDescription, String> exampleEventsMap = new HashMap();
-            exampleEventsMap.put(exampleEvent, "sdsdsds");
-            GridCellAdapter adapter = new GridCellAdapter(context, month, year, exampleEventsMap, new CalendarAdapterCallback());
+            GridCellAdapter adapter = new GridCellAdapter(context, month, year, dateToEvents, new CalendarAdapterCallback());
             adapter.notifyDataSetChanged();
             calendarView.setAdapter(adapter);
             final TextView currentMonth = (TextView) convertView.findViewById(R.id.current_month);
@@ -156,7 +154,7 @@ public class CalendarAdapter extends BaseExpandableListAdapter
                         default:
                             return;
                     }
-                    GridCellAdapter adapter = new GridCellAdapter(context, month, year, exampleEventsMap, new CalendarAdapterCallback());
+                    GridCellAdapter adapter = new GridCellAdapter(context, month, year, dateToEvents, new CalendarAdapterCallback());
                     calendar.set(year, month - 1, calendar.get(Calendar.DAY_OF_MONTH));
                     currentMonth.setText(DateFormat.format("MMMM yyyy", calendar.getTime()));
                     adapter.notifyDataSetChanged();
@@ -169,7 +167,8 @@ public class CalendarAdapter extends BaseExpandableListAdapter
         {
             if (eventsView == null)
             {
-                eventsView = (ListView) inflater.inflate(R.layout.group_name, parent, false);
+                eventsView = (ListView) inflater.inflate(R.layout.list, parent, false);
+                eventsView.setBackgroundColor(Color.RED);
                 convertView = eventsView;
             } else
             {

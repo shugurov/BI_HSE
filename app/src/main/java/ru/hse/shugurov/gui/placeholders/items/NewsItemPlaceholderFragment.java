@@ -14,13 +14,14 @@ import ru.hse.shugurov.ImageLoader;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.FlexibleImageView;
 import ru.hse.shugurov.gui.MainActivity;
+import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
 import ru.hse.shugurov.model.NewsItem;
 import ru.hse.shugurov.sections.Section;
 
 /**
  * Created by Иван on 06.01.14.
  */
-public class NewsItemPlaceholderFragment extends SpecificItemPlaceholder
+public class NewsItemPlaceholderFragment extends PlaceholderFragment
 {
     private NewsItem item;
 

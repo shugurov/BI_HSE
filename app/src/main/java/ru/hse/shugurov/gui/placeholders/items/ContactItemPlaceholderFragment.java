@@ -15,6 +15,7 @@ import ru.hse.shugurov.ImageLoader;
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
 import ru.hse.shugurov.gui.adapters.ContactAdapter;
+import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
 import ru.hse.shugurov.model.ContactItem;
 import ru.hse.shugurov.sections.Section;
 import ru.hse.shugurov.sections.SingleViewSection;
@@ -22,7 +23,7 @@ import ru.hse.shugurov.sections.SingleViewSection;
 /**
  * Created by Иван on 07.01.14.
  */
-public class ContactItemPlaceholderFragment extends SpecificItemPlaceholder
+public class ContactItemPlaceholderFragment extends PlaceholderFragment
 {
     private ContactItem contactItem;
 
