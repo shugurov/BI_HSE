@@ -39,16 +39,18 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
-    private CharSequence mTitle;
+    private String mTitle;
     private Section[] sections;
     private PlaceholderFragment[] fragments;
     private PlaceholderFragment currentPlaceholder;
+    private NavigationDrawerAdapter navigationDrawerAdapter;
+    private boolean wasRestored;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        //this.getSupportFragmentManager().findFragmentById()  //TODO что делает byTag?
+        wasRestored = savedInstanceState != null;
         FileCache.init(this);
         ImageLoader.init(this);
         ApplicationStructure.setContext(this);
@@ -60,23 +62,15 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             fragments[i] = null;
         }
         setContentView(R.layout.activity_main);
+        navigationDrawerAdapter = new NavigationDrawerAdapter(this, sections);
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = sections[0].getTitle();
 
         // Set up the drawer.
-        NavigationDrawerAdapter adapter = new NavigationDrawerAdapter(this, sections);
-        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), adapter);
+
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), navigationDrawerAdapter);
 
     }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState)
-    {
-        Bundle fragmentArguments = currentPlaceholder.getArguments();
-        outState.putAll(fragmentArguments);
-        super.onSaveInstanceState(outState);
-    }
-
 
     @Override
     public void onBackPressed()
@@ -89,6 +83,12 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     @Override
     public void onNavigationDrawerItemSelected(final int position)
     {
+        if (wasRestored)
+        {
+            wasRestored = false;
+            return;
+        }
+        //navigationDrawerAdapter.checkItem(position);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentListener fragmentListener = new FragmentListener()
         {
@@ -188,7 +188,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         return super.onCreateOptionsMenu(menu);
     }
 
-    public abstract class FragmentListener implements Serializable
+    public abstract class FragmentListener implements Serializable //TODO
     {
         public abstract void setCurrentFragment(PlaceholderFragment currentFragment);
 

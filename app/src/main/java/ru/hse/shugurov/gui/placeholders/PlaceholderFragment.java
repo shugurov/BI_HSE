@@ -6,9 +6,6 @@ package ru.hse.shugurov.gui.placeholders;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import ru.hse.shugurov.R;
 import ru.hse.shugurov.gui.MainActivity;
@@ -25,14 +22,33 @@ public abstract class PlaceholderFragment extends Fragment
 
     public PlaceholderFragment()
     {
-        Bundle arguments = getArguments();//TODO delete
-        setArguments(new Bundle());
     }
 
     public PlaceholderFragment(MainActivity.FragmentListener fragmentListener, Section section)
     {
-        this();
-        initParent(fragmentListener, section);
+        this.fragmentListener = fragmentListener;
+        this.fragmentListener.setCurrentFragment(this);
+        this.section = section;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null && section == null)
+        {
+            section = (Section) savedInstanceState.getSerializable(SECTION_TAG);
+            fragmentListener = (MainActivity.FragmentListener) savedInstanceState.getSerializable(FRAGMENT_TAG);
+        }
+        getActivity().setTitle(section.getTitle());//TODO неправильный заголовок
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(SECTION_TAG, section);
+        outState.putSerializable(FRAGMENT_TAG, fragmentListener);
     }
 
     protected MainActivity.FragmentListener getFragmentListener()
@@ -43,31 +59,6 @@ public abstract class PlaceholderFragment extends Fragment
     public Section getSection()
     {
         return section;
-    }
-
-    protected void initParent(MainActivity.FragmentListener fragmentListener, Section section)
-    {
-        this.fragmentListener = fragmentListener;
-        this.fragmentListener.setCurrentFragment(this);
-        this.section = section;
-        fragmentListener.setSectionTitle(section.getTitle());
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        if (section == null)
-        {
-            MainActivity.FragmentListener listener = (MainActivity.FragmentListener) savedInstanceState.get(FRAGMENT_TAG);
-            Section currentSection = (Section) savedInstanceState.get(SECTION_TAG);
-            initParent(listener, currentSection);
-        } else//TODO  надо ли это делать тут?(
-        {
-            Bundle arguments = getArguments();
-            arguments.putSerializable(FRAGMENT_TAG, fragmentListener);
-            arguments.putSerializable(SECTION_TAG, section);
-        }
-        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     protected void showChildFragment(Fragment childFragment)

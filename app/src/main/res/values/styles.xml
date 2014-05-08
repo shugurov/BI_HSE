@@ -5,7 +5,6 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <color name="reference_color">#3c9eff</color>
 
     <style name="SettingsLayoutItem">
         <item name="android:layout_width">fill_parent</item>

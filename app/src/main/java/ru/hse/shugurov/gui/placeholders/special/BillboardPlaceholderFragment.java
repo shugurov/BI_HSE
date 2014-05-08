@@ -34,6 +34,10 @@ public class BillboardPlaceholderFragment extends PlaceholderFragment implements
     private LinearLayout root;
     private View currentView;
 
+    public BillboardPlaceholderFragment()
+    {
+    }
+
     public BillboardPlaceholderFragment(MainActivity.FragmentListener fragmentListener, MultipleAdaptersViewSection section)
     {
         super(fragmentListener, section);

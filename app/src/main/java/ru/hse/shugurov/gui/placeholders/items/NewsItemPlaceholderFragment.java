@@ -23,7 +23,13 @@ import ru.hse.shugurov.sections.Section;
  */
 public class NewsItemPlaceholderFragment extends PlaceholderFragment
 {
+
+    private static final String ITEM_TAG = "news_fragment_concrete_item";
     private NewsItem item;
+
+    public NewsItemPlaceholderFragment()
+    {
+    }
 
     public NewsItemPlaceholderFragment(NewsItem item, MainActivity.FragmentListener fragmentListener, Section section)
     {
@@ -52,4 +58,20 @@ public class NewsItemPlaceholderFragment extends PlaceholderFragment
         return rootView;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null && item == null)
+        {
+            item = savedInstanceState.getParcelable(ITEM_TAG);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(ITEM_TAG, item);
+    }
 }

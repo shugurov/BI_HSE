@@ -19,6 +19,9 @@ public class AdvertItemPlaceholderFragment extends PlaceholderFragment
 {
     private AdvertItem advertItem;
 
+    public AdvertItemPlaceholderFragment()
+    {
+    }
     public AdvertItemPlaceholderFragment(MainActivity.FragmentListener fragmentListener, Section section, AdvertItem advertItem)
     {
         super(fragmentListener, section);

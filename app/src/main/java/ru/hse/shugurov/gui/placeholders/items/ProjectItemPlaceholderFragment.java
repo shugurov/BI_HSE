@@ -22,9 +22,15 @@ import ru.hse.shugurov.sections.SingleViewSection;
 /**
  * Created by Иван on 06.01.14.
  */
-public class ProjectItemPlaceholderFragment extends PlaceholderFragment
+public class ProjectItemPlaceholderFragment extends PlaceholderFragment//TODO почему-то падал при открытии браузера
 {
+    private final static String PROJECT_ITEM_TAG = "project_item";
     private ProjectItem item;
+
+
+    public ProjectItemPlaceholderFragment()
+    {
+    }
 
     public ProjectItemPlaceholderFragment(ProjectItem item, MainActivity.FragmentListener fragmentListener, Section section)
     {
@@ -53,5 +59,22 @@ public class ProjectItemPlaceholderFragment extends PlaceholderFragment
         int width = container.getWidth() - paddingLeft - paddingRight;
         imageLoader.displayImage(item.getPictureUrl(), new FlexibleImageView(imageView, width));
         return rootView;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null)
+        {
+            item = (ProjectItem) savedInstanceState.getSerializable(PROJECT_ITEM_TAG);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(PROJECT_ITEM_TAG, item);
     }
 }

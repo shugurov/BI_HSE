@@ -1,16 +1,23 @@
 package ru.hse.shugurov.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Иван on 01.01.14.
  */
-public class NewsItem
+public class NewsItem implements Parcelable
 {
-    private final String title;
-    private final String text;
-    private final String date;
-    private final String picture;
-    private final String summary;
-    private final int type;
+    private String title;
+    private String text;
+    private String date;
+    private String picture;
+    private String summary;
+    private int type;
+
+    private NewsItem(Parcel parcel)
+    {
+    }
 
     public NewsItem(String title, String text, String date, String picture, String summary, int type)
     {
@@ -51,5 +58,32 @@ public class NewsItem
     public int getType()
     {
         return type;
+    }
+
+    public static final Creator<NewsItem> CREATOR = new Creator<NewsItem>()
+    {
+        @Override
+        public NewsItem createFromParcel(Parcel source)
+        {
+            return new NewsItem(source);
+        }
+
+        @Override
+        public NewsItem[] newArray(int size)
+        {
+            return new NewsItem[size];
+        }
+    };
+
+    @Override
+    public int describeContents()
+    {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags)
+    {
+
     }
 }

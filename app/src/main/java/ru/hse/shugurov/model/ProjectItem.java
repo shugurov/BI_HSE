@@ -1,10 +1,12 @@
 package ru.hse.shugurov.model;
 
 
+import java.io.Serializable;
+
 /**
  * Created by Иван on 06.01.14.
  */
-public class ProjectItem
+public class ProjectItem implements Serializable
 {
     private final String text;
     private final String url;
