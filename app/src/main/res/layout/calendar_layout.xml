@@ -45,11 +45,11 @@
     </LinearLayout>
 
 
-    <ru.hse.shugurov.gui.NonScrollableGridView
+    <ru.hse.shugurov.bi_application.gui.NonScrollableGridView
         android:id="@+id/calendar"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:numColumns="7">
-    </ru.hse.shugurov.gui.NonScrollableGridView>
+    </ru.hse.shugurov.bi_application.gui.NonScrollableGridView>
 
 </LinearLayout>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ru.hse.shugurov.gui.MainActivity">
+    tools:context="ru.hse.shugurov.bi_application.MainActivity">
 
     <FrameLayout
         android:id="@+id/container"
@@ -13,7 +13,7 @@
 
     <fragment
         android:id="@+id/navigation_drawer"
-        android:name="ru.hse.shugurov.gui.NavigationDrawerFragment"
+        android:name="ru.hse.shugurov.bi_application.gui.NavigationDrawerFragment"
         android:layout_width="@dimen/navigation_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"/>
