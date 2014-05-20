@@ -10,13 +10,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import ru.hse.shugurov.bi_application.CallBack;
-import ru.hse.shugurov.bi_application.Downloader;
-import ru.hse.shugurov.bi_application.FileCache;
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.adapters.AdvertAdapter;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
@@ -274,7 +270,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void run()
             {
-                final FileCache fileCache = FileCache.instance();
+                /*final FileCache fileCache = FileCache.instance();
                 String data = fileCache.get(getSection().getTitle());
                 if (data == null)
                 {
@@ -298,7 +294,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                 } else
                 {
                     setAdapters(data, inflater);
-                }
+                }TODO раскомментировать*/
             }
         };
         new Thread(loadAdverts).start();

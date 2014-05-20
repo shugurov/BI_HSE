@@ -14,10 +14,12 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import ru.hse.shugurov.bi_application.CallBack;
+import java.io.IOException;
+
 import ru.hse.shugurov.bi_application.ContentTypes;
 import ru.hse.shugurov.bi_application.Downloader;
-import ru.hse.shugurov.bi_application.FileCache;
+import ru.hse.shugurov.bi_application.FileDescription;
+import ru.hse.shugurov.bi_application.FileManager;
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.adapters.ContactAdapter;
 import ru.hse.shugurov.bi_application.gui.adapters.NewsAdapter;
@@ -76,44 +78,23 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
                 public void run()
                 {
 
-                    final FileCache fileCache = FileCache.instance();
-                    final String data = fileCache.get(getSection().getTitle());
-                    if (data == null)
+                    final FileManager fileManager = FileManager.instance();
+                    final String data;
+                    try
                     {
-                        Downloader downloader = new Downloader(new CallBack()
+                        data = fileManager.getFileContent(getSection().getTitle());
+                        if (data == null)
                         {
-                            @Override
-                            public void call(String[] results)
-                            {
-                                if (results != null && results[0] != null)
-                                {
-                                    fileCache.add(getSection().getTitle(), results[0]);
-                                    fillList(results[0]);
-                                } else
-                                {
-                                    Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                        if (getSection().getType() == ContentTypes.NEWS)
-                        {
-                            String filter = getFilter();
-                            writePreferences(filter);
-                            if (filter.length() == 8)
-                            {
-                                downloader.execute(((SingleViewSection) getSection()).getUrl());
-                            } else
-                            {
-                                downloader.execute(((SingleViewSection) getSection()).getUrl() + filter);
-                            }
+                            requestData();
                         } else
                         {
-                            downloader.execute(((SingleViewSection) getSection()).getUrl());
+                            fillList(data);
                         }
-                    } else
+                    } catch (IOException e)
                     {
-                        fillList(data);
+                        requestData();
                     }
+
 
                 }
             };
@@ -121,6 +102,45 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
         }
 
         return rootView;
+    }
+
+    private void requestData()//TODo  влияют ли настройки на скачивание?
+    {
+        Downloader downloader = new Downloader(getActivity(), new Downloader.DownloadCallback()
+        {
+            @Override
+            public void downloadFinished()
+            {
+                FileManager fileManager = FileManager.instance();
+                try
+                {
+                    String result = fileManager.getFileContent(getSection().getTitle());
+                    fillList(result);
+                } catch (IOException e)
+                {
+                    Toast.makeText(getActivity(), "Не удалось загрузить данные", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        String fileName = getSection().getTitle();
+        String url;
+        if (getSection().getType() == ContentTypes.NEWS)
+        {
+            String filter = getFilter();
+            writePreferences(filter);
+
+            if (filter.length() == 8)
+            {
+                url = ((SingleViewSection) getSection()).getUrl();
+            } else
+            {
+                url = ((SingleViewSection) getSection()).getUrl() + filter;
+            }
+        } else
+        {
+            url = ((SingleViewSection) getSection()).getUrl();
+        }
+        downloader.execute(new FileDescription(fileName, url));
     }
 
     private void writePreferences(String filter)
@@ -199,7 +219,7 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
         progressDialog = null;
     }
 
-    private void fillList(String data)
+    private void fillList(String data)//TODO ловить исключения парсинга?
     {
         final ListAdapter adapter;
         switch (getSection().getType())

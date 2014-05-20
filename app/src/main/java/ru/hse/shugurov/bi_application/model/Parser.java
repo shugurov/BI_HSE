@@ -4,8 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ru.hse.shugurov.bi_application.CallBack;
-import ru.hse.shugurov.bi_application.Downloader;
 import ru.hse.shugurov.bi_application.sections.ReferencesSection;
 
 /**
@@ -308,7 +306,7 @@ public class Parser
 
     public static void parseSchedule(final ReferencesSection section, String url)//TODO как работает, если не удалось скачать в первый раз?
     {
-        Downloader downloader = new Downloader(new CallBack()
+        /*Downloader downloader = new Downloader(new CallBack()
         {
             @Override
             public void call(String[] results)//TODO проверить, скачалось ли
@@ -329,7 +327,7 @@ public class Parser
                 }
             }
         });
-        downloader.execute(url);
+        downloader.execute(url);TODO fix, uncomment*/
     }
 
     public static String[] parseEventDates(String json) throws JSONException

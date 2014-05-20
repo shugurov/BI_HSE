@@ -11,33 +11,25 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import org.json.JSONException;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-import ru.hse.shugurov.bi_application.CallBack;
 import ru.hse.shugurov.bi_application.Downloader;
-import ru.hse.shugurov.bi_application.FileCache;
+import ru.hse.shugurov.bi_application.FileDescription;
 import ru.hse.shugurov.bi_application.R;
-import ru.hse.shugurov.bi_application.gui.adapters.CalendarAdapter;
 import ru.hse.shugurov.bi_application.gui.adapters.NewsAdapter;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.items.NewsItemFragment;
 import ru.hse.shugurov.bi_application.model.NewsItem;
-import ru.hse.shugurov.bi_application.model.Parser;
 import ru.hse.shugurov.bi_application.sections.EventsScreen;
 
 /**
  * Created by Иван on 09.01.14.
  */
-public class EventsFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener//TODO календаря нету в кэше
+public class EventsFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener//TODO календаря нет в кэше
 {
     public static final String CURRENT_SCREEN_TAG = "current_screen";
     private int lastPressedButton;
@@ -252,11 +244,11 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void run()
             {
-                final FileCache fileCache = FileCache.instance();
+                /*final FileCache fileCache = FileCache.instance();TODO проверять по-другому
                 String value = fileCache.get(getSection().getTitle() + "_events");
                 if (value == null)
                 {
-                    Downloader downloader = new Downloader(new CallBack()
+                    /*Downloader downloader = new Downloader(new CallBack()//TODO remove?
                     {
                         @Override
                         public void call(String[] results)
@@ -275,9 +267,27 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                                 Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    });
-                    downloader.execute(currentScreen.getAnnouncesURL());
-                } else
+                    });*/
+                String fileName = getSection().getTitle() + "_events";
+                String url = currentScreen.getAnnouncesURL();
+                FileDescription description = new FileDescription(fileName, url);
+                List<FileDescription> descriptionsList = new ArrayList<FileDescription>();
+                descriptionsList.add(description);
+                Downloader downloader = new Downloader(getActivity(), descriptionsList, new Downloader.DownloadCallback()
+                {
+                    @Override
+                    public void downloadFinished()//TODO как-то проверять успешность
+                    {
+                            /*final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(results[0]));TODO раскомментировать
+                            currentScreen.setAnnounceAdapter(adapter);
+                            if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ANNOUNCES)
+                            {
+                                changeAdapters(adapter);
+                            }*/
+                    }
+                });
+                downloader.execute();
+                /*} else
                 {
                     ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(value));
                     currentScreen.setAnnounceAdapter(adapter);
@@ -285,7 +295,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     {
                         changeAdapters(adapter);
                     }
-                }
+                }TODO раскомментировать*/
             }
         };
         new Thread(loadingAnnounces).start();
@@ -308,7 +318,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                 @Override
                 public void run()//TODO в чём смысл запускать поток в отдельном потоке?
                 {
-                    Downloader downloader = new Downloader(new CallBack()
+                    /*Downloader downloader = new Downloader(new CallBack()TODO новый скачиватель
                     {
                         @Override
                         public void call(String[] results)
@@ -340,7 +350,8 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
 
                         }
                     });
-                    downloader.execute(currentScreen.getCalendarURL());
+                    FileDescription eventsFileDescription = new FileDescription("",currentScreen.getCalendarURL());
+                    downloader.execute(currentScreen.getCalendarURL());TODO раскомментировать*/
 
                 }
             };
@@ -351,7 +362,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
 
     private void downloadEventsForDates(final Date[] eventDates)
     {
-        Downloader downloader = new Downloader(new CallBack()
+        /*Downloader downloader = new Downloader(new CallBack()
         {
             @Override
             public void call(String[] results)
@@ -384,7 +395,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                 }
             }
         });
-        downloader.execute(formRequests(eventDates));
+        downloader.execute(formRequests(eventDates)); TODO раскомментировать*/
     }
 
     private String[] formRequests(Date[] dates)
@@ -422,7 +433,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void run()
             {
-                final FileCache fileCache = FileCache.instance();
+                /*final FileCache fileCache = FileCache.instance();
                 String value = fileCache.get(getSection().getTitle() + "_archive");
                 if (value == null)
                 {
@@ -457,7 +468,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     {
                         changeAdapters(adapter);
                     }
-                }
+                }TODO раскомментировать, поправить*/
             }
         };
         new Thread(loading).start();

@@ -1,130 +1,111 @@
 package ru.hse.shugurov.bi_application;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
-import java.io.BufferedReader;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.concurrent.ExecutionException;
+import java.io.OutputStream;
+import java.util.Collection;
+
 
 /**
- * Created by Иван on 29.12.13.
+ * Downloads files and stores them in a local storage
+ * <p/>
+ *
+ * @author Ivan Shugurov
  */
-public class Downloader extends AsyncTask<String, Void, String[]>
+public class Downloader extends AsyncTask<FileDescription, Void, Void>
 {
-    CallBack callBack;
+    private Collection<FileDescription> fileDescriptions;
+    private Context context;
+    private DownloadCallback callback;
 
-
-    public Downloader(CallBack callBack)
+    /**
+     * Creates a new instance which will download from links supplied as execute method parameters
+     *
+     * @param context  is used to create files if local storage
+     * @param callback notifies in the end of downloading. null is acceptable
+     */
+    public Downloader(Context context, DownloadCallback callback)
     {
-        this.callBack = callBack;
+        this.context = context;
+        this.callback = callback;
+    }
+
+    /**
+     * Creates a new instance which will download from links supplied as execute method parameters
+     * and files supplied in {@code fileDescription} collection
+     *
+     * @param context          is used to create files if local storage
+     * @param fileDescriptions descriptions of files to be downloaded
+     * @param callback         notifies in the end of downloading. null is acceptable
+     */
+    public Downloader(Context context, Collection<FileDescription> fileDescriptions, DownloadCallback callback)
+    {
+        this(context, callback);
+        this.fileDescriptions = fileDescriptions;
     }
 
     @Override
-    protected String[] doInBackground(String... params)
+    protected Void doInBackground(FileDescription... filesToBeDownloaded)
     {
-        for (int i = 0; i < params.length; i++)
+        for (FileDescription aFilesToBeDownloaded : filesToBeDownloaded)
         {
             if (isCancelled())
             {
-                params[i] = null;
-            } else
-            {
-                InputStream inputStream = openInputStream(params[i]);
-                if (inputStream == null)
-                {
-                    return null;
-                } else
-                {
-                    params[i] = readInputStream(inputStream);
-                    try
-                    {
-                        inputStream.close();
-                    } catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        return params;
-    }
-
-    @Override
-    protected void onPostExecute(String[] strings)
-    {
-        super.onPostExecute(strings);
-        if (callBack != null)
-        {
-            String[] result = null;
-            try
-            {
-                result = get();
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            } catch (ExecutionException e)
-            {
-                e.printStackTrace();
-            }
-            callBack.call(result);
-        }
-    }
-
-    private InputStream openInputStream(String urlString)
-    {
-        InputStream inputStream = null;
-        try
-        {
-            URL url = new URL(urlString);
-            URLConnection connection = url.openConnection();
-            if (!(connection instanceof HttpURLConnection))
-            {
                 return null;
             }
-            connection.connect();
-            int response = ((HttpURLConnection) connection).getResponseCode();
-            if (response == HttpURLConnection.HTTP_OK)
-            {
-                inputStream = connection.getInputStream();
-            }
-
-        } catch (MalformedURLException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        } catch (Exception e)
-        {
-            e.printStackTrace();
+            downloadFile(aFilesToBeDownloaded);
         }
-        return inputStream;
+        if (fileDescriptions != null)
+        {
+            for (FileDescription description : fileDescriptions)
+            {
+                if (isCancelled())
+                {
+                    return null;
+                }
+                downloadFile(description);
+            }
+        }
+        return null;
     }
 
-    private String readInputStream(InputStream inputStream)
+
+    @Override
+    protected void onPostExecute(Void result)
     {
-        StringBuilder builder = new StringBuilder();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        final int BUFFER_SIZE = 2000;
-        char[] buffer = new char[BUFFER_SIZE];
-        int charsRead;
+        if (callback != null && !isCancelled())
+        {
+            callback.downloadFinished();
+        }
+    }
+
+
+    /*downloads and stores a file*/
+    private void downloadFile(FileDescription description)
+    {
+        HttpClient client = new DefaultHttpClient();
         try
         {
-            while ((charsRead = reader.read(buffer)) > 0)
-            {
-                builder.append(String.copyValueOf(buffer, 0, charsRead));
-                buffer = new char[BUFFER_SIZE];
-            }
+            HttpEntity entity = client.execute(new HttpGet(description.getUrl())).getEntity();
+            OutputStream outputStream = context.openFileOutput(description.getName(), Context.MODE_WORLD_READABLE);
+            entity.toString();
+            entity.writeTo(outputStream);
+            outputStream.close();
         } catch (IOException e)
         {
             e.printStackTrace();
         }
-        return builder.toString();
+    }
+
+    public interface DownloadCallback
+    {
+        void downloadFinished();
     }
 }

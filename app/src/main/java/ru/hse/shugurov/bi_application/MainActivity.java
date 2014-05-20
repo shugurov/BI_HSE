@@ -15,7 +15,7 @@ import ru.hse.shugurov.bi_application.gui.fragments.items.AboutUsFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.lists.EventsFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.lists.FragmentWithList;
 import ru.hse.shugurov.bi_application.gui.fragments.special.BillboardFragment;
-import ru.hse.shugurov.bi_application.gui.fragments.special.SchedulePlaceholderFragment;
+import ru.hse.shugurov.bi_application.gui.fragments.special.ScheduleFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.special.SettingFragment;
 import ru.hse.shugurov.bi_application.sections.EventsScreen;
 import ru.hse.shugurov.bi_application.sections.MultipleAdaptersViewSection;
@@ -23,7 +23,7 @@ import ru.hse.shugurov.bi_application.sections.ReferencesSection;
 import ru.hse.shugurov.bi_application.sections.Section;
 import ru.hse.shugurov.bi_application.sections.SingleViewSection;
 
-public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks
+public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks//TODO объйвления не работают
 {
 
     /**
@@ -45,8 +45,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     {
         super.onCreate(savedInstanceState);
         wasRestored = savedInstanceState != null;
-        FileCache.init(this);
         ImageLoader.init(this);
+        FileManager.init(this);
         ApplicationStructure.setContext(this);
         ApplicationStructure structure = ApplicationStructure.getStructure();
         sections = structure.getSections();
@@ -114,7 +114,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             case ContentTypes.SCHEDULE:
                 if (sections[position] instanceof ReferencesSection)
                 {
-                    currentPlaceholder = new SchedulePlaceholderFragment();
+                    currentPlaceholder = new ScheduleFragment();
                 }
                 break;
             case ContentTypes.TEACHERS:

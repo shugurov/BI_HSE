@@ -1,4 +1,4 @@
-package ru.hse.shugurov.gui.placeholders.special;
+package ru.hse.shugurov.bi_application.gui.fragments.special;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -10,26 +10,17 @@ import android.widget.Toast;
 
 import java.io.File;
 
-import ru.hse.shugurov.CallBack;
-import ru.hse.shugurov.Downloader;
-import ru.hse.shugurov.FileCache;
-import ru.hse.shugurov.R;
-import ru.hse.shugurov.gui.MainActivity;
-import ru.hse.shugurov.gui.placeholders.PlaceholderFragment;
-import ru.hse.shugurov.sections.ReferencesSection;
-import ru.hse.shugurov.sections.Section;
+import ru.hse.shugurov.bi_application.Downloader;
+import ru.hse.shugurov.bi_application.FileDescription;
+import ru.hse.shugurov.bi_application.R;
+import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
+import ru.hse.shugurov.bi_application.sections.ReferencesSection;
 
 /**
  * Created by Иван on 20.01.14.
  */
-public class SchedulePlaceholderFragment extends PlaceholderFragment implements View.OnClickListener
+public class ScheduleFragment extends BaseFragment implements View.OnClickListener
 {
-
-
-    public SchedulePlaceholderFragment(MainActivity.FragmentListener fragmentListener, Section section)
-    {
-        super(fragmentListener, section);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -48,7 +39,7 @@ public class SchedulePlaceholderFragment extends PlaceholderFragment implements 
     public void onClick(View view)
     {
         String url = null;
-        switch (view.getId())
+        switch (view.getId())//TODO почему все ссылки null?
         {
             case R.id.schedule_bs1:
                 url = ((ReferencesSection) getSection()).getReference(0);
@@ -74,16 +65,13 @@ public class SchedulePlaceholderFragment extends PlaceholderFragment implements 
             Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
             return;
         }
-        //final Uri uri = Uri.parse(url);
-        //DownloadManager manager = (DownloadManager) getContext().getSystemService(Context.DOWNLOAD_SERVICE);
-        //manager.enqueue(new DownloadManager.Request(uri));
-        Downloader downloader = new Downloader(new CallBack()
+        /*Downloader downloader = new Downloader(new CallBack() //TODO remove?
         {
             @Override
             public void call(String[] results)
-            {//TODO тут много бреда(
-                FileCache fileCache = FileCache.instance();
-                fileCache.add("lol.xlsx", results[0]);
+            {
+                FileManager fileManager = FileManager.instance();
+                //fileCache.add("lol.xlsx", results[0]);
                 File file = new File(getActivity().getCacheDir(), "lol.xlsx");
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse(file.getAbsolutePath()));
@@ -96,6 +84,26 @@ public class SchedulePlaceholderFragment extends PlaceholderFragment implements 
                 }
             }
         });
-        downloader.execute(url);
+        downloader.execute(url);*/
+
+        Downloader downloader = new Downloader(getActivity(), new Downloader.DownloadCallback()
+        {
+            @Override
+            public void downloadFinished()
+            {
+                File file = new File(getActivity().getFilesDir(), "lol.xlsx");//TODO
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(file.getAbsolutePath()));
+                try
+                {
+                    startActivity(intent);
+                } catch (Exception e)
+                {
+                    Toast.makeText(getActivity(), "Не получилось открыть файл", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        FileDescription fileDescription = new FileDescription("lol.xlsx", url);//TODO file name
+        downloader.execute(fileDescription);
     }
 }
