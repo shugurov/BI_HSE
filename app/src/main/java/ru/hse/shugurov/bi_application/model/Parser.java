@@ -1,9 +1,14 @@
 package ru.hse.shugurov.bi_application.model;
 
+import android.content.Context;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import ru.hse.shugurov.bi_application.Downloader;
+import ru.hse.shugurov.bi_application.FileDescription;
+import ru.hse.shugurov.bi_application.FileManager;
 import ru.hse.shugurov.bi_application.sections.ReferencesSection;
 
 /**
@@ -304,33 +309,35 @@ public class Parser
         return advertItemItems;
     }
 
-    public static void parseSchedule(final ReferencesSection section, String url)//TODO как работает, если не удалось скачать в первый раз?
+    public static void parseSchedule(Context context, final ReferencesSection section, String url, final String fileName)//TODO как работает, если не удалось скачать в первый раз?
     {
-        /*Downloader downloader = new Downloader(new CallBack()
+        Downloader downloader = new Downloader(context, new Downloader.DownloadCallback()
         {
             @Override
-            public void call(String[] results)//TODO проверить, скачалось ли
+            public void downloadFinished()
             {
-                if (results != null)
+                FileManager fileManager = FileManager.instance();
+                try
                 {
-                    try
+                    String content = fileManager.getFileContent(fileName);
+                    JSONArray jsonArray = new JSONArray(content);
+                    for (int i = 0; i < jsonArray.length(); i++)
                     {
-                        JSONArray jsonArray = new JSONArray(results[0]);
-                        for (int i = 0; i < jsonArray.length(); i++)
-                        {
-                            section.setReference(i, jsonArray.getString(i));
-                        }
-                    } catch (JSONException e)
-                    {
-                        e.printStackTrace();
+                        section.setReference(i, jsonArray.getString(i));
                     }
+                } catch (Exception e)
+                {
+                    return;
                 }
+
             }
         });
-        downloader.execute(url);TODO fix, uncomment*/
+        FileDescription description = new FileDescription(fileName, url);
+        downloader.execute(description);
+
     }
 
-    public static String[] parseEventDates(String json) throws JSONException
+    public static String[] parseEventDates(String json) throws JSONException//TODO I don't use it
     {
         JSONArray datesJSON = new JSONArray(json);
         String[] dates = new String[datesJSON.length()];

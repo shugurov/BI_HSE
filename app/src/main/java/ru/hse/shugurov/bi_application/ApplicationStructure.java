@@ -175,7 +175,7 @@ public class ApplicationStructure
                     break;
                 case ContentTypes.SCHEDULE:
                     section = new ReferencesSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), type, 6);
-                    Parser.parseSchedule((ReferencesSection) section, url);
+                    Parser.parseSchedule(context, (ReferencesSection) section, url, "temp");//TOD а почему temp?
                     break;
                 case ContentTypes.ABOUT_APP:
                     section = new AboutAppSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), type, getImageID(), getDevelopers());

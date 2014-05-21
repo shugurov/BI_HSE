@@ -1,5 +1,6 @@
 package ru.hse.shugurov.bi_application.gui.fragments.special;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -62,44 +63,31 @@ public class ScheduleFragment extends BaseFragment implements View.OnClickListen
         }
         if (url == null)
         {
-            Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Не удалось скачат файл", Toast.LENGTH_SHORT).show();
             return;
         }
-        /*Downloader downloader = new Downloader(new CallBack() //TODO remove?
-        {
-            @Override
-            public void call(String[] results)
-            {
-                FileManager fileManager = FileManager.instance();
-                //fileCache.add("lol.xlsx", results[0]);
-                File file = new File(getActivity().getCacheDir(), "lol.xlsx");
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(file.getAbsolutePath()));
-                try
-                {
-                    startActivity(intent);
-                } catch (Exception e)
-                {
-                    Toast.makeText(getActivity(), "Не получилось открыть файл", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        downloader.execute(url);*/
-
         Downloader downloader = new Downloader(getActivity(), new Downloader.DownloadCallback()
         {
             @Override
             public void downloadFinished()
-            {
-                File file = new File(getActivity().getFilesDir(), "lol.xlsx");//TODO
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(file.getAbsolutePath()));
-                try
+            {//TODO прогресс бар?
+                File file = new File(getActivity().getFilesDir(), "lol.xlsx");//TODO ;(
+                if (file.exists())
                 {
-                    startActivity(intent);
-                } catch (Exception e)
+                    Intent target = new Intent(Intent.ACTION_VIEW);
+                    target.setDataAndType(Uri.fromFile(file), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                    try
+                    {
+                        Intent chooser = Intent.createChooser(target, "Open a file");
+                        getActivity().startActivity(chooser);
+                    } catch (ActivityNotFoundException e)
+                    {
+                        Toast.makeText(getActivity(), "Нет приложений, способных открыть этот тип фалов", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else
                 {
-                    Toast.makeText(getActivity(), "Не получилось открыть файл", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Не удалось открыть файл", Toast.LENGTH_SHORT).show();
                 }
             }
         });
