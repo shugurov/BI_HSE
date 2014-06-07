@@ -5,7 +5,7 @@ import java.util.LinkedList;
 /**
  * Created by Иван on 07.06.2014.
  */
-public class BackStack
+public class BackStack//TODO не работает при перевороте
 {
     private LinkedList<BaseFragment> backStack = new LinkedList<BaseFragment>();
     private boolean avoidAddingToBackStack;

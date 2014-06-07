@@ -57,6 +57,7 @@ public abstract class BaseFragment extends Fragment
     {
         super.onPause();
         backStack.addFragmentToBackStack(this);
+
     }
 
     public Section getSection()
@@ -67,7 +68,6 @@ public abstract class BaseFragment extends Fragment
     protected void showNextFragment(BaseFragment childFragment)
     {
         android.support.v4.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        //transaction.avoidAddingToBackStack(null); TODO remove?
         transaction.replace(R.id.container, childFragment);
         childFragment.setBackStack(backStack);
         transaction.commit();

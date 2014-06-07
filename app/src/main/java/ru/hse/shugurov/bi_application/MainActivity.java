@@ -91,7 +91,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             wasRestored = false;
             return;
         }
-        //navigationDrawerAdapter.setPosition(position); TODO падает при попытке выделить пункт меню
+        if (navigationDrawerAdapter != null)
+        {
+            navigationDrawerAdapter.setPosition(position);
+        }
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragments[position] == null)
         {
@@ -100,6 +103,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         } else
         {
             current = fragments[position].getFragmentToBeShown();
+            if (current == null)
+            {
+                current = fragments[position];
+            }
         }
         fragmentManager.beginTransaction().replace(R.id.container, current).commit();
     }

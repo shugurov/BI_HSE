@@ -50,7 +50,7 @@ public class NavigationDrawerAdapter extends BaseAdapter
     @Override
     public long getItemId(int position)
     {
-        return position;  //Может стоит как-то по-другому получать id?
+        return position;
     }
 
     @Override
@@ -66,17 +66,15 @@ public class NavigationDrawerAdapter extends BaseAdapter
             {
                 responseView = inflater.inflate(R.layout.drawer_item, parent, false);
             }
-            //BEGIN TODO
+            Drawable icon;
             if (position == this.position)
             {
-                responseView.setBackgroundColor(Color.RED);
+                icon = context.getResources().getDrawable(sections[position].getIconSelected());
             } else
             {
-                responseView.setBackgroundColor(Color.WHITE);
+                icon = context.getResources().getDrawable(sections[position].getIconDefault());
             }
-            //END TODO
             ((TextView) responseView.findViewById(R.id.drawer_item_text)).setText(sections[position].getTitle());
-            Drawable icon = context.getResources().getDrawable(sections[position].getIconDefault());
             ((ImageView) responseView.findViewById(R.id.drawer_item_icon)).setImageDrawable(icon);
             return responseView;
         }
