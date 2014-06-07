@@ -1,7 +1,6 @@
 package ru.hse.shugurov.bi_application.gui.fragments.lists;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +16,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import ru.hse.shugurov.bi_application.Downloader;
 import ru.hse.shugurov.bi_application.FileDescription;
+import ru.hse.shugurov.bi_application.FileDownloader;
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.adapters.NewsAdapter;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
@@ -225,12 +224,12 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
         Object item = adapter.getItem(position);
         if (item instanceof NewsItem)
         {
-            Fragment newsItemPlaceholderFragment = new NewsItemFragment();
+            NewsItemFragment newsItemPlaceholderFragment = new NewsItemFragment();
             Bundle arguments = new Bundle();
             arguments.putSerializable(NewsItemFragment.SECTION_TAG, getSection());
             arguments.putSerializable(NewsItemFragment.ITEM_TAG, (NewsItem) item);
             newsItemPlaceholderFragment.setArguments(arguments);
-            showChildFragment(newsItemPlaceholderFragment);
+            showNextFragment(newsItemPlaceholderFragment);
         }
     }
 
@@ -273,7 +272,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                 FileDescription description = new FileDescription(fileName, url);
                 List<FileDescription> descriptionsList = new ArrayList<FileDescription>();
                 descriptionsList.add(description);
-                Downloader downloader = new Downloader(getActivity(), descriptionsList, new Downloader.DownloadCallback()
+                FileDownloader downloader = new FileDownloader(getActivity(), descriptionsList, new FileDownloader.DownloadCallback()
                 {
                     @Override
                     public void downloadFinished()//TODO как-то проверять успешность

@@ -1,7 +1,6 @@
 package ru.hse.shugurov.bi_application.gui.fragments.special;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +12,7 @@ import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 
+import ru.hse.shugurov.bi_application.FileManager;
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.adapters.AdvertAdapter;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
@@ -191,12 +191,12 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
     {
         MultipleAdaptersViewSection currentSection = (MultipleAdaptersViewSection) getSection();
         AdvertAdapter adapter = (AdvertAdapter) currentSection.getAdapter(currentSection.getCurrentState());
-        Fragment advertItemPlaceholderFragment = new AdvertItemFragment();
+        AdvertItemFragment advertItemPlaceholderFragment = new AdvertItemFragment();
         Bundle arguments = new Bundle();
         arguments.putSerializable(AdvertItemFragment.ADVERT_ITEM_TAG, adapter.getItem(position));
         arguments.putSerializable(AdvertItemFragment.SECTION_TAG, getSection());
         advertItemPlaceholderFragment.setArguments(arguments);
-        showChildFragment(advertItemPlaceholderFragment);
+        showNextFragment(advertItemPlaceholderFragment);
     }
 
     private void setAdapters(String result, final LayoutInflater inflater)//TODO а может не надо тут это делать?(
@@ -251,6 +251,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
         });
     }
 
+
     private void setOnClickListeners()
     {
         root.findViewById(R.id.bs1).setOnClickListener(this);
@@ -261,42 +262,49 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
         root.findViewById(R.id.ms2).setOnClickListener(this);
     }
 
+
     private void loadContent(final LayoutInflater inflater)
     {
         currentView = inflater.inflate(R.layout.progress, root, false);
         root.addView(currentView, 0);
-        Runnable loadAdverts = new Runnable()
+        /*Runnable loadAdverts = new Runnable()
         {
             @Override
             public void run()
-            {
-                /*final FileCache fileCache = FileCache.instance();
-                String data = fileCache.get(getSection().getTitle());
-                if (data == null)
+            {*/
+        final FileManager fileManager = FileManager.instance();
+                /*try
                 {
-                    Downloader downloader = new Downloader(new CallBack()//TODO скачиваю только в одном из случаев. может во всех проверять?
+                    String data = fileManager.getFileContent(getSection().getTitle());
+                    if (data.isEmpty())//TODO убрать этот позор
                     {
-                        @Override
-                        public void call(String[] results)
+                        FileDownloader downloader = new FileDownloader(getActivity(), new FileDownloader.DownloadCallback()//TODO скачиваю только в одном из случаев. может во всех проверять?
                         {
-                            if (results != null && results[0] != null)
+                            @Override
+                            public void downloadFinished()
                             {
-                                fileCache.add(getSection().getTitle(), results[0]);//TODO далить этот позор
-                                setAdapters(results[0], inflater);
-                            } else
-                            {
-                                Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                                try
+                                {
+                                    String data = fileManager.getFileContent(getSection().getTitle());
+                                    setAdapters(data, inflater);
+                                } else
+                                {
+                                    Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                    });
-
-                    downloader.execute(((MultipleAdaptersViewSection) getSection()).getUrl());
-                } else
+                        });
+                        downloader.execute(((MultipleAdaptersViewSection) getSection()).getUrl());
+                    } else
+                    {
+                        setAdapters(data, inflater);
+                    }
+                } catch (IOException exception)
                 {
-                    setAdapters(data, inflater);
-                }TODO раскомментировать*/
+                    //Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show(); TODO
+                }TODO fix*/
+
             }
-        };
+        /*};
         new Thread(loadAdverts).start();
-    }
+    }TODO*/
 }

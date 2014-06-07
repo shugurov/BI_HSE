@@ -15,7 +15,7 @@ public abstract class BaseFragment extends Fragment
 {
     public final static String SECTION_TAG = "section";
     private Section section;
-
+    private BackStack backStack;
 
     protected void readStateFromBundle(Bundle args)
     {
@@ -29,6 +29,10 @@ public abstract class BaseFragment extends Fragment
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        if (backStack == null)
+        {
+            backStack = new BackStack();
+        }
         if (savedInstanceState == null)
         {
             Bundle arguments = getArguments();
@@ -48,16 +52,34 @@ public abstract class BaseFragment extends Fragment
         outState.putSerializable(SECTION_TAG, section);
     }
 
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        backStack.addFragmentToBackStack(this);
+    }
+
     public Section getSection()
     {
         return section;
     }
 
-    protected void showChildFragment(Fragment childFragment)
+    protected void showNextFragment(BaseFragment childFragment)
     {
         android.support.v4.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.addToBackStack(null);
+        //transaction.avoidAddingToBackStack(null); TODO remove?
         transaction.replace(R.id.container, childFragment);
+        childFragment.setBackStack(backStack);
         transaction.commit();
+    }
+
+    public BaseFragment getFragmentToBeShown()
+    {
+        return backStack.getFragmentToBeShown();
+    }
+
+    public void setBackStack(BackStack backStack)
+    {
+        this.backStack = backStack;
     }
 }

@@ -11,8 +11,8 @@ import android.widget.Toast;
 
 import java.io.File;
 
-import ru.hse.shugurov.bi_application.Downloader;
 import ru.hse.shugurov.bi_application.FileDescription;
+import ru.hse.shugurov.bi_application.FileDownloader;
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.sections.ReferencesSection;
@@ -66,7 +66,7 @@ public class ScheduleFragment extends BaseFragment implements View.OnClickListen
             Toast.makeText(getActivity(), "Не удалось скачат файл", Toast.LENGTH_SHORT).show();
             return;
         }
-        Downloader downloader = new Downloader(getActivity(), new Downloader.DownloadCallback()
+        FileDownloader downloader = new FileDownloader(getActivity(), new FileDownloader.DownloadCallback()
         {
             @Override
             public void downloadFinished()

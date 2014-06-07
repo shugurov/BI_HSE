@@ -6,8 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import ru.hse.shugurov.bi_application.Downloader;
 import ru.hse.shugurov.bi_application.FileDescription;
+import ru.hse.shugurov.bi_application.FileDownloader;
 import ru.hse.shugurov.bi_application.FileManager;
 import ru.hse.shugurov.bi_application.sections.ReferencesSection;
 
@@ -311,7 +311,7 @@ public class Parser
 
     public static void parseSchedule(Context context, final ReferencesSection section, String url, final String fileName)//TODO как работает, если не удалось скачать в первый раз?
     {
-        Downloader downloader = new Downloader(context, new Downloader.DownloadCallback()
+        FileDownloader downloader = new FileDownloader(context, new FileDownloader.DownloadCallback()
         {
             @Override
             public void downloadFinished()

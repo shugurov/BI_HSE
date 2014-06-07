@@ -3,7 +3,6 @@ package ru.hse.shugurov.bi_application.gui.fragments.lists;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +17,6 @@ import java.io.IOException;
 
 import ru.hse.shugurov.bi_application.ContentTypes;
 import ru.hse.shugurov.bi_application.Downloader;
-import ru.hse.shugurov.bi_application.FileDescription;
 import ru.hse.shugurov.bi_application.FileManager;
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.adapters.ContactAdapter;
@@ -106,7 +104,8 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
 
     private void requestData()//TODo  влияют ли настройки на скачивание?
     {
-        Downloader downloader = new Downloader(getActivity(), new Downloader.DownloadCallback()
+        /*
+        FileDownloader downloader = new FileDownloader(getActivity(), new FileDownloader.DownloadCallback() TODO
         {
             @Override
             public void downloadFinished()
@@ -119,6 +118,22 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
                 } catch (IOException e)
                 {
                     Toast.makeText(getActivity(), "Не удалось загрузить данные", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });*/
+        Downloader downloader = new Downloader(new Downloader.RequestResultCallback()
+        {
+            @Override
+            public void pushResult(String result)//TODO а в отдельном ли потоке пишу в файл?
+            {
+                if (result == null && isAdded())
+                {
+                    Toast.makeText(getActivity(), "Не удалось загрузить данные", Toast.LENGTH_SHORT).show();
+                } else
+                {
+                    FileManager fileManager = FileManager.instance();
+                    fileManager.writeToFile(getSection().getTitle(), result);
+                    fillList(result);
                 }
             }
         });
@@ -140,7 +155,7 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
         {
             url = ((SingleViewSection) getSection()).getUrl();
         }
-        downloader.execute(new FileDescription(fileName, url));
+        downloader.execute(url);
     }
 
     private void writePreferences(String filter)
@@ -159,7 +174,7 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
                 Object item = ((SingleViewSection) getSection()).getAdapter().getItem(position);//TODO вот это мне не нравится(
-                Fragment nextFragment = null;
+                BaseFragment nextFragment = null;
                 Bundle arguments = new Bundle();
                 arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
                 if (item instanceof NewsItem)
@@ -182,7 +197,7 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
                     }
                 }
                 nextFragment.setArguments(arguments);
-                showChildFragment(nextFragment);
+                showNextFragment(nextFragment);
             }
         });
     }
@@ -221,37 +236,40 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
 
     private void fillList(String data)//TODO ловить исключения парсинга?
     {
-        final ListAdapter adapter;
-        switch (getSection().getType())
+        if (isAdded())
         {
-            case ContentTypes.NEWS:
-                NewsItem[] newsItems = Parser.parseNews(data);
-                adapter = new NewsAdapter(getActivity(), newsItems);
-                break;
-            case ContentTypes.PROJECTS_VOLUNTEERING:
-                ProjectItem[] projectItems = Parser.parseProjects(data);
-                adapter = new ProjectAdapter(getActivity(), projectItems);
-                break;
-            case ContentTypes.CONTACTS:
-            case ContentTypes.TEACHERS:
-                ContactItem[] contactItems = Parser.parseContacts(data);
-                adapter = new ContactAdapter(getActivity(), contactItems);
-
-                break;
-            default:
-                return;
-        }
-        ((SingleViewSection) getSection()).setAdapter(adapter);
-        Runnable listCreation = new Runnable()
-        {
-            @Override
-            public void run()
+            final ListAdapter adapter;
+            switch (getSection().getType())
             {
-                listView = (ListView) getLayoutInflater(getArguments()).inflate(R.layout.list, container, false);
-                setListener();
-                setAdapterInsteadProgressDialog(adapter);
+                case ContentTypes.NEWS:
+                    NewsItem[] newsItems = Parser.parseNews(data);
+                    adapter = new NewsAdapter(getActivity(), newsItems);
+                    break;
+                case ContentTypes.PROJECTS_VOLUNTEERING:
+                    ProjectItem[] projectItems = Parser.parseProjects(data);
+                    adapter = new ProjectAdapter(getActivity(), projectItems);
+                    break;
+                case ContentTypes.CONTACTS:
+                case ContentTypes.TEACHERS:
+                    ContactItem[] contactItems = Parser.parseContacts(data);
+                    adapter = new ContactAdapter(getActivity(), contactItems);
+
+                    break;
+                default:
+                    return;
             }
-        };
-        getActivity().runOnUiThread(listCreation);
+            ((SingleViewSection) getSection()).setAdapter(adapter);
+            Runnable listCreation = new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    listView = (ListView) getLayoutInflater(getArguments()).inflate(R.layout.list, container, false);
+                    setListener();
+                    setAdapterInsteadProgressDialog(adapter);
+                }
+            };
+            getActivity().runOnUiThread(listCreation);
+        }
     }
 }

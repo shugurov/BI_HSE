@@ -1,7 +1,9 @@
 package ru.hse.shugurov.bi_application;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -36,7 +38,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private String mTitle;
     private Section[] sections;
     private BaseFragment[] fragments;
-    private BaseFragment currentPlaceholder;
+    private BaseFragment current;
     private NavigationDrawerAdapter navigationDrawerAdapter;
     private boolean wasRestored;
 
@@ -67,6 +69,21 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     }
 
     @Override
+    public void onBackPressed()
+    {
+        Fragment fragmentToBeShown = current.getFragmentToBeShown();
+        if (fragmentToBeShown == null)
+        {
+            super.onBackPressed();
+        } else
+        {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.container, fragmentToBeShown);
+            transaction.commit();
+        }
+    }
+
+    @Override
     public void onNavigationDrawerItemSelected(final int position)
     {
         if (wasRestored)
@@ -74,8 +91,21 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             wasRestored = false;
             return;
         }
-        //navigationDrawerAdapter.checkItem(position);
+        //navigationDrawerAdapter.setPosition(position); TODO падает при попытке выделить пункт меню
         FragmentManager fragmentManager = getSupportFragmentManager();
+        if (fragments[position] == null)
+        {
+            createNewFragment(position);
+            fragments[position] = current;
+        } else
+        {
+            current = fragments[position].getFragmentToBeShown();
+        }
+        fragmentManager.beginTransaction().replace(R.id.container, current).commit();
+    }
+
+    private void createNewFragment(int position)
+    {
         Bundle arguments = new Bundle();
         arguments.putSerializable(FragmentWithList.SECTION_TAG, sections[position]);
         switch (sections[position].getType())
@@ -83,64 +113,61 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             case ContentTypes.NEWS:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    currentPlaceholder = new FragmentWithList();
+                    current = new FragmentWithList();
                 }
                 break;
             case ContentTypes.PROJECTS_VOLUNTEERING:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    currentPlaceholder = new FragmentWithList();
+                    current = new FragmentWithList();
                 }
                 break;
             case ContentTypes.CONTACTS:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    currentPlaceholder = new FragmentWithList();
+                    current = new FragmentWithList();
                 }
                 break;
             case ContentTypes.EVENTS:
                 if (sections[position] instanceof EventsScreen)
                 {
-                    currentPlaceholder = new EventsFragment();
+                    current = new EventsFragment();
                     arguments.putSerializable(EventsFragment.CURRENT_SCREEN_TAG, sections[position]);
                 }
                 break;
             case ContentTypes.BILLBOARD:
                 if (sections[position] instanceof MultipleAdaptersViewSection)
                 {
-                    currentPlaceholder = new BillboardFragment();
+                    current = new BillboardFragment();
                 }
                 break;
             case ContentTypes.SCHEDULE:
                 if (sections[position] instanceof ReferencesSection)
                 {
-                    currentPlaceholder = new ScheduleFragment();
+                    current = new ScheduleFragment();
                 }
                 break;
             case ContentTypes.TEACHERS:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    currentPlaceholder = new FragmentWithList();
+                    current = new FragmentWithList();
                 }
                 break;
             case ContentTypes.SETTINGS:
             {
-                currentPlaceholder = new SettingFragment();
+                current = new SettingFragment();
                 break;
             }
             case ContentTypes.ABOUT_US:
             {
-                currentPlaceholder = new AboutUsFragment();
+                current = new AboutUsFragment();
                 break;
             }
             case ContentTypes.ABOUT_APP:
-                currentPlaceholder = new AboutAppFragment();
+                current = new AboutAppFragment();
                 break;
         }
-
-        fragments[position] = currentPlaceholder;
-        currentPlaceholder.setArguments(arguments);
-        fragmentManager.beginTransaction().replace(R.id.container, currentPlaceholder).commit();
+        current.setArguments(arguments);
     }
 
 

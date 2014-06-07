@@ -2,8 +2,11 @@ package ru.hse.shugurov.bi_application;
 
 import android.content.Context;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 
 /**
  * Used for convenient reading from a file. Design is strongly influenced by singleton design pattern
@@ -73,5 +76,35 @@ public class FileManager
             }
         }
         return builder.toString();
+    }
+
+    public void writeToFile(String fileName, String data)
+    {
+        try
+        {
+            OutputStream outputStream = null;
+            try
+            {
+                outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+                PrintWriter printer = new PrintWriter(outputStream, true);
+                printer.write(data);
+                outputStream.close();
+            } finally
+            {
+                if (outputStream != null)
+                {
+                    outputStream.close();
+                }
+            }
+
+        } catch (IOException e)
+        {
+            File file = new File(context.getFilesDir(), fileName);
+            if (file.exists())
+            {
+                file.delete();
+            }
+        }
+
     }
 }

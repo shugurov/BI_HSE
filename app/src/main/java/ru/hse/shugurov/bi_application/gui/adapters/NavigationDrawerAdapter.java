@@ -24,6 +24,7 @@ public class NavigationDrawerAdapter extends BaseAdapter
     private Section[] sections;
     private LayoutInflater inflater;
     private View[] contentViews;
+    private int position;
 
     public NavigationDrawerAdapter(Context context, Section[] sections)
     {
@@ -65,6 +66,15 @@ public class NavigationDrawerAdapter extends BaseAdapter
             {
                 responseView = inflater.inflate(R.layout.drawer_item, parent, false);
             }
+            //BEGIN TODO
+            if (position == this.position)
+            {
+                responseView.setBackgroundColor(Color.RED);
+            } else
+            {
+                responseView.setBackgroundColor(Color.WHITE);
+            }
+            //END TODO
             ((TextView) responseView.findViewById(R.id.drawer_item_text)).setText(sections[position].getTitle());
             Drawable icon = context.getResources().getDrawable(sections[position].getIconDefault());
             ((ImageView) responseView.findViewById(R.id.drawer_item_icon)).setImageDrawable(icon);
@@ -72,8 +82,9 @@ public class NavigationDrawerAdapter extends BaseAdapter
         }
     }
 
-    public void checkItem(int position)
+    public void setPosition(int position)//TODO
     {
+        this.position = position;
         Section section = getItem(position);
         View checkerView = contentViews[position];
         if (checkerView != null)

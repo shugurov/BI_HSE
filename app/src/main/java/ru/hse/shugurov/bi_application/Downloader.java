@@ -1,111 +1,170 @@
 package ru.hse.shugurov.bi_application;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Collection;
-
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
- * Downloads files and stores them in a local storage
+ * Makes requests to social networks.
  * <p/>
  *
  * @author Ivan Shugurov
  */
-public class Downloader extends AsyncTask<FileDescription, Void, Void>
+public class Downloader extends AsyncTask<String, Void, String[]>
 {
-    private Collection<FileDescription> fileDescriptions;
-    private Context context;
-    private DownloadCallback callback;
+    private RequestResultCallback callback;
+    private MultipleRequestResultCallback multipleRequestResultCallback;
 
     /**
-     * Creates a new instance which will download from links supplied as execute method parameters
+     * Creates instance which downloads 1 item from the Internet
      *
-     * @param context  is used to create files if local storage
-     * @param callback notifies in the end of downloading. null is acceptable
+     * @param callback used for notification when downloading is finished
      */
-    public Downloader(Context context, DownloadCallback callback)
+    public Downloader(RequestResultCallback callback)
     {
-        this.context = context;
         this.callback = callback;
     }
 
     /**
-     * Creates a new instance which will download from links supplied as execute method parameters
-     * and files supplied in {@code fileDescription} collection
+     * Creates instance which downloads a number of items from the Internet
      *
-     * @param context          is used to create files if local storage
-     * @param fileDescriptions descriptions of files to be downloaded
-     * @param callback         notifies in the end of downloading. null is acceptable
+     * @param multipleRequestResultCallback used for notification when downloading is finished
      */
-    public Downloader(Context context, Collection<FileDescription> fileDescriptions, DownloadCallback callback)
+    public Downloader(MultipleRequestResultCallback multipleRequestResultCallback)
     {
-        this(context, callback);
-        this.fileDescriptions = fileDescriptions;
+        this.multipleRequestResultCallback = multipleRequestResultCallback;
     }
 
     @Override
-    protected Void doInBackground(FileDescription... filesToBeDownloaded)
+    protected String[] doInBackground(String[] params)
     {
-        for (FileDescription aFilesToBeDownloaded : filesToBeDownloaded)
+        String[] result = new String[params.length];
+        for (int i = 0; i < params.length; i++)
         {
-            if (isCancelled())
+            result[i] = downloadFromTheInternet(params[i]);
+            if (result[i] == null)
             {
                 return null;
             }
-            downloadFile(aFilesToBeDownloaded);
         }
-        if (fileDescriptions != null)
-        {
-            for (FileDescription description : fileDescriptions)
-            {
-                if (isCancelled())
-                {
-                    return null;
-                }
-                downloadFile(description);
-            }
-        }
-        return null;
+        return result;
     }
-
 
     @Override
-    protected void onPostExecute(Void result)
+    protected void onPostExecute(String[] result)
     {
-        if (callback != null && !isCancelled())
+        if (callback != null)
         {
-            callback.downloadFinished();
+            if (result == null)
+            {
+                callback.pushResult(null);
+            } else
+            {
+                callback.pushResult(result[0]);
+            }
+        } else if (multipleRequestResultCallback != null)
+        {
+            multipleRequestResultCallback.pushResult(result);
         }
     }
 
-
-    /*downloads and stores a file*/
-    private void downloadFile(FileDescription description)
+    /*downloads from the Internet*/
+    private String downloadFromTheInternet(String url)
     {
-        HttpClient client = new DefaultHttpClient();
+        InputStream input = OpenHttpUrlConnection(url);
+        if (input == null)
+        {
+            return null;
+        }
+        int BUFFER_SIZE = 2000;
+        InputStreamReader reader = new InputStreamReader(input);
+        char[] inputBuffer = new char[BUFFER_SIZE];
+        int charRead;
+        String content = "";
         try
         {
-            HttpEntity entity = client.execute(new HttpGet(description.getUrl())).getEntity();
-            OutputStream outputStream = context.openFileOutput(description.getName(), Context.MODE_WORLD_READABLE);
-            entity.toString();
-            entity.writeTo(outputStream);
-            outputStream.close();
+            while ((charRead = reader.read(inputBuffer)) != -1)
+            {
+                String readString = String.copyValueOf(inputBuffer, 0, charRead);
+                content += readString;
+                inputBuffer = new char[BUFFER_SIZE];
+            }
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+            try
+            {
+                input.close();
+            } catch (IOException e1)
+            {
+                e1.printStackTrace();
+            }
+            return null;
+        }
+        return content;
+    }
+
+    /*opens internet connection, gets and returns input stream*/
+    private InputStream OpenHttpUrlConnection(String urlString)
+    {
+        InputStream input = null;
+        int response;
+        try
+        {
+            URL url = new URL(urlString);
+            URLConnection urlConnection = url.openConnection();
+            if (!(urlConnection instanceof HttpURLConnection))
+            {
+                return null;
+            }
+            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+            httpURLConnection.connect();
+            response = httpURLConnection.getResponseCode();
+            if (response == httpURLConnection.HTTP_OK)
+            {
+                input = httpURLConnection.getInputStream();
+            }
+        } catch (MalformedURLException e)
+        {
+            e.printStackTrace();
         } catch (IOException e)
         {
             e.printStackTrace();
         }
+        return input;
     }
 
-    public interface DownloadCallback
+    /**
+     * Used as a callback for notifying of end of downloading.
+     */
+    public interface RequestResultCallback
     {
-        void downloadFinished();
+        /**
+         * Pushes a single result. Generally, objects which implement this interface should check that
+         * obtained value is not null
+         *
+         * @param result is null if downloading was not successful, otherwise not null.
+         */
+        void pushResult(String result);
+    }
+
+    /**
+     * Used as a callback for notifying of end of downloading.
+     */
+    public interface MultipleRequestResultCallback
+    {
+        /**
+         * Pushes a number of results. Generally, objects which implement this interface should check that
+         * obtained array is not null
+         *
+         * @param results is null if downloading was not successful, otherwise not null.
+         */
+        void pushResult(String[] results);
     }
 }
