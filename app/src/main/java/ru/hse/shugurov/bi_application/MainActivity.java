@@ -71,7 +71,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     @Override
     public void onBackPressed()
     {
-        Fragment fragmentToBeShown = current.getFragmentToBeShown();
+        Fragment fragmentToBeShown = current.getPreviousFragment();
         if (fragmentToBeShown == null)
         {
             super.onBackPressed();
@@ -102,7 +102,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             fragments[position] = current;
         } else
         {
-            current = fragments[position].getFragmentToBeShown();
+            current = fragments[position].getCurrrentFragment();
             if (current == null)
             {
                 current = fragments[position];

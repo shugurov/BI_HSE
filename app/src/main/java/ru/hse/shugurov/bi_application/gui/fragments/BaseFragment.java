@@ -33,6 +33,7 @@ public abstract class BaseFragment extends Fragment
         {
             backStack = new BackStack();
         }
+        backStack.addFragmentToBackStack(this);
         if (savedInstanceState == null)
         {
             Bundle arguments = getArguments();
@@ -52,14 +53,6 @@ public abstract class BaseFragment extends Fragment
         outState.putSerializable(SECTION_TAG, section);
     }
 
-    @Override
-    public void onPause()
-    {
-        super.onPause();
-        backStack.addFragmentToBackStack(this);
-
-    }
-
     public Section getSection()
     {
         return section;
@@ -73,12 +66,18 @@ public abstract class BaseFragment extends Fragment
         transaction.commit();
     }
 
-    public BaseFragment getFragmentToBeShown()
+    public BaseFragment getPreviousFragment()
     {
-        return backStack.getFragmentToBeShown();
+        return backStack.getPreviousFragment();
     }
 
-    public void setBackStack(BackStack backStack)
+
+    public BaseFragment getCurrrentFragment()
+    {
+        return backStack.getCurrentFragment();
+    }
+
+    private void setBackStack(BackStack backStack)
     {
         this.backStack = backStack;
     }

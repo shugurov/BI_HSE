@@ -8,22 +8,24 @@ import java.util.LinkedList;
 public class BackStack//TODO не работает при перевороте
 {
     private LinkedList<BaseFragment> backStack = new LinkedList<BaseFragment>();
-    private boolean avoidAddingToBackStack;
 
     public void addFragmentToBackStack(BaseFragment fragment)
     {
-        if (avoidAddingToBackStack)
-        {
-            avoidAddingToBackStack = false;
-        } else
-        {
-            backStack.add(fragment);
-        }
+        backStack.add(fragment);
     }
 
-    public BaseFragment getFragmentToBeShown()
+    public BaseFragment getPreviousFragment()
     {
-        avoidAddingToBackStack = true;
+        if (backStack.size() < 2)
+        {
+            return null;
+        }
+        backStack.removeLast();
+        return backStack.pollLast();
+    }
+
+    public BaseFragment getCurrentFragment()
+    {
         BaseFragment result;
         if (backStack.isEmpty())
         {

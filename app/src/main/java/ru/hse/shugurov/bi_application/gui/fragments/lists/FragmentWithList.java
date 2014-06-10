@@ -137,7 +137,6 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
                 }
             }
         });
-        String fileName = getSection().getTitle();
         String url;
         if (getSection().getType() == ContentTypes.NEWS)
         {

@@ -9,9 +9,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import ru.hse.shugurov.bi_application.Downloader;
 import ru.hse.shugurov.bi_application.FileManager;
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.adapters.AdvertAdapter;
@@ -24,7 +26,7 @@ import ru.hse.shugurov.bi_application.sections.MultipleAdaptersViewSection;
 /**
  * Created by Иван on 13.01.14.
  */
-public class BillboardFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener
+public class BillboardFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener //TODO я сразу качаю или вначале проверяю кэш?
 {
     private LinearLayout root;
     private View currentView;
@@ -271,9 +273,9 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
         {
             @Override
             public void run()
-            {*/
+            {
         final FileManager fileManager = FileManager.instance();
-                /*try
+                try
                 {
                     String data = fileManager.getFileContent(getSection().getTitle());
                     if (data.isEmpty())//TODO убрать этот позор
@@ -287,7 +289,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                                 {
                                     String data = fileManager.getFileContent(getSection().getTitle());
                                     setAdapters(data, inflater);
-                                } else
+                                } catch (IOException e)
                                 {
                                     Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show();
                                 }
@@ -301,10 +303,30 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                 } catch (IOException exception)
                 {
                     //Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show(); TODO
-                }TODO fix*/
+                }
 
             }
-        /*};
-        new Thread(loadAdverts).start();
-    }TODO*/
+        };
+        new Thread(loadAdverts).start();*/
+        Downloader downloader = new Downloader(new Downloader.RequestResultCallback()
+        {
+            @Override
+            public void pushResult(String result)
+            {
+                if (isAdded())
+                {
+                    if (result == null)
+                    {
+                        Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show();
+                    } else
+                    {
+                        FileManager manager = FileManager.instance();
+                        manager.writeToFile(getSection().getTitle(), result);
+                        setAdapters(result, inflater);
+                    }
+                }
+            }
+        });
+        downloader.execute(((MultipleAdaptersViewSection) getSection()).getUrl());
+    }
 }

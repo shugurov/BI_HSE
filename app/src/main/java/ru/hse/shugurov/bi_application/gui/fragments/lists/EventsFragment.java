@@ -10,14 +10,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import ru.hse.shugurov.bi_application.FileDescription;
-import ru.hse.shugurov.bi_application.FileDownloader;
+import ru.hse.shugurov.bi_application.Downloader;
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.adapters.NewsAdapter;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
@@ -238,12 +236,12 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
     {
         currentView = getLayoutInflater(null).inflate(R.layout.progress, root, false);
         root.addView(currentView, 0);
-        Runnable loadingAnnounces = new Runnable()
+        /*Runnable loadingAnnounces = new Runnable()
         {
             @Override
             public void run()
             {
-                /*final FileCache fileCache = FileCache.instance();TODO проверять по-другому
+                final FileCache fileCache = FileCache.instance();TODO проверять по-другому
                 String value = fileCache.get(getSection().getTitle() + "_events");
                 if (value == null)
                 {
@@ -266,7 +264,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                                 Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    });*/
+                    });
                 String fileName = getSection().getTitle() + "_events";
                 String url = currentScreen.getAnnouncesURL();
                 FileDescription description = new FileDescription(fileName, url);
@@ -282,7 +280,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                             if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ANNOUNCES)
                             {
                                 changeAdapters(adapter);
-                            }*/
+                            }
                     }
                 });
                 downloader.execute();
@@ -294,10 +292,31 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     {
                         changeAdapters(adapter);
                     }
-                }TODO раскомментировать*/
+                }
             }
         };
-        new Thread(loadingAnnounces).start();
+        new Thread(loadingAnnounces).start();TODO раскомментировать или удалить?*/
+        Runnable loadingAnnounces = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Downloader downloader = new Downloader(new Downloader.RequestResultCallback()
+                {
+                    @Override
+                    public void pushResult(String result)
+                    {
+                        if (result == null)
+                        {
+                            Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show();
+                        } else
+                        {
+
+                        }
+                    }
+                });
+            }
+        };
     }
 
     private void loadCalendar()
