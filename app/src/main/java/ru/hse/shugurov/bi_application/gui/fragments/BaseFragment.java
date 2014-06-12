@@ -58,6 +58,11 @@ public abstract class BaseFragment extends Fragment
         return section;
     }
 
+    public void setSection(Section section)
+    {
+        this.section = section;
+    }
+
     protected void showNextFragment(BaseFragment childFragment)
     {
         android.support.v4.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -66,18 +71,22 @@ public abstract class BaseFragment extends Fragment
         transaction.commit();
     }
 
-    public BaseFragment getPreviousFragment()
+    public BaseFragment popPreviousFragment()
     {
-        return backStack.getPreviousFragment();
+        return backStack.popPreviousFragment();
     }
 
-
-    public BaseFragment getCurrrentFragment()
+    public BaseFragment popCurrentFragment()
     {
-        return backStack.getCurrentFragment();
+        return backStack.popCurrentFragment();
     }
 
-    private void setBackStack(BackStack backStack)
+    public BackStack getBackStack()
+    {
+        return backStack;
+    }
+
+    void setBackStack(BackStack backStack)
     {
         this.backStack = backStack;
     }

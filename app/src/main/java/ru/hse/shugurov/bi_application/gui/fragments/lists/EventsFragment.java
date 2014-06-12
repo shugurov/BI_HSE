@@ -1,6 +1,7 @@
 package ru.hse.shugurov.bi_application.gui.fragments.lists;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,15 +13,20 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ru.hse.shugurov.bi_application.Downloader;
+import ru.hse.shugurov.bi_application.FileDescription;
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.adapters.NewsAdapter;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.items.NewsItemFragment;
 import ru.hse.shugurov.bi_application.model.NewsItem;
+import ru.hse.shugurov.bi_application.model.Parser;
 import ru.hse.shugurov.bi_application.sections.EventsScreen;
 
 /**
@@ -71,6 +77,8 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
             case ANNOUNCES:
                 if (currentScreen.getAnnounceAdapter() == null)
                 {
+                    Log.d("my log", "load announces from onCreateView");
+                    Log.d("my log", this.toString());
                     loadAnnounces();
                 } else
                 {
@@ -131,6 +139,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                         setAdapterToList(adapter);
                     } else
                     {
+                        Log.d("my log", "load announces from onClick");
                         loadAnnounces();
                     }
                 }
@@ -296,27 +305,26 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
             }
         };
         new Thread(loadingAnnounces).start();TODO раскомментировать или удалить?*/
-        Runnable loadingAnnounces = new Runnable()
+        Downloader downloader = new Downloader(new Downloader.RequestResultCallback()//TODO I do not save downloaded data, I don't check if activity is added to
         {
             @Override
-            public void run()
+            public void pushResult(String result)
             {
-                Downloader downloader = new Downloader(new Downloader.RequestResultCallback()
+                if (result == null)
                 {
-                    @Override
-                    public void pushResult(String result)
+                    Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show();
+                } else
+                {
+                    final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(result));
+                    currentScreen.setAnnounceAdapter(adapter);
+                    if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ANNOUNCES)
                     {
-                        if (result == null)
-                        {
-                            Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show();
-                        } else
-                        {
-
-                        }
+                        changeAdapters(adapter);
                     }
-                });
+                }
             }
-        };
+        });
+        downloader.execute(currentScreen.getAnnouncesURL());
     }
 
     private void loadCalendar()
@@ -331,49 +339,39 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
         {
             currentView = getLayoutInflater(null).inflate(R.layout.progress, root, false);
             root.addView(currentView, 0);
-            Runnable loading = new Runnable()
+            Downloader downloader = new Downloader(new Downloader.RequestResultCallback()
             {
                 @Override
-                public void run()//TODO в чём смысл запускать поток в отдельном потоке?
+                public void pushResult(String result)//TODO
                 {
-                    /*Downloader downloader = new Downloader(new CallBack()TODO новый скачиватель
+                    if (result != null)
                     {
-                        @Override
-                        public void call(String[] results)
+                        try
                         {
-                            if (results != null && results[0] != null)
+                            String[] datesInStringFormat = Parser.parseEventDates(result);
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.M.yy");
+                            Date[] eventDates = new Date[datesInStringFormat.length];
+                            for (int i = 0; i < datesInStringFormat.length; i++)
                             {
-                                try
-                                {
-                                    String[] datesInStringFormat = Parser.parseEventDates(results[0]);
-                                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd.M.yy");
-                                    Date[] eventDates = new Date[datesInStringFormat.length];
-                                    for (int i = 0; i < datesInStringFormat.length; i++)
-                                    {
-                                        eventDates[i] = dateFormat.parse(datesInStringFormat[i]);
-                                    }
-                                    downloadEventsForDates(eventDates);
-
-                                } catch (JSONException e)
-                                {
-                                    Toast.makeText(getActivity(), "Ошибка в ходе загрузки данных", Toast.LENGTH_SHORT).show();
-                                } catch (ParseException e)
-                                {
-                                    Toast.makeText(getActivity(), "Ошибка в ходе загрузки данных", Toast.LENGTH_SHORT).show();
-                                }
-                            } else
-                            {
-                                Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                                eventDates[i] = dateFormat.parse(datesInStringFormat[i]);
                             }
+                            downloadEventsForDates(eventDates);
 
+                        } catch (JSONException e)
+                        {
+                            Toast.makeText(getActivity(), "Ошибка в ходе загрузки данных", Toast.LENGTH_SHORT).show();
+                        } catch (ParseException e)
+                        {
+                            Toast.makeText(getActivity(), "Ошибка в ходе загрузки данных", Toast.LENGTH_SHORT).show();
                         }
-                    });
-                    FileDescription eventsFileDescription = new FileDescription("",currentScreen.getCalendarURL());
-                    downloader.execute(currentScreen.getCalendarURL());TODO раскомментировать*/
-
+                    } else
+                    {
+                        Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                    }
                 }
-            };
-            new Thread(loading).start();
+            });
+            FileDescription eventsFileDescription = new FileDescription("", currentScreen.getCalendarURL());//TODO wtf?
+            downloader.execute(currentScreen.getCalendarURL());
         }
     }
 

@@ -83,7 +83,6 @@ public class NavigationDrawerAdapter extends BaseAdapter
     public void setPosition(int position)//TODO
     {
         this.position = position;
-        Section section = getItem(position);
         View checkerView = contentViews[position];
         if (checkerView != null)
         {

@@ -7,19 +7,18 @@ import android.widget.ListAdapter;
  */
 public class MultipleAdaptersViewSection extends Section
 {
-    private transient final ListAdapter[] adapters;
-    private final String url;
+    private transient ListAdapter[] adapters;
+    private String url;
     private int currentState = 0;
+    private int numberOfAdapters;
+
 
     public MultipleAdaptersViewSection(String title, int iconDefault, int iconSelected, int type, int numberOfAdapters, String url)
     {
         super(title, iconDefault, iconSelected, type);
         this.url = url;
-        adapters = new ListAdapter[numberOfAdapters];
-        for (int i = 0; i < numberOfAdapters; i++)
-        {
-            adapters[i] = null;
-        }
+        this.numberOfAdapters = numberOfAdapters;
+        checkAdapters();
     }
 
     public String getUrl()
@@ -29,17 +28,19 @@ public class MultipleAdaptersViewSection extends Section
 
     public ListAdapter getAdapter(int index)
     {
+        checkAdapters();
         return adapters[index];
     }
 
     public void setAdapter(ListAdapter adapter, int index)
     {
+        checkAdapters();
         adapters[index] = adapter;
     }
 
     public int getNumberOfAdapters()
     {
-        return adapters.length;
+        return numberOfAdapters;
     }
 
     public int getCurrentState()
@@ -50,5 +51,17 @@ public class MultipleAdaptersViewSection extends Section
     public void setCurrentState(int currentState)
     {
         this.currentState = currentState;
+    }
+
+    private void checkAdapters()
+    {
+        if (adapters == null)
+        {
+            adapters = new ListAdapter[numberOfAdapters];
+            for (int i = 0; i < numberOfAdapters; i++)
+            {
+                adapters[i] = null;
+            }
+        }
     }
 }

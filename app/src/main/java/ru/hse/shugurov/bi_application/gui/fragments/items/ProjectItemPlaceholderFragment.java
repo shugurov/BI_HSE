@@ -12,10 +12,8 @@ import android.widget.TextView;
 import ru.hse.shugurov.bi_application.ImageLoader;
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.FlexibleImageView;
-import ru.hse.shugurov.bi_application.gui.adapters.ProjectAdapter;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.model.ProjectItem;
-import ru.hse.shugurov.bi_application.sections.SingleViewSection;
 
 /**
  * Created by Иван on 06.01.14.
@@ -39,7 +37,7 @@ public class ProjectItemPlaceholderFragment extends BaseFragment//TODO поче�
                 startActivity(browserIntent);
             }
         });
-        ImageLoader imageLoader = ((ProjectAdapter) ((SingleViewSection) getSection()).getAdapter()).getImageLoader();
+        ImageLoader imageLoader = ImageLoader.instance();
         ImageView imageView = ((ImageView) rootView.findViewById(R.id.project_layout_picture));
         int paddingLeft = imageView.getPaddingLeft();
         int paddingRight = imageView.getPaddingRight();

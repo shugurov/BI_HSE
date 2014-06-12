@@ -30,10 +30,6 @@ public class ProjectAdapter extends BaseAdapter
         imageLoader = ImageLoader.instance();
     }
 
-    public ImageLoader getImageLoader()
-    {
-        return imageLoader;
-    }
 
     @Override
     public int getCount()

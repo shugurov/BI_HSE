@@ -1,16 +1,21 @@
 package ru.hse.shugurov.bi_application;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
+
+import java.util.Arrays;
 
 import ru.hse.shugurov.bi_application.gui.NavigationDrawerFragment;
 import ru.hse.shugurov.bi_application.gui.adapters.NavigationDrawerAdapter;
+import ru.hse.shugurov.bi_application.gui.fragments.BackStack;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.items.AboutAppFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.items.AboutUsFragment;
@@ -27,7 +32,10 @@ import ru.hse.shugurov.bi_application.sections.SingleViewSection;
 
 public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks//TODO объйвления не работают
 {
-
+    private static final String BACK_STACKS_TAG = "back stacks";
+    private static final String SELECTED_ITEM_TAG = "selected item";
+    //TODO а правильные ли вещи в рейтинге показываются?
+    //TODO неправильно сохраняется номер выбранного элемента
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -40,38 +48,80 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private BaseFragment[] fragments;
     private BaseFragment current;
     private NavigationDrawerAdapter navigationDrawerAdapter;
-    private boolean wasRestored;
+    private int selectedIndex; //TODO не рабоатет
+    private boolean isRestored;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        wasRestored = savedInstanceState != null;
+        isRestored = savedInstanceState != null;
         ImageLoader.init(this);
         FileManager.init(this);
         ApplicationStructure.setContext(this);
         ApplicationStructure structure = ApplicationStructure.getStructure();
         sections = structure.getSections();
-        fragments = new BaseFragment[sections.length]; //TODO зачем создаю массив??(
-        for (int i = 0; i < fragments.length; i++)
+        if (savedInstanceState == null)
         {
-            fragments[i] = null;
+            fragments = new BaseFragment[sections.length];
+            for (int i = 0; i < fragments.length; i++)
+            {
+                fragments[i] = null;
+            }
+        } else
+        {
+            selectedIndex = savedInstanceState.getInt(SELECTED_ITEM_TAG);
+            Parcelable[] array = savedInstanceState.getParcelableArray(BACK_STACKS_TAG);
+            BackStack[] stacks = Arrays.copyOf(array, array.length, BackStack[].class);
+            fragments = new BaseFragment[stacks.length];
+            for (int i = 0; i < stacks.length; i++)
+            {
+                BackStack currentStack = stacks[i];
+                if (currentStack == null)
+                {
+                    fragments[i] = null;
+                } else
+                {
+                    currentStack.restoreBackStack(this);
+                    fragments[i] = currentStack.getMainFragment();
+                }
+            }
+            current = fragments[selectedIndex];
         }
-        setContentView(R.layout.activity_main);
         navigationDrawerAdapter = new NavigationDrawerAdapter(this, sections);
+        setContentView(R.layout.activity_main);
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = sections[0].getTitle();
 
         // Set up the drawer.
 
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout), navigationDrawerAdapter);
+    }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        BackStack[] stacks = new BackStack[fragments.length];
+        for (int i = 0; i < fragments.length; i++)
+        {
+            if (fragments[i] == null)
+            {
+                stacks[i] = null;
+            } else
+            {
+                stacks[i] = fragments[i].getBackStack();
+            }
+        }
+        outState.putParcelableArray(BACK_STACKS_TAG, stacks);
+        outState.putInt(SELECTED_ITEM_TAG, selectedIndex);
+        Log.d("my log", "Selected item: " + selectedIndex);
     }
 
     @Override
     public void onBackPressed()
     {
-        Fragment fragmentToBeShown = current.getPreviousFragment();
+        Fragment fragmentToBeShown = current.popPreviousFragment();
         if (fragmentToBeShown == null)
         {
             super.onBackPressed();
@@ -86,15 +136,23 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     @Override
     public void onNavigationDrawerItemSelected(final int position)
     {
-        if (wasRestored)
-        {
-            wasRestored = false;
-            return;
-        }
         if (navigationDrawerAdapter != null)
         {
-            navigationDrawerAdapter.setPosition(position);
+            if (isRestored)
+            {
+                navigationDrawerAdapter.setPosition(selectedIndex);
+            } else
+            {
+                selectedIndex = position;
+                navigationDrawerAdapter.setPosition(position);
+            }
         }
+        if (isRestored)
+        {
+            isRestored = false;
+            return;
+        }
+        selectedIndex = position;
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragments[position] == null)
         {
@@ -102,7 +160,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             fragments[position] = current;
         } else
         {
-            current = fragments[position].getCurrrentFragment();
+            current = fragments[position].popCurrentFragment();
             if (current == null)
             {
                 current = fragments[position];
