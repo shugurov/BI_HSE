@@ -19,8 +19,11 @@ import ru.hse.shugurov.bi_application.gui.fragments.BackStack;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.items.AboutAppFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.items.AboutUsFragment;
+import ru.hse.shugurov.bi_application.gui.fragments.lists.ContactsListFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.lists.EventsFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.lists.FragmentWithList;
+import ru.hse.shugurov.bi_application.gui.fragments.lists.NewsListFragment;
+import ru.hse.shugurov.bi_application.gui.fragments.lists.ProjectsListFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.special.BillboardFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.special.ScheduleFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.special.SettingFragment;
@@ -178,19 +181,19 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             case ContentTypes.NEWS:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    current = new FragmentWithList();
+                    current = new NewsListFragment();
                 }
                 break;
             case ContentTypes.PROJECTS_VOLUNTEERING:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    current = new FragmentWithList();
+                    current = new ProjectsListFragment();
                 }
                 break;
             case ContentTypes.CONTACTS:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    current = new FragmentWithList();
+                    current = new ContactsListFragment();
                 }
                 break;
             case ContentTypes.EVENTS:
@@ -215,7 +218,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             case ContentTypes.TEACHERS:
                 if (sections[position] instanceof SingleViewSection)
                 {
-                    current = new FragmentWithList();
+                    current = new ContactsListFragment();
                 }
                 break;
             case ContentTypes.SETTINGS:

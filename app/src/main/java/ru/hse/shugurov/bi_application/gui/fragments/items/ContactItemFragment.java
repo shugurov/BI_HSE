@@ -13,15 +13,13 @@ import android.widget.Toast;
 
 import ru.hse.shugurov.bi_application.ImageLoader;
 import ru.hse.shugurov.bi_application.R;
-import ru.hse.shugurov.bi_application.gui.adapters.ContactAdapter;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.model.ContactItem;
-import ru.hse.shugurov.bi_application.sections.SingleViewSection;
 
 /**
  * Created by Иван on 07.01.14.
  */
-public class ContactItemPlaceholderFragment extends BaseFragment
+public class ContactItemFragment extends BaseFragment
 {
     public final static String CONTACT_ITEM_TAG = "contact_item";
     private ContactItem contactItem;
@@ -38,7 +36,7 @@ public class ContactItemPlaceholderFragment extends BaseFragment
         ((TextView) resultView.findViewById(R.id.contact_layout_department)).setText(contactItem.getDepartment());
         ((TextView) resultView.findViewById(R.id.contact_layout_address)).setText(getResources().getString(R.string.address_prefix) + contactItem.getAddress());
         ImageView imageView = (ImageView) resultView.findViewById(R.id.contact_layout_photo);
-        ImageLoader imageLoader = ((ContactAdapter) ((SingleViewSection) getSection()).getAdapter()).getImageLoader();
+        ImageLoader imageLoader = ImageLoader.instance();
         imageLoader.displayImage(contactItem.getPicture(), imageView);
         resultView.findViewById(R.id.contact_layout_send_email).setOnClickListener(new View.OnClickListener()
         {

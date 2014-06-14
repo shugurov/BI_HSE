@@ -13,15 +13,18 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-
-import java.text.ParseException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import ru.hse.shugurov.bi_application.Downloader;
 import ru.hse.shugurov.bi_application.FileDescription;
+import ru.hse.shugurov.bi_application.FileManager;
 import ru.hse.shugurov.bi_application.R;
+import ru.hse.shugurov.bi_application.gui.adapters.CalendarAdapter;
 import ru.hse.shugurov.bi_application.gui.adapters.NewsAdapter;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.items.NewsItemFragment;
@@ -245,55 +248,48 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
     {
         currentView = getLayoutInflater(null).inflate(R.layout.progress, root, false);
         root.addView(currentView, 0);
-        /*Runnable loadingAnnounces = new Runnable()
+        Runnable loadingAnnounces = new Runnable()
         {
             @Override
             public void run()
             {
-                final FileCache fileCache = FileCache.instance();TODO проверять по-другому
-                String value = fileCache.get(getSection().getTitle() + "_events");
+                final FileManager fileCache = FileManager.instance();
+                String value = null;
+                try
+                {
+                    value = fileCache.getFileContent(getSection().getTitle() + "_events");
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
                 if (value == null)
                 {
-                    /*Downloader downloader = new Downloader(new CallBack()//TODO remove?
+                    Downloader downloader = new Downloader(new Downloader.RequestResultCallback()//TODO I do not save downloaded data, I don't check if activity is added to
                     {
                         @Override
-                        public void call(String[] results)
+                        public void pushResult(String result)
                         {
-                            if (results != null && results[0] != null)
+                            if (result == null && isAdded())
                             {
-                                final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(results[0]));
-                                currentScreen.setAnnounceAdapter(adapter);
-                                fileCache.add(getSection().getTitle() + "_events", results[0]);
-                                if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ANNOUNCES)
-                                {
-                                    changeAdapters(adapter);
-                                }
+                                Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show();
                             } else
                             {
-                                Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                                if (isAdded())
+                                {
+                                    final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(result));
+                                    currentScreen.setAnnounceAdapter(adapter);
+                                    if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ANNOUNCES)
+                                    {
+                                        changeAdapters(adapter);
+                                    }
+                                }
+                                fileCache.writeToFile(getSection().getTitle() + "_events", result);
                             }
                         }
                     });
-                String fileName = getSection().getTitle() + "_events";
-                String url = currentScreen.getAnnouncesURL();
-                FileDescription description = new FileDescription(fileName, url);
-                List<FileDescription> descriptionsList = new ArrayList<FileDescription>();
-                descriptionsList.add(description);
-                FileDownloader downloader = new FileDownloader(getActivity(), descriptionsList, new FileDownloader.DownloadCallback()
-                {
-                    @Override
-                    public void downloadFinished()//TODO как-то проверять успешность
-                    {
-                            /*final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(results[0]));TODO раскомментировать
-                            currentScreen.setAnnounceAdapter(adapter);
-                            if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ANNOUNCES)
-                            {
-                                changeAdapters(adapter);
-                            }
-                    }
-                });
-                downloader.execute();
-                /*} else
+                    downloader.execute(currentScreen.getAnnouncesURL());
+
+                } else
                 {
                     ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(value));
                     currentScreen.setAnnounceAdapter(adapter);
@@ -304,27 +300,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                 }
             }
         };
-        new Thread(loadingAnnounces).start();TODO раскомментировать или удалить?*/
-        Downloader downloader = new Downloader(new Downloader.RequestResultCallback()//TODO I do not save downloaded data, I don't check if activity is added to
-        {
-            @Override
-            public void pushResult(String result)
-            {
-                if (result == null)
-                {
-                    Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show();
-                } else
-                {
-                    final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(result));
-                    currentScreen.setAnnounceAdapter(adapter);
-                    if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ANNOUNCES)
-                    {
-                        changeAdapters(adapter);
-                    }
-                }
-            }
-        });
-        downloader.execute(currentScreen.getAnnouncesURL());
+        new Thread(loadingAnnounces).start();
     }
 
     private void loadCalendar()
@@ -342,7 +318,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
             Downloader downloader = new Downloader(new Downloader.RequestResultCallback()
             {
                 @Override
-                public void pushResult(String result)//TODO
+                public void pushResult(String result)//TODO не проверяю isAdded
                 {
                     if (result != null)
                     {
@@ -357,10 +333,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                             }
                             downloadEventsForDates(eventDates);
 
-                        } catch (JSONException e)
-                        {
-                            Toast.makeText(getActivity(), "Ошибка в ходе загрузки данных", Toast.LENGTH_SHORT).show();
-                        } catch (ParseException e)
+                        } catch (Exception e)
                         {
                             Toast.makeText(getActivity(), "Ошибка в ходе загрузки данных", Toast.LENGTH_SHORT).show();
                         }
@@ -378,12 +351,15 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
 
     private void downloadEventsForDates(final Date[] eventDates)
     {
-        /*Downloader downloader = new Downloader(new CallBack()
+        Downloader downloader = new Downloader(new Downloader.MultipleRequestResultCallback()
         {
             @Override
-            public void call(String[] results)
+            public void pushResult(String[] results)//TODO не проверяю isAdded
             {
-                if (results != null)
+                if (results == null)
+                {
+                    Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();//TODO перенести в базовый класс сообщение о невозможности загрузить?
+                } else
                 {
                     removeCurrentView();
                     Map<Calendar, NewsItem[]> dateToNews = new HashMap<Calendar, NewsItem[]>(results.length);
@@ -405,13 +381,10 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                         root.addView(expandableListView, 0);
                         currentView = expandableListView;
                     }
-                } else
-                {
-                    Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        downloader.execute(formRequests(eventDates)); TODO раскомментировать*/
+        downloader.execute(formRequests(eventDates));
     }
 
     private String[] formRequests(Date[] dates)
@@ -449,19 +422,26 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void run()
             {
-                /*final FileCache fileCache = FileCache.instance();
-                String value = fileCache.get(getSection().getTitle() + "_archive");
-                if (value == null)
+                final FileManager fileCache = FileManager.instance();
+                String value = null;
+                try
                 {
-                    Downloader downloader = new Downloader(new CallBack()
+                    value = fileCache.getFileContent(getSection().getTitle() + "_archive");
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+                if (value == null)//TODo не читаю и не записываю в файл в отдельном потоке
+                {
+                    Downloader downloader = new Downloader(new Downloader.RequestResultCallback()
                     {
                         @Override
-                        public void call(String[] results)
+                        public void pushResult(String result)
                         {
-                            if (results != null && results[0] != null)
+                            if (result != null)//TODO не прверяю isAdded
                             {
-                                final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(results[0]));
-                                fileCache.add(getSection().getTitle() + "_archive", results[0]);
+                                final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(result));
+                                fileCache.writeToFile(getSection().getTitle() + "_archive", result);
                                 currentScreen.setArchiveAdapter(adapter);
                                 if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ARCHIVE)
                                 {
@@ -484,7 +464,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     {
                         changeAdapters(adapter);
                     }
-                }TODO раскомментировать, поправить*/
+                }
             }
         };
         new Thread(loading).start();

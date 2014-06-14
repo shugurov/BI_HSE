@@ -18,7 +18,7 @@ public class Parser
 {
     public static NewsItem[] parseNews(String str)
     {
-        str = str.replaceAll("News\":", "\":");//replace with regex
+        str = str.replaceAll("News\":", "\":");//TODO replace with regex
         str = str.replaceAll("Activity\":", "\":");
         JSONArray array;
         try

@@ -23,9 +23,9 @@ public class AboutUsFragment extends BaseFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View rootView = inflater.inflate(R.layout.about_us, container, false);
-        AboutUsSection section = (AboutUsSection) getSection();
+        AboutUsSection section = getSection();
         ImageView imageView = (ImageView) rootView.findViewById(R.id.about_us_image);
-        Bitmap bitmap = BitmapFactory.decodeResource(getActivity().getResources(), ((AboutUsSection) getSection()).getImage());
+        Bitmap bitmap = BitmapFactory.decodeResource(getActivity().getResources(), getSection().getImage());
         double aspectRatio = ((double) bitmap.getHeight()) / bitmap.getWidth();
         int height = (int) Math.round(container.getWidth() * aspectRatio);
         imageView.getLayoutParams().height = height;
@@ -34,5 +34,11 @@ public class AboutUsFragment extends BaseFragment
         ((TextView) rootView.findViewById(R.id.about_us_heading)).setText(section.getHeading());
         ((TextView) rootView.findViewById(R.id.about_us_text)).setText(section.getText());
         return rootView;
+    }
+
+    @Override
+    public AboutUsSection getSection()
+    {
+        return (AboutUsSection) super.getSection();
     }
 }

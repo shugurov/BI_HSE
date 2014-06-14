@@ -18,7 +18,7 @@ import ru.hse.shugurov.bi_application.model.ProjectItem;
 /**
  * Created by Иван on 06.01.14.
  */
-public class ProjectItemPlaceholderFragment extends BaseFragment//TODO почему-то падал при открытии браузера
+public class ProjectItemFragment extends BaseFragment//TODO почему-то падал при открытии браузера
 {
     public final static String PROJECT_ITEM_TAG = "project_item";
     private ProjectItem item;

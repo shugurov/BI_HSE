@@ -1,7 +1,5 @@
 package ru.hse.shugurov.bi_application.gui.fragments.lists;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,27 +13,16 @@ import android.widget.Toast;
 
 import java.io.IOException;
 
-import ru.hse.shugurov.bi_application.ContentTypes;
 import ru.hse.shugurov.bi_application.Downloader;
 import ru.hse.shugurov.bi_application.FileManager;
 import ru.hse.shugurov.bi_application.R;
-import ru.hse.shugurov.bi_application.gui.adapters.ContactAdapter;
-import ru.hse.shugurov.bi_application.gui.adapters.NewsAdapter;
-import ru.hse.shugurov.bi_application.gui.adapters.ProjectAdapter;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
-import ru.hse.shugurov.bi_application.gui.fragments.items.ContactItemPlaceholderFragment;
-import ru.hse.shugurov.bi_application.gui.fragments.items.NewsItemFragment;
-import ru.hse.shugurov.bi_application.gui.fragments.items.ProjectItemPlaceholderFragment;
-import ru.hse.shugurov.bi_application.model.ContactItem;
-import ru.hse.shugurov.bi_application.model.NewsItem;
-import ru.hse.shugurov.bi_application.model.Parser;
-import ru.hse.shugurov.bi_application.model.ProjectItem;
 import ru.hse.shugurov.bi_application.sections.SingleViewSection;
 
 /**
  * Created by Иван on 29.12.13.
  */
-public class FragmentWithList extends BaseFragment //TODO поменять на ListFragment?
+public abstract class FragmentWithList extends BaseFragment implements AdapterView.OnItemClickListener //TODO поменять на ListFragment?
 {
     private LinearLayout rootView;
     private ListView listView;
@@ -48,24 +35,12 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
         super.onCreateView(inflater, container, savedInstanceState);
         this.container = container;
         rootView = (LinearLayout) inflater.inflate(R.layout.fragment_list, container, false);
-        ListAdapter adapter = ((SingleViewSection) getSection()).getAdapter();
+        ListAdapter adapter = getCurrentAdapter();
         if (adapter != null)
         {
-            if (getSection().getType() == ContentTypes.NEWS)
-            {
-                SharedPreferences preferences = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
-                String existedFilter = preferences.getString("filter", "&filter=");
-                String filter = getFilter();
-                if (!existedFilter.equals(filter))
-                {
-                    writePreferences(filter);
-                    ((SingleViewSection) getSection()).setAdapter(null);
-                    return onCreateView(inflater, container, savedInstanceState);
-                }
-            }
             listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
             listView.setAdapter(adapter);
-            setListener();
+            listView.setOnItemClickListener(this);//TODO а почему эта строчка встречается дважды?
         } else
         {
             progressDialog = inflater.inflate(R.layout.progress, rootView, false);
@@ -83,14 +58,14 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
                         data = fileManager.getFileContent(getSection().getTitle());
                         if (data == null)
                         {
-                            requestData();
+                            requestData(getDataUrl());
                         } else
                         {
                             fillList(data);
                         }
                     } catch (IOException e)
                     {
-                        requestData();
+                        requestData(getDataUrl());
                     }
 
 
@@ -102,25 +77,13 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
         return rootView;
     }
 
-    private void requestData()//TODo  влияют ли настройки на скачивание?
+    protected String getDataUrl()
     {
-        /*
-        FileDownloader downloader = new FileDownloader(getActivity(), new FileDownloader.DownloadCallback() TODO
-        {
-            @Override
-            public void downloadFinished()
-            {
-                FileManager fileManager = FileManager.instance();
-                try
-                {
-                    String result = fileManager.getFileContent(getSection().getTitle());
-                    fillList(result);
-                } catch (IOException e)
-                {
-                    Toast.makeText(getActivity(), "Не удалось загрузить данные", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });*/
+        return getSection().getUrl();
+    }
+
+    protected void requestData(String url)//TODo  влияют ли настройки на скачивание?
+    {
         Downloader downloader = new Downloader(new Downloader.RequestResultCallback()
         {
             @Override
@@ -131,101 +94,25 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
                     Toast.makeText(getActivity(), "Не удалось загрузить данные", Toast.LENGTH_SHORT).show();
                 } else
                 {
-                    FileManager fileManager = FileManager.instance();
-                    fileManager.writeToFile(getSection().getTitle(), result);
-                    fillList(result);
+                    if (isAdded())
+                    {
+                        FileManager fileManager = FileManager.instance();
+                        fileManager.writeToFile(getSection().getTitle(), result);
+                        fillList(result);
+                    }
                 }
             }
         });
-        String url;
-        if (getSection().getType() == ContentTypes.NEWS)
-        {
-            String filter = getFilter();
-            writePreferences(filter);
-
-            if (filter.length() == 8)
-            {
-                url = ((SingleViewSection) getSection()).getUrl();
-            } else
-            {
-                url = ((SingleViewSection) getSection()).getUrl() + filter;
-            }
-        } else
-        {
-            url = ((SingleViewSection) getSection()).getUrl();
-        }
         downloader.execute(url);
     }
 
-    private void writePreferences(String filter)
+    protected ListAdapter getCurrentAdapter()
     {
-        SharedPreferences.Editor editor = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE).edit();
-        editor.putString("filter", filter);
-        editor.commit();
-    }
-
-    private void setListener()
-    {
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
-                Object item = ((SingleViewSection) getSection()).getAdapter().getItem(position);//TODO вот это мне не нравится(
-                BaseFragment nextFragment = null;
-                Bundle arguments = new Bundle();
-                arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
-                if (item instanceof NewsItem)
-                {
-                    nextFragment = new NewsItemFragment();
-                    arguments.putSerializable(NewsItemFragment.ITEM_TAG, (NewsItem) item);
-                } else
-                {
-                    if (item instanceof ProjectItem)
-                    {
-                        nextFragment = new ProjectItemPlaceholderFragment();
-                        arguments.putSerializable(ProjectItemPlaceholderFragment.PROJECT_ITEM_TAG, (ProjectItem) item);
-                    } else
-                    {
-                        if (item instanceof ContactItem)
-                        {
-                            nextFragment = new ContactItemPlaceholderFragment();
-                            arguments.putSerializable(ContactItemPlaceholderFragment.CONTACT_ITEM_TAG, (ContactItem) item);
-                        }
-                    }
-                }
-                nextFragment.setArguments(arguments);
-                showNextFragment(nextFragment);
-            }
-        });
-    }
-
-    private String getFilter()
-    {
-        String filter = "&filter=";
-        SharedPreferences preferences = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
-        if (preferences.getBoolean("enrolee", false))
-        {
-            filter += "1";
-        }
-        if (preferences.getBoolean("bs", false))
-        {
-            filter += "2";
-        }
-        if (preferences.getBoolean("ms_enrolee", false))
-        {
-            filter += "3";
-        }
-        if (preferences.getBoolean("ms", false))
-        {
-            filter += "4";
-        }
-        return filter;
+        return getSection().getAdapter();
     }
 
     /*have to be run on GUI thread*/
-    private void setAdapterInsteadProgressDialog(final ListAdapter adapter)
+    protected void setAdapterInsteadProgressDialog(final ListAdapter adapter)
     {
         listView.setAdapter(adapter);
         rootView.removeView(progressDialog);
@@ -233,42 +120,37 @@ public class FragmentWithList extends BaseFragment //TODO поменять на 
         progressDialog = null;
     }
 
-    private void fillList(String data)//TODO ловить исключения парсинга?
+    protected abstract ListAdapter getAdapter(String data);
+
+    private void fillList(String data)
     {
         if (isAdded())
         {
-            final ListAdapter adapter;
-            switch (getSection().getType())
-            {
-                case ContentTypes.NEWS:
-                    NewsItem[] newsItems = Parser.parseNews(data);
-                    adapter = new NewsAdapter(getActivity(), newsItems);
-                    break;
-                case ContentTypes.PROJECTS_VOLUNTEERING:
-                    ProjectItem[] projectItems = Parser.parseProjects(data);
-                    adapter = new ProjectAdapter(getActivity(), projectItems);
-                    break;
-                case ContentTypes.CONTACTS:
-                case ContentTypes.TEACHERS:
-                    ContactItem[] contactItems = Parser.parseContacts(data);
-                    adapter = new ContactAdapter(getActivity(), contactItems);
-
-                    break;
-                default:
-                    return;
-            }
-            ((SingleViewSection) getSection()).setAdapter(adapter);
+            final ListAdapter adapter = getAdapter(data);
+            //TODO что делать, если adapter == null
+            getSection().setAdapter(adapter);
             Runnable listCreation = new Runnable()
             {
                 @Override
                 public void run()
                 {
                     listView = (ListView) getLayoutInflater(getArguments()).inflate(R.layout.list, container, false);
-                    setListener();
+                    listView.setOnItemClickListener(FragmentWithList.this);
                     setAdapterInsteadProgressDialog(adapter);
                 }
             };
             getActivity().runOnUiThread(listCreation);
         }
+    }
+
+    protected <T> T getSelectedItem(AdapterView<?> adapterView, int position)
+    {
+        return (T) adapterView.getItemAtPosition(position);
+    }
+
+    @Override
+    public SingleViewSection getSection()
+    {
+        return (SingleViewSection) super.getSection();
     }
 }

@@ -78,33 +78,47 @@ public class FileManager
         return builder.toString();
     }
 
-    public void writeToFile(String fileName, String data)
+    public void writeToFile(final String fileName, final String data)
     {
-        try
+        Runnable writeTask = new Runnable()
         {
-            OutputStream outputStream = null;
-            try
+            @Override
+            public void run()
             {
-                outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
-                PrintWriter printer = new PrintWriter(outputStream, true);
-                printer.write(data);
-                outputStream.close();
-            } finally
-            {
-                if (outputStream != null)
+                try
                 {
-                    outputStream.close();
+                    writeFile(fileName, data);
+                } catch (IOException e)
+                {
+                    File file = new File(context.getFilesDir(), fileName);
+                    if (file.exists())
+                    {
+                        file.delete();
+                    }
                 }
             }
+        };
+        new Thread(writeTask).start();
 
-        } catch (IOException e)
+    }
+
+    private void writeFile(String fileName, String data) throws IOException
+    {
+        OutputStream outputStream = null;
+        try
         {
-            File file = new File(context.getFilesDir(), fileName);
-            if (file.exists())
+
+            outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            PrintWriter printer = new PrintWriter(outputStream);
+            printer.write(data);
+            printer.flush();
+            outputStream.close();
+        } finally
+        {
+            if (outputStream != null)
             {
-                file.delete();
+                outputStream.close();
             }
         }
-
     }
 }

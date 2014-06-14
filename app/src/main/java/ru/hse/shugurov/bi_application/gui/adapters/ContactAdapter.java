@@ -46,11 +46,6 @@ public class ContactAdapter extends BaseAdapter
         return position;
     }
 
-    public ImageLoader getImageLoader()
-    {
-        return imageLoader;
-    }
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {

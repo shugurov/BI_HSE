@@ -37,11 +37,11 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
     {
         root = (LinearLayout) inflater.inflate(R.layout.billboard, container, false);
         setOnClickListeners();
-        switch (((MultipleAdaptersViewSection) getSection()).getCurrentState())
+        switch (getSection().getCurrentState())
         {
             case 0:
                 ((ImageView) root.findViewById(R.id.bs1)).setImageDrawable(getResources().getDrawable(R.drawable.course1_pressed));
-                if (((MultipleAdaptersViewSection) getSection()).getAdapter(0) != null)
+                if (getSection().getAdapter(0) != null)
                 {
                     setAdapter(inflater, 0);
                 } else
@@ -76,7 +76,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onClick(View view)
     {
-        MultipleAdaptersViewSection section = (MultipleAdaptersViewSection) getSection();
+        MultipleAdaptersViewSection section = getSection();
         switch (view.getId())
         {
             case R.id.bs1:
@@ -156,7 +156,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
 
     private void releaseButton()
     {
-        MultipleAdaptersViewSection section = (MultipleAdaptersViewSection) getSection();
+        MultipleAdaptersViewSection section = getSection();
         switch (section.getCurrentState())
         {
             case 0:
@@ -183,7 +183,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
     private void setAdapter(LayoutInflater inflater, int index)
     {
         currentView = inflater.inflate(R.layout.list, root, false);
-        ((ListView) currentView).setAdapter(((MultipleAdaptersViewSection) getSection()).getAdapter(index));
+        ((ListView) currentView).setAdapter(getSection().getAdapter(index));
         ((ListView) currentView).setOnItemClickListener(this);
         root.addView(currentView, 0);
     }
@@ -191,7 +191,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        MultipleAdaptersViewSection currentSection = (MultipleAdaptersViewSection) getSection();
+        MultipleAdaptersViewSection currentSection = getSection();
         AdvertAdapter adapter = (AdvertAdapter) currentSection.getAdapter(currentSection.getCurrentState());
         AdvertItemFragment advertItemPlaceholderFragment = new AdvertItemFragment();
         Bundle arguments = new Bundle();
@@ -235,7 +235,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                     break;
             }
         }
-        MultipleAdaptersViewSection section = (MultipleAdaptersViewSection) getSection();
+        MultipleAdaptersViewSection section = getSection();
         section.setAdapter(new AdvertAdapter(getActivity(), bs1), 0);
         section.setAdapter(new AdvertAdapter(getActivity(), bs2), 1);
         section.setAdapter(new AdvertAdapter(getActivity(), bs3), 2);
@@ -327,6 +327,12 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                 }
             }
         });
-        downloader.execute(((MultipleAdaptersViewSection) getSection()).getUrl());
+        downloader.execute(getSection().getUrl());
+    }
+
+    @Override
+    public MultipleAdaptersViewSection getSection()
+    {
+        return (MultipleAdaptersViewSection) super.getSection();
     }
 }

@@ -26,11 +26,11 @@ public class AboutAppFragment extends BaseFragment
         int paddingLeft = imageView.getPaddingLeft();
         int paddingRight = imageView.getPaddingRight();
         int width = container.getWidth() - paddingLeft - paddingRight;
-        new FlexibleImageView(imageView, width).setImageBitmap(BitmapFactory.decodeResource(getResources(), ((AboutAppSection) getSection()).getImage()));
+        new FlexibleImageView(imageView, width).setImageBitmap(BitmapFactory.decodeResource(getResources(), getSection().getImage()));
         LinearLayout developersContainer = (LinearLayout) rootView.findViewById(R.id.about_app_container);
-        for (int i = 0; i < ((AboutAppSection) getSection()).getNumberOfDevelopers(); i++)
+        for (int i = 0; i < getSection().getNumberOfDevelopers(); i++)
         {
-            Developer developer = ((AboutAppSection) getSection()).getDeveloper(i);
+            Developer developer = getSection().getDeveloper(i);
             View developerView = inflater.inflate(R.layout.developer, developersContainer, false);
             ((ImageView) developerView.findViewById(R.id.developer_photo)).setImageDrawable(getActivity().getResources().getDrawable(developer.getPhoto()));
             ((TextView) developerView.findViewById(R.id.developer_name)).setText(developer.getName());
@@ -38,5 +38,11 @@ public class AboutAppFragment extends BaseFragment
             developersContainer.addView(developerView, i);
         }
         return rootView;
+    }
+
+    @Override
+    public AboutAppSection getSection()
+    {
+        return (AboutAppSection) super.getSection();
     }
 }
