@@ -1,6 +1,7 @@
 package ru.hse.shugurov.bi_application.gui.fragments.lists;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +23,7 @@ import ru.hse.shugurov.bi_application.sections.SingleViewSection;
 /**
  * Created by Иван on 29.12.13.
  */
-public abstract class FragmentWithList extends BaseFragment implements AdapterView.OnItemClickListener //TODO поменять на ListFragment?
+public abstract class FragmentWithList extends BaseFragment implements AdapterView.OnItemClickListener
 {
     private LinearLayout rootView;
     private ListView listView;
@@ -124,22 +125,26 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
 
     private void fillList(String data)
     {
+        Log.d("json", data);
         if (isAdded())
         {
             final ListAdapter adapter = getAdapter(data);
             //TODO что делать, если adapter == null
             getSection().setAdapter(adapter);
-            Runnable listCreation = new Runnable()
+            if (isAdded())
             {
-                @Override
-                public void run()
+                Runnable listCreation = new Runnable()
                 {
-                    listView = (ListView) getLayoutInflater(getArguments()).inflate(R.layout.list, container, false);
-                    listView.setOnItemClickListener(FragmentWithList.this);
-                    setAdapterInsteadProgressDialog(adapter);
-                }
-            };
-            getActivity().runOnUiThread(listCreation);
+                    @Override
+                    public void run()
+                    {
+                        listView = (ListView) getLayoutInflater(getArguments()).inflate(R.layout.list, container, false);
+                        listView.setOnItemClickListener(FragmentWithList.this);
+                        setAdapterInsteadProgressDialog(adapter);
+                    }
+                };
+                getActivity().runOnUiThread(listCreation);
+            }
         }
     }
 

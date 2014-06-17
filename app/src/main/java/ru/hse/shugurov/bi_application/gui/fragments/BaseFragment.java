@@ -42,8 +42,14 @@ public abstract class BaseFragment extends Fragment//TODO запись в фай
         {
             readStateFromBundle(savedInstanceState);
         }
+    }
+
+    @Override
+    public void onResume()
+    {
+        super.onResume();
         String title = section.getTitle();
-        getActivity().setTitle(title);//TODO неправильный заголовок
+        getActivity().setTitle(title);
     }
 
     @Override

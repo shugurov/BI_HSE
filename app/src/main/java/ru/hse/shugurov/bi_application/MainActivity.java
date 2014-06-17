@@ -6,9 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.Menu;
 
 import java.util.Arrays;
@@ -43,16 +41,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
     private NavigationDrawerFragment mNavigationDrawerFragment;
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    private String mTitle;
     private Section[] sections;
     private BaseFragment[] fragments;
     private BaseFragment current;
     private NavigationDrawerAdapter navigationDrawerAdapter;
-    private int selectedIndex; //TODO не рабоатет
+    private int selectedIndex;
     private boolean isRestored;
+    private String actionBarTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -94,7 +89,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         navigationDrawerAdapter = new NavigationDrawerAdapter(this, sections);
         setContentView(R.layout.activity_main);
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mTitle = sections[0].getTitle();
 
         // Set up the drawer.
 
@@ -118,7 +112,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         }
         outState.putParcelableArray(BACK_STACKS_TAG, stacks);
         outState.putInt(SELECTED_ITEM_TAG, selectedIndex);
-        Log.d("my log", "Selected item: " + selectedIndex);
     }
 
     @Override
@@ -239,22 +232,20 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     }
 
 
-    public void restoreActionBar()
-    {
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
+        getSupportActionBar().setTitle(actionBarTitle);
         if (!mNavigationDrawerFragment.isDrawerOpen())
         {
-            restoreActionBar();
             return true;
         }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public void setTitle(CharSequence title)
+    {
+        actionBarTitle = title.toString();
     }
 }
