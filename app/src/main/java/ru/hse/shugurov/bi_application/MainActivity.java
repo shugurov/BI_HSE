@@ -18,11 +18,11 @@ import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.items.AboutAppFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.items.AboutUsFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.lists.ContactsListFragment;
-import ru.hse.shugurov.bi_application.gui.fragments.lists.EventsFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.lists.FragmentWithList;
 import ru.hse.shugurov.bi_application.gui.fragments.lists.NewsListFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.lists.ProjectsListFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.special.BillboardFragment;
+import ru.hse.shugurov.bi_application.gui.fragments.special.EventsFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.special.ScheduleFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.special.SettingFragment;
 import ru.hse.shugurov.bi_application.sections.EventsScreen;
@@ -31,7 +31,7 @@ import ru.hse.shugurov.bi_application.sections.ReferencesSection;
 import ru.hse.shugurov.bi_application.sections.Section;
 import ru.hse.shugurov.bi_application.sections.SingleViewSection;
 
-public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks//TODO объйвления не работают
+public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks
 {
     private static final String BACK_STACKS_TAG = "back stacks";
     private static final String SELECTED_ITEM_TAG = "selected item";

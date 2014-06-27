@@ -33,12 +33,12 @@ public class CalendarAdapter extends BaseExpandableListAdapter
     private ListView eventsView;
     private Map<Calendar, NewsItem[]> dateToEvents;
 
-    public CalendarAdapter(Context context, Map<Calendar, NewsItem[]> dateToEvents)
+    /*public CalendarAdapter(Context context, Map<Calendar, NewsItem[]> dateToEvents)
     {
         this.context = context;
         inflater = LayoutInflater.from(context);
         this.dateToEvents = dateToEvents;
-    }
+    }*/
 
     @Override
     public int getGroupCount()
