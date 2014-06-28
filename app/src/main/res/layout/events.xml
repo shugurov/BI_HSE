@@ -28,7 +28,6 @@
 
             <TextView
                 style="@style/EventGUIElement"
-                android:text="first"
                 />
         </LinearLayout>
 
@@ -41,8 +40,7 @@
                 android:src="@drawable/calendar_button"/>
 
             <TextView
-                style="@style/EventGUIElement"
-                android:text="second"/>
+                style="@style/EventGUIElement"/>
         </LinearLayout>
 
         <LinearLayout
@@ -54,8 +52,7 @@
                 android:src="@drawable/archive_button"/>
 
             <TextView
-                style="@style/EventGUIElement"
-                android:text="first"/>
+                style="@style/EventGUIElement"/>
         </LinearLayout>
     </LinearLayout>
 

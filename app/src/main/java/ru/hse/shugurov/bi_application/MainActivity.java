@@ -25,7 +25,7 @@ import ru.hse.shugurov.bi_application.gui.fragments.special.BillboardFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.special.EventsFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.special.ScheduleFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.special.SettingFragment;
-import ru.hse.shugurov.bi_application.sections.EventsScreen;
+import ru.hse.shugurov.bi_application.sections.EventsSection;
 import ru.hse.shugurov.bi_application.sections.MultipleAdaptersViewSection;
 import ru.hse.shugurov.bi_application.sections.ReferencesSection;
 import ru.hse.shugurov.bi_application.sections.Section;
@@ -190,7 +190,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 }
                 break;
             case ContentTypes.EVENTS:
-                if (sections[position] instanceof EventsScreen)
+                if (sections[position] instanceof EventsSection)
                 {
                     current = new EventsFragment();
                     arguments.putSerializable(EventsFragment.CURRENT_SCREEN_TAG, sections[position]);

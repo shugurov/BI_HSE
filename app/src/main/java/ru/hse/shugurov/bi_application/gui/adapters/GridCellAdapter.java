@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,15 +38,13 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     private int currentYear;
     private Map<Calendar, NewsItem[]> events;
     private View currentlySelectedView;
-    private CalendarAdapter.CalendarAdapterCallback callback;
 
-    public GridCellAdapter(Context context, int month, int year, Map<Calendar, NewsItem[]> events, CalendarAdapter.CalendarAdapterCallback callback)
+    public GridCellAdapter(Context context, int month, int year, Map<Calendar, NewsItem[]> events)
     {
         super();
         this.context = context;
         this.listOfDaysOnScreen = new ArrayList<DayDescription>();
         this.events = events;
-        this.callback = callback;
         Calendar calendar = Calendar.getInstance();
         currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         currentMonth = calendar.get(Calendar.MONTH) + 1;
@@ -72,7 +71,7 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     }
 
 
-    private void printMonth(int givenMonth, int givenYear)
+    private void printMonth(int givenMonth, int givenYear)//TODo что тут происходит?
     {
         int trailingSpaces;
         int daysInPrevMonth;
@@ -196,9 +195,6 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         {
             /*String event = events.get(selectedDay); TODO тут говорю о нажатие
             callback.setEventListAdapter(Arrays.asList(new String[]{"sdsds"}));*/
-        } else
-        {
-            callback.setEventListAdapter(null);
         }
         Drawable newBackground = context.getResources().getDrawable(R.drawable.calendar_bg_orange);
         if (Build.VERSION.SDK_INT >= 16)
@@ -223,6 +219,11 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     private void setBackgroundV16Minus(View view, Drawable drawable)
     {
         view.setBackgroundDrawable(drawable);
+    }
+
+    public String getMonthDescription()
+    {
+        return months[currentMonth] + " " + currentYear;
     }
 
 }

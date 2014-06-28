@@ -17,7 +17,7 @@ import ru.hse.shugurov.bi_application.model.Icon;
 import ru.hse.shugurov.bi_application.model.Parser;
 import ru.hse.shugurov.bi_application.sections.AboutAppSection;
 import ru.hse.shugurov.bi_application.sections.AboutUsSection;
-import ru.hse.shugurov.bi_application.sections.EventsScreen;
+import ru.hse.shugurov.bi_application.sections.EventsSection;
 import ru.hse.shugurov.bi_application.sections.MultipleAdaptersViewSection;
 import ru.hse.shugurov.bi_application.sections.ReferencesSection;
 import ru.hse.shugurov.bi_application.sections.Section;
@@ -193,7 +193,7 @@ public class ApplicationStructure
             }
         } else
         {
-            section = new EventsScreen(title, icon.getDefaultIcon(), icon.getSelectedIcon(), urls.toArray(new String[urls.size()]), type);
+            section = new EventsSection(title, icon.getDefaultIcon(), icon.getSelectedIcon(), urls.toArray(new String[urls.size()]), type);
 
         }
 
@@ -223,7 +223,7 @@ public class ApplicationStructure
         Icon icon = null;
         try
         {
-            parser.require(XmlPullParser.START_TAG, null, "icon");
+            parser.require(XmlPullParser.START_TAG, null, "icon");//TODO падает при попытке найти картинки?
         } catch (XmlPullParserException e)
         {
             e.printStackTrace();

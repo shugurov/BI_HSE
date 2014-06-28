@@ -3,11 +3,12 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:orientation="vertical"
-              android:layout_weight="1">
+              android:layout_weight="1"
+              android:layout_marginTop="50dp">
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:gravity="left|top"
         android:height="60sp"
         android:orientation="horizontal"
@@ -16,10 +17,11 @@
 
         <ImageView
             android:id="@+id/previous_month"
-            android:layout_width="20sp"
+            android:layout_width="60sp"
             android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:layout_marginLeft="10sp"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="20sp"
+            android:paddingRight="20sp"
             android:src="@drawable/calendar_left_arrow_selector">
         </ImageView>
 
@@ -35,21 +37,22 @@
 
         <ImageView
             android:id="@+id/next_month"
-            android:layout_width="20sp"
+            android:layout_width="60sp"
             android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            android:layout_marginRight="10sp"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="20sp"
+            android:paddingRight="20sp"
             android:src="@drawable/calendar_right_arrow_selector">
         </ImageView>
 
     </LinearLayout>
 
 
-    <ru.hse.shugurov.bi_application.gui.NonScrollableGridView
+    <GridView
         android:id="@+id/calendar"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
         android:numColumns="7">
-    </ru.hse.shugurov.bi_application.gui.NonScrollableGridView>
+    </GridView>
 
 </LinearLayout>

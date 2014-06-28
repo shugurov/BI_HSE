@@ -1,7 +1,7 @@
 package ru.hse.shugurov.bi_application.gui.fragments.special;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +23,7 @@ import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.items.NewsItemFragment;
 import ru.hse.shugurov.bi_application.model.NewsItem;
 import ru.hse.shugurov.bi_application.model.Parser;
-import ru.hse.shugurov.bi_application.sections.EventsScreen;
+import ru.hse.shugurov.bi_application.sections.EventsSection;
 
 /**
  * Created by Иван on 09.01.14.
@@ -32,7 +32,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
 {
     public static final String CURRENT_SCREEN_TAG = "current_screen";
     private int lastPressedButton;
-    private EventsScreen currentScreen;
+    private EventsSection currentScreen;
     private LinearLayout root;
     private ListView list;
     private View currentView;
@@ -73,8 +73,6 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
             case ANNOUNCES:
                 if (currentScreen.getAnnounceAdapter() == null)
                 {
-                    Log.d("my log", "load announces from onCreateView");
-                    Log.d("my log", this.toString());
                     loadAnnounces();
                 } else
                 {
@@ -82,15 +80,15 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                 }
                 break;
             case CALENDAR:
-                if (currentScreen.getCalendarAdapter() == null)
+               /* if (currentScreen.getCalendarAdapter() == null)TODO что тут происходит?
                 {
-                    loadCalendar();
+                    //loadCalendar();  TODO
                 } else
                 {
                     ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);//TODO копипаст(
                     if (currentScreen.getCalendarAdapter() == null)
                     {
-                        loadCalendar();
+                        //TODO loadCalendar();
                     } else
                     {
                         expandableListView.setAdapter(currentScreen.getCalendarAdapter());
@@ -98,7 +96,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                         currentView = expandableListView;
                     }
                 }
-                break;
+                break;*/
             case ARCHIVE:
                 if (currentScreen.getArchiveAdapter() == null)
                 {
@@ -127,17 +125,17 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     ((ImageView) getView().findViewById(R.id.events_announce_image)).setImageDrawable(getResources().getDrawable(R.drawable.anons_button_pressed));
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_announce_image;
-                    currentScreen.setCurrentState(EventsScreen.EventScreenState.ANNOUNCES);
+                    currentScreen.setCurrentState(EventsSection.EventScreenState.ANNOUNCES);
                     adapter = currentScreen.getAnnounceAdapter();
                     removeCurrentView();
-                    if (adapter != null)
+                    /*if (adapter != null)
                     {
                         setAdapterToList(adapter);
                     } else
                     {
                         Log.d("my log", "load announces from onClick");
                         loadAnnounces();
-                    }
+                    }*/
                 }
                 break;
             case R.id.events_calendar_image:
@@ -146,22 +144,33 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     return;
                 } else
                 {
-                    ((ImageView) getView().findViewById(R.id.events_calendar_image)).setImageDrawable(getResources().getDrawable(R.drawable.calendar_button_pressed));
+                    /* TODO remove
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_calendar_image;
-                    currentScreen.setCurrentState(EventsScreen.EventScreenState.CALENDAR);
+                    currentScreen.setCurrentState(EventsSection.EventScreenState.CALENDAR);
                     removeCurrentView();
                     if (currentScreen.getCalendarAdapter() != null)
                     {
-
                         ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);
                         expandableListView.setAdapter(currentScreen.getCalendarAdapter());
                         root.addView(expandableListView, 0);
                         currentView = expandableListView;
                     } else
                     {
-                        loadCalendar();
-                    }
+                        //loadCalendar(); TODO
+                    }*/
+                    ((ImageView) getView().findViewById(R.id.events_calendar_image)).setImageDrawable(getResources().getDrawable(R.drawable.calendar_button_pressed));
+                    releaseButton(lastPressedButton);
+                    lastPressedButton = R.id.events_calendar_image;
+                    currentScreen.setCurrentState(EventsSection.EventScreenState.CALENDAR);
+                    removeCurrentView();
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    BaseFragment calendarFragment = new CalendarFragment();
+                    Bundle arguments = new Bundle();
+                    arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
+                    calendarFragment.setArguments(arguments);
+                    transaction.replace(R.id.events_container, calendarFragment);
+                    transaction.commit();
                 }
                 break;
             case R.id.events_archives_image:
@@ -174,8 +183,8 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     ((ImageView) getView().findViewById(R.id.events_archives_image)).setImageDrawable(getResources().getDrawable(R.drawable.archive_button_pressed));
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_archives_image;
-                    currentScreen.setCurrentState(EventsScreen.EventScreenState.ARCHIVE);
-                    adapter = currentScreen.getArchiveAdapter();
+                    currentScreen.setCurrentState(EventsSection.EventScreenState.ARCHIVE);
+                    /*adapter = currentScreen.getArchiveAdapter();
                     if (adapter != null)
                     {
                         if (list != null)
@@ -187,7 +196,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     } else
                     {
                         loadArchive();
-                    }
+                    }*/
                 }
                 break;
         }
@@ -271,7 +280,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                                 {
                                     final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(result));
                                     currentScreen.setAnnounceAdapter(adapter);
-                                    if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ANNOUNCES)
+                                    if (currentScreen.getCurrentState() == EventsSection.EventScreenState.ANNOUNCES)
                                     {
                                         changeAdapters(adapter);
                                     }
@@ -286,7 +295,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                 {
                     ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(value));
                     currentScreen.setAnnounceAdapter(adapter);
-                    if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ANNOUNCES)
+                    if (currentScreen.getCurrentState() == EventsSection.EventScreenState.ANNOUNCES)
                     {
                         changeAdapters(adapter);
                     }
@@ -326,7 +335,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                                 final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(result));
                                 fileCache.writeToFile(getSection().getTitle() + "_archive", result);
                                 currentScreen.setArchiveAdapter(adapter);
-                                if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ARCHIVE)
+                                if (currentScreen.getCurrentState() == EventsSection.EventScreenState.ARCHIVE)
                                 {
                                     changeAdapters(adapter);
                                 }
@@ -343,7 +352,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     //TODO что делать если есть кэшированный файл с календарём?
                     ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(value));
                     currentScreen.setArchiveAdapter(adapter);
-                    if (currentScreen.getCurrentState() == EventsScreen.EventScreenState.ARCHIVE)
+                    if (currentScreen.getCurrentState() == EventsSection.EventScreenState.ARCHIVE)
                     {
                         changeAdapters(adapter);
                     }
@@ -386,7 +395,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
     protected void readStateFromBundle(Bundle args)
     {
         super.readStateFromBundle(args);
-        currentScreen = (EventsScreen) args.get(CURRENT_SCREEN_TAG);
+        currentScreen = (EventsSection) args.get(CURRENT_SCREEN_TAG);
         switch (currentScreen.getCurrentState())
         {
             case ANNOUNCES:
