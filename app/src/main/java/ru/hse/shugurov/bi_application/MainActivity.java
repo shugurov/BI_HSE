@@ -36,7 +36,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private static final String BACK_STACKS_TAG = "back stacks";
     private static final String SELECTED_ITEM_TAG = "selected item";
     //TODO а правильные ли вещи в рейтинге показываются?
-    //TODO неправильно сохраняется номер выбранного элемента
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -193,7 +192,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 if (sections[position] instanceof EventsSection)
                 {
                     current = new EventsFragment();
-                    arguments.putSerializable(EventsFragment.CURRENT_SCREEN_TAG, sections[position]);
                 }
                 break;
             case ContentTypes.BILLBOARD:

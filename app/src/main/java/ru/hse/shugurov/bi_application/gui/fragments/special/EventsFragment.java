@@ -6,35 +6,26 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import ru.hse.shugurov.bi_application.R;
-import ru.hse.shugurov.bi_application.gui.adapters.NewsAdapter;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
-import ru.hse.shugurov.bi_application.gui.fragments.items.NewsItemFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.lists.AnnouncesFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.lists.ArchiveFragment;
-import ru.hse.shugurov.bi_application.model.NewsItem;
 import ru.hse.shugurov.bi_application.sections.EventsSection;
 
 /**
  * Created by Иван on 09.01.14.
  */
-public class EventsFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener//TODO календаря нет в кэше
+public class EventsFragment extends BaseFragment implements View.OnClickListener//TODO календаря нет в кэше
 {
-    public static final String CURRENT_SCREEN_TAG = "current_screen";
     private int lastPressedButton;
-    private EventsSection currentScreen;
-    private LinearLayout root;
-    private ListView list;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        root = (LinearLayout) inflater.inflate(R.layout.events, container, false);
+        LinearLayout root = (LinearLayout) inflater.inflate(R.layout.events, container, false);
         //select appropriate button
         switch (lastPressedButton)
         {
@@ -60,20 +51,25 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                 imageView.setImageDrawable(getResources().getDrawable(R.drawable.archive_button_pressed));
                 break;
         }
-        list = (ListView) inflater.inflate(R.layout.list, root, false);
-        list.setOnItemClickListener(this);
-        switch (currentScreen.getCurrentState())
+        Fragment fragmentToBeShown = null;
+        Bundle arguments = new Bundle();
+        switch (getSection().getCurrentState())
         {
             case ANNOUNCES:
-
+                fragmentToBeShown = new AnnouncesFragment();
                 break;
             case CALENDAR:
-
+                fragmentToBeShown = new CalendarFragment();
                 break;
             case ARCHIVE:
-
+                fragmentToBeShown = new ArchiveFragment();
                 break;
         }
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
+        fragmentToBeShown.setArguments(arguments);
+        transaction.replace(R.id.events_container, fragmentToBeShown);
+        transaction.commit();
         return root;
     }
 
@@ -93,7 +89,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     ((ImageView) getView().findViewById(R.id.events_announce_image)).setImageDrawable(getResources().getDrawable(R.drawable.anons_button_pressed));
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_announce_image;
-                    currentScreen.setCurrentState(EventsSection.EventScreenState.ANNOUNCES);
+                    getSection().setCurrentState(EventsSection.EventScreenState.ANNOUNCES);
                     fragmentToBeShown = new AnnouncesFragment();
 
                 }
@@ -107,7 +103,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     ((ImageView) getView().findViewById(R.id.events_calendar_image)).setImageDrawable(getResources().getDrawable(R.drawable.calendar_button_pressed));
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_calendar_image;
-                    currentScreen.setCurrentState(EventsSection.EventScreenState.CALENDAR);
+                    getSection().setCurrentState(EventsSection.EventScreenState.CALENDAR);
                     fragmentToBeShown = new CalendarFragment();
                 }
                 break;
@@ -120,12 +116,12 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     ((ImageView) getView().findViewById(R.id.events_archives_image)).setImageDrawable(getResources().getDrawable(R.drawable.archive_button_pressed));
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_archives_image;
-                    currentScreen.setCurrentState(EventsSection.EventScreenState.ARCHIVE);
+                    getSection().setCurrentState(EventsSection.EventScreenState.ARCHIVE);
                     fragmentToBeShown = new ArchiveFragment();
                 }
                 break;
         }
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
         fragmentToBeShown.setArguments(arguments);
         transaction.replace(R.id.events_container, fragmentToBeShown);
@@ -149,38 +145,10 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-    {
-        NewsAdapter adapter;
-        switch (currentScreen.getCurrentState())
-        {
-            case ANNOUNCES:
-                adapter = (NewsAdapter) currentScreen.getAnnouncesAdapter();
-                break;
-            case ARCHIVE:
-                adapter = (NewsAdapter) currentScreen.getArchiveAdapter();
-                break;
-            default:
-                return;
-        }
-        Object item = adapter.getItem(position);
-        if (item instanceof NewsItem)
-        {
-            NewsItemFragment newsItemPlaceholderFragment = new NewsItemFragment();
-            Bundle arguments = new Bundle();
-            arguments.putSerializable(NewsItemFragment.SECTION_TAG, getSection());
-            arguments.putSerializable(NewsItemFragment.ITEM_TAG, (NewsItem) item);
-            newsItemPlaceholderFragment.setArguments(arguments);
-            showNextFragment(newsItemPlaceholderFragment);
-        }
-    }
-
-    @Override
     protected void readStateFromBundle(Bundle args)
     {
         super.readStateFromBundle(args);
-        currentScreen = (EventsSection) args.get(CURRENT_SCREEN_TAG);
-        switch (currentScreen.getCurrentState())
+        switch (getSection().getCurrentState())
         {
             case ANNOUNCES:
                 lastPressedButton = R.id.events_announce_image;
@@ -195,9 +163,8 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState)
+    public EventsSection getSection()
     {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(CURRENT_SCREEN_TAG, currentScreen);
+        return (EventsSection) super.getSection();
     }
 }

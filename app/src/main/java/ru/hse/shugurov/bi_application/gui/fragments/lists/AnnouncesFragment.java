@@ -1,10 +1,15 @@
 package ru.hse.shugurov.bi_application.gui.fragments.lists;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 
+import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.adapters.NewsAdapter;
+import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
+import ru.hse.shugurov.bi_application.gui.fragments.items.NewsItemFragment;
+import ru.hse.shugurov.bi_application.model.NewsItem;
 import ru.hse.shugurov.bi_application.model.Parser;
 import ru.hse.shugurov.bi_application.sections.EventsSection;
 
@@ -12,7 +17,7 @@ import ru.hse.shugurov.bi_application.sections.EventsSection;
 /**
  * Created by Иван on 29.06.2014.
  */
-public class AnnouncesFragment extends FragmentWithList
+public class AnnouncesFragment extends FragmentWithList//TODO закрыается при нажатии назад
 {
     private static final String FILE_CACHE_NAME = "announces";
 
@@ -50,7 +55,18 @@ public class AnnouncesFragment extends FragmentWithList
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        //TODO create method(
+        BaseFragment newsFragment = new NewsItemFragment();
+        newsFragment.getBackStack().addFragmentToBackStack(this);//TODO это норма?? сделать как в архиве
+        NewsItem item = getSelectedItem(parent, position);
+        Bundle arguments = new Bundle();
+        arguments.putSerializable(NewsItemFragment.ITEM_TAG, item);
+        arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
+        newsFragment.setArguments(arguments);
+        BaseFragment parentFragment = (BaseFragment) getParentFragment();
+        parentFragment.getBackStack().addFragmentToBackStack(parentFragment);
+        android.support.v4.app.FragmentTransaction transaction = getParentFragment().getFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, newsFragment);
+        transaction.commit();
     }
 
     @Override

@@ -1,11 +1,15 @@
 package ru.hse.shugurov.bi_application.gui.fragments.lists;
 
-import android.util.Log;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 
+import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.adapters.NewsAdapter;
+import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
+import ru.hse.shugurov.bi_application.gui.fragments.items.NewsItemFragment;
+import ru.hse.shugurov.bi_application.model.NewsItem;
 import ru.hse.shugurov.bi_application.model.Parser;
 import ru.hse.shugurov.bi_application.sections.EventsSection;
 
@@ -25,22 +29,18 @@ public class ArchiveFragment extends FragmentWithList
     @Override
     protected String getDataUrl()
     {
-        Log.d("archive", "data url is requested");
-        Log.d("archive", "data url: " + getSection().getArchiveURL());
         return getSection().getArchiveURL();
     }
 
     @Override
     protected ListAdapter getCurrentAdapter()
     {
-        Log.d("archive", "current adapter is requested");
         return getSection().getArchiveAdapter();
     }
 
     @Override
     protected ListAdapter getAdapter(String data)
     {
-        Log.d("archive", "adapter creation is requested");
         ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(data));
         return adapter;
     }
@@ -48,14 +48,23 @@ public class ArchiveFragment extends FragmentWithList
     @Override
     protected void setSectionAdapter(ListAdapter adapter)
     {
-        Log.d("archive", "section adapter is set");
         getSection().setArchiveAdapter(adapter);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        //TODO create method(
+        BaseFragment newsFragment = new NewsItemFragment();
+        NewsItem item = getSelectedItem(parent, position);
+        Bundle arguments = new Bundle();
+        arguments.putSerializable(NewsItemFragment.ITEM_TAG, item);
+        arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
+        newsFragment.setArguments(arguments);
+        BaseFragment parentFragment = (BaseFragment) getParentFragment();
+        parentFragment.getBackStack().addFragmentToBackStack(parentFragment);
+        android.support.v4.app.FragmentTransaction transaction = getParentFragment().getFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, newsFragment);
+        transaction.commit();
     }
 
     @Override
