@@ -13,6 +13,7 @@ import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.items.NewsItemFragment;
 import ru.hse.shugurov.bi_application.model.NewsItem;
 import ru.hse.shugurov.bi_application.model.Parser;
+import ru.hse.shugurov.bi_application.sections.SingleViewSection;
 
 /**
  * Created by Иван on 14.06.2014.
@@ -95,6 +96,12 @@ public class NewsListFragment extends FragmentWithList
     }
 
     @Override
+    protected void setSectionAdapter(ListAdapter adapter)
+    {
+        getSection().setAdapter(adapter);
+    }
+
+    @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
         BaseFragment newsFragment = new NewsItemFragment();
@@ -104,5 +111,11 @@ public class NewsListFragment extends FragmentWithList
         arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
         newsFragment.setArguments(arguments);
         showNextFragment(newsFragment);
+    }
+
+    @Override
+    public SingleViewSection getSection()
+    {
+        return (SingleViewSection) super.getSection();
     }
 }

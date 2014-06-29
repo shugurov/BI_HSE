@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,6 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     private static final int DAY_OFFSET = 1;
     private final Context context;
     private final List<DayDescription> listOfDaysOnScreen;
-    private final String[] months = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
     private final int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     private int daysInMonth;
     private int currentDayOfMonth;
@@ -219,11 +217,6 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     private void setBackgroundV16Minus(View view, Drawable drawable)
     {
         view.setBackgroundDrawable(drawable);
-    }
-
-    public String getMonthDescription()
-    {
-        return months[currentMonth] + " " + currentYear;
     }
 
 }

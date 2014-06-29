@@ -10,6 +10,7 @@ import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.items.ContactItemFragment;
 import ru.hse.shugurov.bi_application.model.ContactItem;
 import ru.hse.shugurov.bi_application.model.Parser;
+import ru.hse.shugurov.bi_application.sections.SingleViewSection;
 
 /**
  * Created by Иван on 15.06.2014.
@@ -17,11 +18,29 @@ import ru.hse.shugurov.bi_application.model.Parser;
 public class ContactsListFragment extends FragmentWithList
 {
     @Override
+    protected String getDataUrl()
+    {
+        return getSection().getUrl();
+    }
+
+    @Override
+    protected ListAdapter getCurrentAdapter()
+    {
+        return getSection().getAdapter();
+    }
+
+    @Override
     protected ListAdapter getAdapter(String data)
     {
         ContactItem[] contactItems = Parser.parseContacts(data);
         ListAdapter adapter = new ContactAdapter(getActivity(), contactItems);
         return adapter;
+    }
+
+    @Override
+    protected void setSectionAdapter(ListAdapter adapter)
+    {
+        getSection().setAdapter(adapter);
     }
 
     @Override
@@ -34,5 +53,11 @@ public class ContactsListFragment extends FragmentWithList
         arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
         contactFragment.setArguments(arguments);
         showNextFragment(contactFragment);
+    }
+
+    @Override
+    public SingleViewSection getSection()
+    {
+        return (SingleViewSection) super.getSection();
     }
 }

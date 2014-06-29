@@ -18,7 +18,6 @@ import ru.hse.shugurov.bi_application.Downloader;
 import ru.hse.shugurov.bi_application.FileManager;
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
-import ru.hse.shugurov.bi_application.sections.SingleViewSection;
 
 /**
  * Created by Иван on 29.12.13.
@@ -33,6 +32,7 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
     {
+        container.removeAllViews();//TODO fix when a progress bar is shown
         super.onCreateView(inflater, container, savedInstanceState);
         this.container = container;
         rootView = (LinearLayout) inflater.inflate(R.layout.fragment_list, container, false);
@@ -56,7 +56,7 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
                     final String data;
                     try
                     {
-                        data = fileManager.getFileContent(getSection().getTitle());
+                        data = fileManager.getFileContent(getFileCacheName());
                         if (data == null)
                         {
                             requestData(getDataUrl());
@@ -78,10 +78,12 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
         return rootView;
     }
 
-    protected String getDataUrl()
+    protected String getFileCacheName()
     {
-        return getSection().getUrl();
+        return getSection().getTitle();
     }
+
+    protected abstract String getDataUrl();
 
     protected void requestData(String url)//TODo  влияют ли настройки на скачивание?
     {
@@ -98,7 +100,7 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
                     if (isAdded())
                     {
                         FileManager fileManager = FileManager.instance();
-                        fileManager.writeToFile(getSection().getTitle(), result);
+                        fileManager.writeToFile(getFileCacheName(), result);
                         fillList(result);
                     }
                 }
@@ -107,10 +109,7 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
         downloader.execute(url);
     }
 
-    protected ListAdapter getCurrentAdapter()
-    {
-        return getSection().getAdapter();
-    }
+    protected abstract ListAdapter getCurrentAdapter();
 
     /*have to be run on GUI thread*/
     protected void setAdapterInsteadProgressDialog(final ListAdapter adapter)
@@ -123,6 +122,8 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
 
     protected abstract ListAdapter getAdapter(String data);
 
+    protected abstract void setSectionAdapter(ListAdapter adapter);
+
     private void fillList(String data)
     {
         Log.d("json", data);
@@ -130,7 +131,7 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
         {
             final ListAdapter adapter = getAdapter(data);
             //TODO что делать, если adapter == null
-            getSection().setAdapter(adapter);
+            setSectionAdapter(adapter);
             if (isAdded())
             {
                 Runnable listCreation = new Runnable()
@@ -151,11 +152,5 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
     protected <T> T getSelectedItem(AdapterView<?> adapterView, int position)
     {
         return (T) adapterView.getItemAtPosition(position);
-    }
-
-    @Override
-    public SingleViewSection getSection()
-    {
-        return (SingleViewSection) super.getSection();
     }
 }
