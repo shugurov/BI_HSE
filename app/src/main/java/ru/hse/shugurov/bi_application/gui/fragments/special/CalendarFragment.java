@@ -33,8 +33,8 @@ public class CalendarFragment extends BaseFragment//TODo пока всё дел�
     //TODO падает при перелистывании месяцев
     private ViewGroup container;
     //BEGIN TODO remove? hide?
-    private int month;
-    private int year;
+    /*private int month;
+    private int year;*/
     private TextView currentMonthTextView;
     private GridView calendarView;
 
@@ -111,8 +111,8 @@ public class CalendarFragment extends BaseFragment//TODo пока всё дел�
     private void showCalendar(final Map<Calendar, NewsItem[]> dateToEvents)//TODO лаги в выборе месяца
     {
         final Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        month = calendar.get(Calendar.MONTH) + 1;
-        year = calendar.get(Calendar.YEAR);
+        /*month = calendar.get(Calendar.MONTH); TODO uncomment, remove?
+        year = calendar.get(Calendar.YEAR);*/
         View calendarContainer = getLayoutInflater(null).inflate(R.layout.calendar_layout, container, false);
         calendarView = (GridView) calendarContainer.findViewById(R.id.calendar);
         currentMonthTextView = (TextView) calendarContainer.findViewById(R.id.current_month);
@@ -127,24 +127,26 @@ public class CalendarFragment extends BaseFragment//TODo пока всё дел�
                 switch (v.getId())
                 {
                     case R.id.previous_month:
-                        if (month <= 1)
+                        /*if (month <= 1)TODO
                         {
                             month = 12;
                             year--;
                         } else
                         {
                             month--;
-                        }
+                        }*/
+                        calendar.add(Calendar.MONTH, -1);
                         break;
                     case R.id.next_month:
-                        if (month > 11)
+                        /*if (month > 11) TODO
                         {
                             month = 1;
                             year++;
                         } else
                         {
                             month++;
-                        }
+                        }*/
+                        calendar.add(Calendar.MONTH, 1);
                         break;
                     default:
                         return;
@@ -161,9 +163,8 @@ public class CalendarFragment extends BaseFragment//TODo пока всё дел�
 
     private void setCalendarAdapter(Map<Calendar, NewsItem[]> dateToEvents, Calendar calendar, TextView currentMonth, GridView calendarView)
     {
-        GridCellAdapter adapter = new GridCellAdapter(getActivity(), month, year, dateToEvents);
-        calendar.set(year, month - 1, calendar.get(Calendar.DAY_OF_MONTH));
-        currentMonth.setText(months[month] + " " + calendar.get(Calendar.YEAR));
+        GridCellAdapter adapter = new GridCellAdapter(getActivity(), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), dateToEvents);//TODO тупо передавать каледарь?
+        currentMonth.setText(months[calendar.get(Calendar.MONTH)] + " " + calendar.get(Calendar.YEAR));
         adapter.notifyDataSetChanged();
         calendarView.setAdapter(adapter);
     }

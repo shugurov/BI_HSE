@@ -1,46 +1,29 @@
 package ru.hse.shugurov.bi_application.model;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 /**
  * Created by Иван on 17.03.14.
  */
 public class DayDescription implements Serializable
 {
-    private Calendar calendar;
-    private int color;
+    private final int day;
+    private final int color;
 
-    public DayDescription(int day, int month, int year, int color)
+    public DayDescription(int day, int color)
     {
+        this.day = day;
         this.color = color;
-        calendar = new GregorianCalendar(year, month, day);
-    }
-
-    public int getYear()
-    {
-        return calendar.get(Calendar.YEAR);
     }
 
     public int getDay()
     {
-        return calendar.get(Calendar.DATE);
-    }
-
-    public int getMonth()
-    {
-        return calendar.get(Calendar.MONTH);
+        return day;
     }
 
     public int getColor()
     {
         return color;
-    }
-
-    public Calendar getCalendar()
-    {
-        return calendar;
     }
 
     @Override
@@ -50,7 +33,7 @@ public class DayDescription implements Serializable
         {
             return true;
         }
-        if (o == null || ((Object) this).getClass() != o.getClass())
+        if (o == null || !(o instanceof DayDescription))
         {
             return false;
         }
@@ -61,7 +44,7 @@ public class DayDescription implements Serializable
         {
             return false;
         }
-        if (calendar != null ? !calendar.equals(that.calendar) : that.calendar != null)
+        if (day != that.day)
         {
             return false;
         }
@@ -72,7 +55,7 @@ public class DayDescription implements Serializable
     @Override
     public int hashCode()
     {
-        int result = calendar != null ? calendar.hashCode() : 0;
+        int result = day;
         result = 31 * result + color;
         return result;
     }

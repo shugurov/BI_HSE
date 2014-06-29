@@ -26,11 +26,8 @@ import ru.hse.shugurov.bi_application.model.NewsItem;
  */
 public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
 {
-    private static final int DAY_OFFSET = 1;
     private final Context context;
     private final List<DayDescription> listOfDaysOnScreen;
-    private final int[] daysOfMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    private int daysInMonth;
     private int currentDayOfMonth;
     private int currentMonth; //using traditional numeration. January - 1
     private int currentYear;
@@ -45,16 +42,10 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         this.events = events;
         Calendar calendar = Calendar.getInstance();
         currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-        currentMonth = calendar.get(Calendar.MONTH) + 1;
+        currentMonth = calendar.get(Calendar.MONTH);
         currentYear = calendar.get(Calendar.YEAR);
         printMonth(month, year);
 
-    }
-
-
-    private int getNumberOfDaysOfMonth(int i)
-    {
-        return daysOfMonth[i];
     }
 
     public DayDescription getItem(int position)
@@ -69,75 +60,43 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     }
 
 
-    private void printMonth(int givenMonth, int givenYear)//TODo что тут происходит?
+    private void printMonth(int givenMonth, int givenYear)
     {
         int trailingSpaces;
-        int daysInPrevMonth;
-        int prevMonth;
-        int prevYear;
-        int nextYear;
 
-        int currentMonth = givenMonth - 1;
-        daysInMonth = getNumberOfDaysOfMonth(currentMonth);
+        Calendar previousMonth = new GregorianCalendar(givenYear, givenMonth, 1);
+        previousMonth.add(Calendar.MONTH, -1);
+        Calendar nextMonth = new GregorianCalendar(givenYear, givenMonth, 1);
+        nextMonth.add(Calendar.MONTH, 1);
 
-        GregorianCalendar cal = new GregorianCalendar(givenYear, currentMonth, 1);
-
-        if (currentMonth == 11)
-        {
-            prevMonth = currentMonth - 1;
-            daysInPrevMonth = getNumberOfDaysOfMonth(prevMonth);
-            prevYear = givenYear;
-            nextYear = givenYear + 1;
-        } else if (currentMonth == 0)
-        {
-            prevMonth = 11;
-            prevYear = givenYear - 1;
-            nextYear = givenYear;
-            daysInPrevMonth = getNumberOfDaysOfMonth(prevMonth);
-        } else
-        {
-            prevMonth = currentMonth - 1;
-            nextYear = givenYear;
-            prevYear = givenYear;
-            daysInPrevMonth = getNumberOfDaysOfMonth(prevMonth);
-        }
-
-        int currentWeekDay = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        GregorianCalendar cal = new GregorianCalendar(givenYear, givenMonth, 1);
+        int currentWeekDay = (cal.get(Calendar.DAY_OF_WEEK) + 5) % 7;
         trailingSpaces = currentWeekDay;
 
-        if (cal.isLeapYear(cal.get(Calendar.YEAR)))
-        {
-            if (givenMonth == 2)
-            {
-                ++daysInMonth;
-            } else if (givenMonth == 3)
-            {
-                ++daysInPrevMonth;
-            }
-        }
-
         // Trailing Month days
+        int daysInPreviousMonth = previousMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
         for (int i = 0; i < trailingSpaces; i++)
         {
-            listOfDaysOnScreen.add(new DayDescription(daysInPrevMonth - trailingSpaces + DAY_OFFSET, prevMonth, prevYear, R.color.lightgray));
+            listOfDaysOnScreen.add(new DayDescription(daysInPreviousMonth - trailingSpaces + i + 1, R.color.lightgray));
         }
 
         // Current Month Days
-        for (int i = 1; i <= daysInMonth; i++)
+        int numberOfDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        for (int i = 1; i <= numberOfDays; i++)
         {
             if (i == currentDayOfMonth && this.currentMonth == givenMonth && currentYear == givenYear)
             {
-                listOfDaysOnScreen.add(new DayDescription(i, currentMonth, givenYear, R.color.black));
+                listOfDaysOnScreen.add(new DayDescription(i, R.color.black));
             } else
             {
-                listOfDaysOnScreen.add(new DayDescription(i, currentMonth, givenYear, R.color.lightgray02));
+                listOfDaysOnScreen.add(new DayDescription(i, R.color.lightgray02));
             }
         }
 
         // Leading Month days
-        for (int i = 0; i < listOfDaysOnScreen.size() % 7; i++)
+        for (int i = 1; i <= listOfDaysOnScreen.size() % 7; i++)
         {
-            listOfDaysOnScreen.add(new DayDescription(i, currentMonth, nextYear, R.color.lightgray));
+            listOfDaysOnScreen.add(new DayDescription(i, R.color.lightgray));
         }
     }
 
