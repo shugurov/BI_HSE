@@ -26,15 +26,10 @@ import ru.hse.shugurov.bi_application.sections.EventsSection;
 /**
  * Created by Иван on 17.06.2014.
  */
-public class CalendarFragment extends BaseFragment//TODo пока всё делаю в 1 потоке(
+public class CalendarFragment extends BaseFragment
 {
-    //END TODO
     private final String[] months = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
-    //TODO падает при перелистывании месяцев
     private ViewGroup container;
-    //BEGIN TODO remove? hide?
-    /*private int month;
-    private int year;*/
     private TextView currentMonthTextView;
     private GridView calendarView;
 
@@ -51,7 +46,7 @@ public class CalendarFragment extends BaseFragment//TODo пока всё дел�
         Downloader downloader = new Downloader(new Downloader.MultipleRequestResultCallback()
         {
             @Override
-            public void pushResult(String[] results)//TODO не проверяю isAdded
+            public void pushResult(String[] results)
             {
                 if (results == null)
                 {
@@ -59,7 +54,7 @@ public class CalendarFragment extends BaseFragment//TODo пока всё дел�
                 } else
                 {
                     Map<Calendar, NewsItem[]> dateToEvents = new HashMap<Calendar, NewsItem[]>(results.length);
-                    for (int i = 0; i < results.length; i++)
+                    for (int i = 0; i < results.length; i++)//TODO делаю в главном потоке(
                     {
                         if (results[i] != null)
                         {
@@ -68,7 +63,10 @@ public class CalendarFragment extends BaseFragment//TODo пока всё дел�
                             dateToEvents.put(currentCalendar, Parser.parseNews(results[i]));
                         }
                     }
-                    showCalendar(dateToEvents);
+                    if (isAdded())
+                    {
+                        showCalendar(dateToEvents);
+                    }
                 }
             }
         });
@@ -108,11 +106,9 @@ public class CalendarFragment extends BaseFragment//TODo пока всё дел�
         downloader.execute(getSection().getCalendarURL());
     }
 
-    private void showCalendar(final Map<Calendar, NewsItem[]> dateToEvents)//TODO лаги в выборе месяца
+    private void showCalendar(final Map<Calendar, NewsItem[]> dateToEvents)
     {
         final Calendar calendar = Calendar.getInstance(Locale.getDefault());
-        /*month = calendar.get(Calendar.MONTH); TODO uncomment, remove?
-        year = calendar.get(Calendar.YEAR);*/
         View calendarContainer = getLayoutInflater(null).inflate(R.layout.calendar_layout, container, false);
         calendarView = (GridView) calendarContainer.findViewById(R.id.calendar);
         currentMonthTextView = (TextView) calendarContainer.findViewById(R.id.current_month);
@@ -127,25 +123,9 @@ public class CalendarFragment extends BaseFragment//TODo пока всё дел�
                 switch (v.getId())
                 {
                     case R.id.previous_month:
-                        /*if (month <= 1)TODO
-                        {
-                            month = 12;
-                            year--;
-                        } else
-                        {
-                            month--;
-                        }*/
                         calendar.add(Calendar.MONTH, -1);
                         break;
                     case R.id.next_month:
-                        /*if (month > 11) TODO
-                        {
-                            month = 1;
-                            year++;
-                        } else
-                        {
-                            month++;
-                        }*/
                         calendar.add(Calendar.MONTH, 1);
                         break;
                     default:
@@ -163,7 +143,7 @@ public class CalendarFragment extends BaseFragment//TODo пока всё дел�
 
     private void setCalendarAdapter(Map<Calendar, NewsItem[]> dateToEvents, Calendar calendar, TextView currentMonth, GridView calendarView)
     {
-        GridCellAdapter adapter = new GridCellAdapter(getActivity(), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), dateToEvents);//TODO тупо передавать каледарь?
+        GridCellAdapter adapter = new GridCellAdapter(getActivity(), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), dateToEvents);
         currentMonth.setText(months[calendar.get(Calendar.MONTH)] + " " + calendar.get(Calendar.YEAR));
         adapter.notifyDataSetChanged();
         calendarView.setAdapter(adapter);

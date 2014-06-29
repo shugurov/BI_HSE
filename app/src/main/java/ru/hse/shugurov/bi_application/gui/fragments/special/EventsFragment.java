@@ -9,14 +9,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import java.io.IOException;
-
-import ru.hse.shugurov.bi_application.Downloader;
-import ru.hse.shugurov.bi_application.FileManager;
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.adapters.NewsAdapter;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
@@ -24,7 +18,6 @@ import ru.hse.shugurov.bi_application.gui.fragments.items.NewsItemFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.lists.AnnouncesFragment;
 import ru.hse.shugurov.bi_application.gui.fragments.lists.ArchiveFragment;
 import ru.hse.shugurov.bi_application.model.NewsItem;
-import ru.hse.shugurov.bi_application.model.Parser;
 import ru.hse.shugurov.bi_application.sections.EventsSection;
 
 /**
@@ -37,7 +30,6 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
     private EventsSection currentScreen;
     private LinearLayout root;
     private ListView list;
-    private View currentView;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -73,40 +65,13 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
         switch (currentScreen.getCurrentState())
         {
             case ANNOUNCES:
-                /*if (currentScreen.getAnnouncesAdapter() == null) TODO modify!
-                {
-                    loadAnnounces();
-                } else
-                {
-                    setAdapterToList(currentScreen.getAnnouncesAdapter());
-                }*/
+
                 break;
             case CALENDAR:
-               /* if (currentScreen.getCalendarAdapter() == null)TODO что тут происходит?
-                {
-                    //loadCalendar();  TODO
-                } else
-                {
-                    ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);//TODO копипаст(
-                    if (currentScreen.getCalendarAdapter() == null)
-                    {
-                        //TODO loadCalendar();
-                    } else
-                    {
-                        expandableListView.setAdapter(currentScreen.getCalendarAdapter());
-                        root.addView(expandableListView, 0);
-                        currentView = expandableListView;
-                    }
-                }*/
+
                 break;
             case ARCHIVE:
-                if (currentScreen.getArchiveAdapter() == null)
-                {
-                    loadArchive();
-                } else
-                {
-                    setAdapterToList(currentScreen.getArchiveAdapter());
-                }
+
                 break;
         }
         return root;
@@ -129,16 +94,6 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_announce_image;
                     currentScreen.setCurrentState(EventsSection.EventScreenState.ANNOUNCES);
-                    removeCurrentView();
-                    /*adapter = currentScreen.getAnnouncesAdapter();
-                    if (adapter != null)
-                    {
-                        setAdapterToList(adapter);
-                    } else
-                    {
-                        Log.d("my log", "load announces from onClick");
-                        loadAnnounces();
-                    }*/
                     fragmentToBeShown = new AnnouncesFragment();
 
                 }
@@ -149,26 +104,10 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     return;
                 } else
                 {
-                    /* TODO remove
-                    releaseButton(lastPressedButton);
-                    lastPressedButton = R.id.events_calendar_image;
-                    currentScreen.setCurrentState(EventsSection.EventScreenState.CALENDAR);
-                    removeCurrentView();
-                    if (currentScreen.getCalendarAdapter() != null)
-                    {
-                        ExpandableListView expandableListView = (ExpandableListView) getLayoutInflater(null).inflate(R.layout.expandable_list, root, false);
-                        expandableListView.setAdapter(currentScreen.getCalendarAdapter());
-                        root.addView(expandableListView, 0);
-                        currentView = expandableListView;
-                    } else
-                    {
-                        //loadCalendar(); TODO
-                    }*/
                     ((ImageView) getView().findViewById(R.id.events_calendar_image)).setImageDrawable(getResources().getDrawable(R.drawable.calendar_button_pressed));
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_calendar_image;
                     currentScreen.setCurrentState(EventsSection.EventScreenState.CALENDAR);
-                    removeCurrentView();
                     fragmentToBeShown = new CalendarFragment();
                 }
                 break;
@@ -178,24 +117,10 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
                     return;
                 } else
                 {
-                    removeCurrentView();
                     ((ImageView) getView().findViewById(R.id.events_archives_image)).setImageDrawable(getResources().getDrawable(R.drawable.archive_button_pressed));
                     releaseButton(lastPressedButton);
                     lastPressedButton = R.id.events_archives_image;
                     currentScreen.setCurrentState(EventsSection.EventScreenState.ARCHIVE);
-                    /*adapter = currentScreen.getArchiveAdapter();
-                    if (adapter != null)
-                    {
-                        if (list != null)
-                        {
-                            list.setAdapter(adapter);
-                            currentView = list;
-                            root.addView(list, 0);
-                        }
-                    } else
-                    {
-                        loadArchive();
-                    }*/
                     fragmentToBeShown = new ArchiveFragment();
                 }
                 break;
@@ -248,152 +173,6 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
             newsItemPlaceholderFragment.setArguments(arguments);
             showNextFragment(newsItemPlaceholderFragment);
         }
-    }
-
-
-    /*private void loadAnnounces()
-    {
-        currentView = getLayoutInflater(null).inflate(R.layout.progress, root, false);
-        root.addView(currentView, 0);
-        Runnable loadingAnnounces = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                final FileManager fileCache = FileManager.instance();
-                String value = null;
-                try
-                {
-                    value = fileCache.getFileContent(getSection().getTitle() + "_events");
-                } catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-                if (value == null)
-                {
-                    Downloader downloader = new Downloader(new Downloader.RequestResultCallback()//TODO I do not save downloaded data, I don't check if activity is added to
-                    {
-                        @Override
-                        public void pushResult(String result)
-                        {
-                            if (result == null && isAdded())
-                            {
-                                Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show();
-                            } else
-                            {
-                                if (isAdded())
-                                {
-                                    final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(result));
-                                    currentScreen.setAnnouncesAdapter(adapter);
-                                    if (currentScreen.getCurrentState() == EventsSection.EventScreenState.ANNOUNCES)
-                                    {
-                                        changeAdapters(adapter);
-                                    }
-                                }
-                                fileCache.writeToFile(getSection().getTitle() + "_events", result);
-                            }
-                        }
-                    });
-                    downloader.execute(currentScreen.getAnnouncesURL());
-
-                } else
-                {
-                    ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(value));
-                    currentScreen.setAnnouncesAdapter(adapter);
-                    if (currentScreen.getCurrentState() == EventsSection.EventScreenState.ANNOUNCES)
-                    {
-                        changeAdapters(adapter);
-                    }
-                }
-            }
-        };
-        new Thread(loadingAnnounces).start();
-    }*/
-
-    private void loadArchive()
-    {
-        currentView = getLayoutInflater(null).inflate(R.layout.progress, root, false);
-        root.addView(currentView, 0);
-        Runnable loading = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                final FileManager fileCache = FileManager.instance();
-                String value = null;
-                try
-                {
-                    value = fileCache.getFileContent(getSection().getTitle() + "_archive");
-                } catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-                if (value == null)//TODo не читаю и не записываю в файл в отдельном потоке
-                {
-                    Downloader downloader = new Downloader(new Downloader.RequestResultCallback()
-                    {
-                        @Override
-                        public void pushResult(String result)
-                        {
-                            if (result != null)//TODO не прверяю isAdded
-                            {
-                                final ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(result));
-                                fileCache.writeToFile(getSection().getTitle() + "_archive", result);
-                                currentScreen.setArchiveAdapter(adapter);
-                                if (currentScreen.getCurrentState() == EventsSection.EventScreenState.ARCHIVE)
-                                {
-                                    changeAdapters(adapter);
-                                }
-                            } else
-                            {
-                                Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                    downloader.execute(currentScreen.getArchiveURL());
-                } else
-                {
-
-                    //TODO что делать если есть кэшированный файл с календарём?
-                    ListAdapter adapter = new NewsAdapter(getActivity(), Parser.parseNews(value));
-                    currentScreen.setArchiveAdapter(adapter);
-                    if (currentScreen.getCurrentState() == EventsSection.EventScreenState.ARCHIVE)
-                    {
-                        changeAdapters(adapter);
-                    }
-                }
-            }
-        };
-        new Thread(loading).start();
-    }
-
-    private void changeAdapters(final ListAdapter adapter)
-    {
-        getActivity().runOnUiThread(new Runnable()
-        {
-            @Override
-            public void run()
-            {
-                setAdapterToList(adapter);
-            }
-        });
-    }
-
-    private void setAdapterToList(ListAdapter adapter)//TODO а зачем постоянно удалять список?(
-    {
-        removeCurrentView();
-        list.setAdapter(adapter);
-        root.addView(list, 0);
-        currentView = list;
-    }
-
-    private void removeCurrentView()
-    {
-        if (currentView != null)
-        {
-            root.removeView(currentView);
-        }
-        currentView = null;
     }
 
     @Override
