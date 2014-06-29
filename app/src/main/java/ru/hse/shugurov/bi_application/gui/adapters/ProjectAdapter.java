@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import ru.hse.shugurov.bi_application.ImageLoader;
 import ru.hse.shugurov.bi_application.R;
-import ru.hse.shugurov.bi_application.gui.FlexibleImageView;
+import ru.hse.shugurov.bi_application.gui.ImageViewProxy;
 import ru.hse.shugurov.bi_application.model.ProjectItem;
 
 /**
@@ -63,8 +63,7 @@ public class ProjectAdapter extends BaseAdapter
         imageView.setImageBitmap(null);
         float weightSum = ((LinearLayout) resultViews).getWeightSum();
         int width = (int) ((parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight()) * (1 / weightSum));
-        imageLoader.displayImage(items[position].getPictureUrl(), new FlexibleImageView(imageView, width));
-        //imageLoader.displayImage(items[position].getPictureUrl(), (ImageView) resultViews.findViewById(R.id.project_item_image)); //TODO что это?
+        imageLoader.displayImage(items[position].getPictureUrl(), new ImageViewProxy(imageView, width));
         return resultViews;
     }
 }

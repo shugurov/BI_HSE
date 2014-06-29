@@ -22,7 +22,7 @@ public class ReferencesSection extends Section
         return references[position];
     }
 
-    public void setReference(int position, String reference)//TODO сделать расширяемым массив. лист? оО
+    public void setReference(int position, String reference)
     {
         references[position] = reference;
     }

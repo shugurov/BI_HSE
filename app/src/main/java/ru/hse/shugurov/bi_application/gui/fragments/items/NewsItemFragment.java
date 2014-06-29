@@ -12,14 +12,14 @@ import android.widget.TextView;
 
 import ru.hse.shugurov.bi_application.ImageLoader;
 import ru.hse.shugurov.bi_application.R;
-import ru.hse.shugurov.bi_application.gui.FlexibleImageView;
+import ru.hse.shugurov.bi_application.gui.ImageViewProxy;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.model.NewsItem;
 
 /**
  * Created by Иван on 06.01.14.
  */
-public class NewsItemFragment extends BaseFragment//TODO remove constructor
+public class NewsItemFragment extends BaseFragment
 {
 
     public static final String ITEM_TAG = "news_fragment_concrete_item";
@@ -41,7 +41,7 @@ public class NewsItemFragment extends BaseFragment//TODO remove constructor
         int paddingLeft = newsContainer.getPaddingLeft();
         int paddingRight = newsContainer.getPaddingRight();
         int width = container.getWidth() - paddingLeft - paddingRight;
-        imageLoader.displayImage(item.getPicture(), new FlexibleImageView(imageView, width));
+        imageLoader.displayImage(item.getPicture(), new ImageViewProxy(imageView, width));
         return rootView;
     }
 

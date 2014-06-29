@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ru.hse.shugurov.bi_application.R;
-import ru.hse.shugurov.bi_application.gui.FlexibleImageView;
+import ru.hse.shugurov.bi_application.gui.ImageViewProxy;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.model.Developer;
 import ru.hse.shugurov.bi_application.sections.AboutAppSection;
@@ -26,7 +26,7 @@ public class AboutAppFragment extends BaseFragment
         int paddingLeft = imageView.getPaddingLeft();
         int paddingRight = imageView.getPaddingRight();
         int width = container.getWidth() - paddingLeft - paddingRight;
-        new FlexibleImageView(imageView, width).setImageBitmap(BitmapFactory.decodeResource(getResources(), getSection().getImage()));
+        new ImageViewProxy(imageView, width).setImageBitmap(BitmapFactory.decodeResource(getResources(), getSection().getImage()));
         LinearLayout developersContainer = (LinearLayout) rootView.findViewById(R.id.about_app_container);
         for (int i = 0; i < getSection().getNumberOfDevelopers(); i++)
         {

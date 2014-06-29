@@ -337,7 +337,7 @@ public class Parser
 
     }
 
-    public static String[] parseEventDates(String json) throws JSONException//TODO I don't use it
+    public static String[] parseEventDates(String json) throws JSONException
     {
         JSONArray datesJSON = new JSONArray(json);
         String[] dates = new String[datesJSON.length()];

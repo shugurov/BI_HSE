@@ -20,10 +20,7 @@ public abstract class BaseFragment extends Fragment//TODO запись в фай
 
     protected void readStateFromBundle(Bundle args)
     {
-        if (args != null)//TODO зачем проверка на null?
-        {
-            section = (Section) args.getSerializable(SECTION_TAG);
-        }
+        section = (Section) args.getSerializable(SECTION_TAG);
     }
 
     @Override

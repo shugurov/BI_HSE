@@ -11,13 +11,13 @@ import android.widget.TextView;
 
 import ru.hse.shugurov.bi_application.ImageLoader;
 import ru.hse.shugurov.bi_application.R;
-import ru.hse.shugurov.bi_application.gui.FlexibleImageView;
+import ru.hse.shugurov.bi_application.gui.ImageViewProxy;
 import ru.hse.shugurov.bi_application.model.NewsItem;
 
 /**
  * Created by Иван on 01.01.14.
  */
-public class NewsAdapter extends BaseAdapter//TODO при отсутствии интернета падать может тут
+public class NewsAdapter extends BaseAdapter
 {
     private NewsItem[] items;
     private LayoutInflater inflater;
@@ -63,7 +63,7 @@ public class NewsAdapter extends BaseAdapter//TODO при отсутствии �
         imageView.setImageBitmap(null);
         float weightSum = ((LinearLayout) view).getWeightSum();
         int width = (int) ((parent.getWidth() - parent.getPaddingLeft() - parent.getPaddingRight()) * (1 / weightSum));
-        imageLoader.displayImage(items[position].getPicture(), new FlexibleImageView(imageView, width));
+        imageLoader.displayImage(items[position].getPicture(), new ImageViewProxy(imageView, width));
         return view;
     }
 }

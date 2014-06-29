@@ -6,12 +6,12 @@ import android.widget.ImageView;
 /**
  * Created by Иван on 25.02.14.
  */
-public class FlexibleImageView extends ImageView
+public class ImageViewProxy extends ImageView
 {
     private ImageView realImage;
     private int width;
 
-    public FlexibleImageView(ImageView realImage, int width)
+    public ImageViewProxy(ImageView realImage, int width)
     {
         super(realImage.getContext());
         this.realImage = realImage;
@@ -32,9 +32,9 @@ public class FlexibleImageView extends ImageView
     @Override
     public boolean equals(Object o)
     {
-        if (o instanceof FlexibleImageView)
+        if (o instanceof ImageViewProxy)
         {
-            return realImage.equals(((FlexibleImageView) o).realImage);
+            return realImage.equals(((ImageViewProxy) o).realImage);
         } else
         {
             return false;

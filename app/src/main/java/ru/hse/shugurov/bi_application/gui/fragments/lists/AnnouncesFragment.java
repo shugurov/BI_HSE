@@ -17,7 +17,7 @@ import ru.hse.shugurov.bi_application.sections.EventsSection;
 /**
  * Created by Иван on 29.06.2014.
  */
-public class AnnouncesFragment extends FragmentWithList//TODO закрыается при нажатии назад
+public class AnnouncesFragment extends FragmentWithList
 {
     private static final String FILE_CACHE_NAME = "announces";
 

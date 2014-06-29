@@ -39,7 +39,7 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
         {
             listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
             listView.setAdapter(adapter);
-            listView.setOnItemClickListener(this);//TODO а почему эта строчка встречается дважды?
+            listView.setOnItemClickListener(this);
         } else
         {
             progressDialog = inflater.inflate(R.layout.progress, rootView, false);
@@ -83,12 +83,12 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
 
     protected abstract String getDataUrl();
 
-    protected void requestData(String url)//TODo  влияют ли настройки на скачивание?
+    protected void requestData(String url)
     {
         Downloader downloader = new Downloader(new Downloader.RequestResultCallback()
         {
             @Override
-            public void pushResult(String result)//TODO а в отдельном ли потоке пишу в файл?
+            public void pushResult(String result)
             {
                 if (result == null)
                 {

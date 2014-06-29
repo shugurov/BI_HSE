@@ -11,14 +11,14 @@ import android.widget.TextView;
 
 import ru.hse.shugurov.bi_application.ImageLoader;
 import ru.hse.shugurov.bi_application.R;
-import ru.hse.shugurov.bi_application.gui.FlexibleImageView;
+import ru.hse.shugurov.bi_application.gui.ImageViewProxy;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
 import ru.hse.shugurov.bi_application.model.ProjectItem;
 
 /**
  * Created by Иван on 06.01.14.
  */
-public class ProjectItemFragment extends BaseFragment//TODO почему-то падал при открытии браузера
+public class ProjectItemFragment extends BaseFragment
 {
     public final static String PROJECT_ITEM_TAG = "project_item";
     private ProjectItem item;
@@ -42,7 +42,7 @@ public class ProjectItemFragment extends BaseFragment//TODO почему-то п
         int paddingLeft = imageView.getPaddingLeft();
         int paddingRight = imageView.getPaddingRight();
         int width = container.getWidth() - paddingLeft - paddingRight;
-        imageLoader.displayImage(item.getPictureUrl(), new FlexibleImageView(imageView, width));
+        imageLoader.displayImage(item.getPictureUrl(), new ImageViewProxy(imageView, width));
         return rootView;
     }
 

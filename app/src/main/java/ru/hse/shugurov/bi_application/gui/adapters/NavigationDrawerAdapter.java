@@ -1,7 +1,6 @@
 package ru.hse.shugurov.bi_application.gui.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.util.Arrays;
 
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.sections.Section;
@@ -23,7 +20,6 @@ public class NavigationDrawerAdapter extends BaseAdapter
     private Context context;
     private Section[] sections;
     private LayoutInflater inflater;
-    private View[] contentViews;
     private int position;
 
     public NavigationDrawerAdapter(Context context, Section[] sections)
@@ -31,8 +27,6 @@ public class NavigationDrawerAdapter extends BaseAdapter
         this.context = context;
         this.sections = sections;
         inflater = LayoutInflater.from(context);
-        contentViews = new View[sections.length];
-        Arrays.fill(contentViews, null);
     }
 
     @Override
@@ -56,37 +50,26 @@ public class NavigationDrawerAdapter extends BaseAdapter
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-        if (contentViews[position] != null)
+        View responseView = convertView;
+        if (responseView == null)
         {
-            return convertView;
+            responseView = inflater.inflate(R.layout.drawer_item, parent, false);
+        }
+        Drawable icon;
+        if (position == this.position)
+        {
+            icon = context.getResources().getDrawable(sections[position].getIconSelected());
         } else
         {
-            View responseView = convertView;
-            if (responseView == null)
-            {
-                responseView = inflater.inflate(R.layout.drawer_item, parent, false);
-            }
-            Drawable icon;
-            if (position == this.position)
-            {
-                icon = context.getResources().getDrawable(sections[position].getIconSelected());
-            } else
-            {
-                icon = context.getResources().getDrawable(sections[position].getIconDefault());
-            }
-            ((TextView) responseView.findViewById(R.id.drawer_item_text)).setText(sections[position].getTitle());
-            ((ImageView) responseView.findViewById(R.id.drawer_item_icon)).setImageDrawable(icon);
-            return responseView;
+            icon = context.getResources().getDrawable(sections[position].getIconDefault());
         }
+        ((TextView) responseView.findViewById(R.id.drawer_item_text)).setText(sections[position].getTitle());
+        ((ImageView) responseView.findViewById(R.id.drawer_item_icon)).setImageDrawable(icon);
+        return responseView;
     }
 
-    public void setPosition(int position)//TODO
+    public void setPosition(int position)
     {
         this.position = position;
-        View checkerView = contentViews[position];
-        if (checkerView != null)
-        {
-            checkerView.setBackgroundColor(Color.RED);
-        }
     }
 }
