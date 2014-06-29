@@ -26,7 +26,7 @@ import ru.hse.shugurov.bi_application.sections.EventsSection;
 /**
  * Created by Иван on 17.06.2014.
  */
-public class CalendarFragment extends BaseFragment
+public class CalendarFragment extends BaseFragment//TODO сохранять состояние календаря
 {
     private final String[] months = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
     private ViewGroup container;
@@ -95,11 +95,11 @@ public class CalendarFragment extends BaseFragment
 
                     } catch (Exception e)
                     {
-                        Toast.makeText(getActivity(), "Ошибка в ходе загрузки данных", Toast.LENGTH_SHORT).show();
+                        handleLoadProblem();
                     }
                 } else
                 {
-                    Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();
+                    handleLoadProblem();
                 }
             }
         });

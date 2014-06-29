@@ -33,6 +33,7 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     private int currentYear;
     private Map<Calendar, NewsItem[]> events;
     private View currentlySelectedView;
+    private GregorianCalendar calendarToBeDisplayed;
 
     public GridCellAdapter(Context context, int month, int year, Map<Calendar, NewsItem[]> events)
     {
@@ -69,8 +70,8 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         Calendar nextMonth = new GregorianCalendar(givenYear, givenMonth, 1);
         nextMonth.add(Calendar.MONTH, 1);
 
-        GregorianCalendar cal = new GregorianCalendar(givenYear, givenMonth, 1);
-        int currentWeekDay = (cal.get(Calendar.DAY_OF_WEEK) + 5) % 7;
+        calendarToBeDisplayed = new GregorianCalendar(givenYear, givenMonth, 1);
+        int currentWeekDay = (calendarToBeDisplayed.get(Calendar.DAY_OF_WEEK) + 5) % 7;
         trailingSpaces = currentWeekDay;
 
         // Trailing Month days
@@ -81,7 +82,7 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         }
 
         // Current Month Days
-        int numberOfDays = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int numberOfDays = calendarToBeDisplayed.getActualMaximum(Calendar.DAY_OF_MONTH);
         for (int i = 1; i <= numberOfDays; i++)
         {
             if (i == currentDayOfMonth && this.currentMonth == givenMonth && currentYear == givenYear)
@@ -120,13 +121,13 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         Button gridCell = (Button) row.findViewById(R.id.calendar_day_gridcell);
         gridCell.setOnClickListener(this);
 
-        DayDescription dayToBeShown = listOfDaysOnScreen.get(position);
-
+        DayDescription dayToBeShown = listOfDaysOnScreen.get(position);//TODO проверять trail days
+        Calendar calendarRepresentationOfDay = new GregorianCalendar(calendarToBeDisplayed.get(Calendar.YEAR), calendarToBeDisplayed.get(Calendar.MONTH), dayToBeShown.getDay());
         if (!events.isEmpty())
         {
-            if (events.containsKey(dayToBeShown))
+            if (events.containsKey(calendarRepresentationOfDay))
             {
-                gridCell.setBackgroundColor(Color.RED);
+                gridCell.setBackgroundColor(Color.RED);//TODO если щёлкнуть на мероприятие, то цвет пропадает
             }
         }
 

@@ -1,7 +1,6 @@
 package ru.hse.shugurov.bi_application.gui.fragments.lists;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -92,15 +90,15 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
             @Override
             public void pushResult(String result)//TODO а в отдельном ли потоке пишу в файл?
             {
-                if (result == null && isAdded())
+                if (result == null)
                 {
-                    Toast.makeText(getActivity(), "Не удалось загрузить данные", Toast.LENGTH_SHORT).show();
+                    handleLoadProblem();
                 } else
                 {
+                    FileManager fileManager = FileManager.instance();
+                    fileManager.writeToFile(getFileCacheName(), result);
                     if (isAdded())
                     {
-                        FileManager fileManager = FileManager.instance();
-                        fileManager.writeToFile(getFileCacheName(), result);
                         fillList(result);
                     }
                 }
@@ -126,7 +124,6 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
 
     private void fillList(String data)
     {
-        Log.d("json", data);
         if (isAdded())
         {
             final ListAdapter adapter = getAdapter(data);

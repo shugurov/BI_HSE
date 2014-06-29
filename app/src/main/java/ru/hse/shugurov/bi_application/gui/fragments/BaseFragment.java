@@ -6,6 +6,7 @@ package ru.hse.shugurov.bi_application.gui.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.widget.Toast;
 
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.sections.Section;
@@ -95,5 +96,13 @@ public abstract class BaseFragment extends Fragment//TODO запись в фай
     void setBackStack(BackStack backStack)
     {
         this.backStack = backStack;
+    }
+
+    protected void handleLoadProblem()
+    {
+        if (isAdded())
+        {
+            Toast.makeText(getActivity(), "Не удалось загрузить данные", Toast.LENGTH_SHORT).show();
+        }
     }
 }

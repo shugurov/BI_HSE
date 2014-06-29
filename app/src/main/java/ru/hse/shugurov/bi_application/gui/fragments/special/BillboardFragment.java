@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -74,7 +73,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
     }
 
     @Override
-    public void onClick(View view)
+    public void onClick(View view)//TODO слишком много instanceof
     {
         MultipleAdaptersViewSection section = getSection();
         switch (view.getId())
@@ -242,15 +241,18 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
         section.setAdapter(new AdvertAdapter(getActivity(), bs4), 3);
         section.setAdapter(new AdvertAdapter(getActivity(), ms1), 4);
         section.setAdapter(new AdvertAdapter(getActivity(), ms2), 5);
-        getActivity().runOnUiThread(new Runnable()
+        if (isAdded())
         {
-            @Override
-            public void run()
+            getActivity().runOnUiThread(new Runnable()
             {
-                root.removeView(currentView);
-                setAdapter(inflater, 0);
-            }
-        });
+                @Override
+                public void run()
+                {
+                    root.removeView(currentView);
+                    setAdapter(inflater, 0);
+                }
+            });
+        }
     }
 
 
@@ -269,45 +271,6 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
     {
         currentView = inflater.inflate(R.layout.progress, root, false);
         root.addView(currentView, 0);
-        /*Runnable loadAdverts = new Runnable()
-        {
-            @Override
-            public void run()
-            {
-        final FileManager fileManager = FileManager.instance();
-                try
-                {
-                    String data = fileManager.getFileContent(getSection().getTitle());
-                    if (data.isEmpty())//TODO убрать этот позор
-                    {
-                        FileDownloader downloader = new FileDownloader(getActivity(), new FileDownloader.DownloadCallback()//TODO скачиваю только в одном из случаев. может во всех проверять?
-                        {
-                            @Override
-                            public void downloadFinished()
-                            {
-                                try
-                                {
-                                    String data = fileManager.getFileContent(getSection().getTitle());
-                                    setAdapters(data, inflater);
-                                } catch (IOException e)
-                                {
-                                    Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                        downloader.execute(((MultipleAdaptersViewSection) getSection()).getUrl());
-                    } else
-                    {
-                        setAdapters(data, inflater);
-                    }
-                } catch (IOException exception)
-                {
-                    //Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show(); TODO
-                }
-
-            }
-        };
-        new Thread(loadAdverts).start();*/
         Downloader downloader = new Downloader(new Downloader.RequestResultCallback()
         {
             @Override
@@ -317,7 +280,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                 {
                     if (result == null)
                     {
-                        Toast.makeText(getActivity(), "Нет далось загрузить данные", Toast.LENGTH_SHORT).show();
+                        handleLoadProblem();
                     } else
                     {
                         FileManager manager = FileManager.instance();

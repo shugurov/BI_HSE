@@ -55,8 +55,7 @@ public class AnnouncesFragment extends FragmentWithList//TODO закрыаетс
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        BaseFragment newsFragment = new NewsItemFragment();
-        newsFragment.getBackStack().addFragmentToBackStack(this);//TODO это норма?? сделать как в архиве
+        BaseFragment newsFragment = new NewsItemFragment();//TODO так ли как в архиве?
         NewsItem item = getSelectedItem(parent, position);
         Bundle arguments = new Bundle();
         arguments.putSerializable(NewsItemFragment.ITEM_TAG, item);
