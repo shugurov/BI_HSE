@@ -8,12 +8,19 @@ import java.io.Serializable;
 public class DayDescription implements Serializable
 {
     private final int day;
+    private final int month;//TODO а нужен ли месяц?
     private final int color;
 
-    public DayDescription(int day, int color)
+    public DayDescription(int day, int month, int color)
     {
         this.day = day;
+        this.month = month;
         this.color = color;
+    }
+
+    public int getMonth()
+    {
+        return month;
     }
 
     public int getDay()
@@ -48,6 +55,10 @@ public class DayDescription implements Serializable
         {
             return false;
         }
+        if (month != that.month)
+        {
+            return false;
+        }
 
         return true;
     }
@@ -55,7 +66,7 @@ public class DayDescription implements Serializable
     @Override
     public int hashCode()
     {
-        int result = day;
+        int result = day + month;
         result = 31 * result + color;
         return result;
     }

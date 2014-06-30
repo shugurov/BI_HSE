@@ -34,6 +34,8 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     private Map<Calendar, NewsItem[]> events;
     private View currentlySelectedView;
     private GregorianCalendar calendarToBeDisplayed;
+    private int givenMonth;
+    private int givenYear;
 
     public GridCellAdapter(Context context, int month, int year, Map<Calendar, NewsItem[]> events)
     {
@@ -41,11 +43,13 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         this.context = context;
         this.listOfDaysOnScreen = new ArrayList<DayDescription>();
         this.events = events;
+        givenMonth = month;
+        givenYear = year;
         Calendar calendar = Calendar.getInstance();
         currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
         currentMonth = calendar.get(Calendar.MONTH);
         currentYear = calendar.get(Calendar.YEAR);
-        printMonth(month, year);
+        printMonth();
 
     }
 
@@ -61,7 +65,7 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     }
 
 
-    private void printMonth(int givenMonth, int givenYear)
+    private void printMonth()
     {
         int trailingSpaces;
 
@@ -78,7 +82,7 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         int daysInPreviousMonth = previousMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
         for (int i = 0; i < trailingSpaces; i++)
         {
-            listOfDaysOnScreen.add(new DayDescription(daysInPreviousMonth - trailingSpaces + i + 1, R.color.lightgray));
+            listOfDaysOnScreen.add(new DayDescription(daysInPreviousMonth - trailingSpaces + i + 1, previousMonth.get(Calendar.MONTH), R.color.lightgray));
         }
 
         // Current Month Days
@@ -87,17 +91,17 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         {
             if (i == currentDayOfMonth && this.currentMonth == givenMonth && currentYear == givenYear)
             {
-                listOfDaysOnScreen.add(new DayDescription(i, R.color.black));
+                listOfDaysOnScreen.add(new DayDescription(i, givenMonth, R.color.black));
             } else
             {
-                listOfDaysOnScreen.add(new DayDescription(i, R.color.lightgray02));
+                listOfDaysOnScreen.add(new DayDescription(i, givenMonth, R.color.lightgray02));
             }
         }
 
         // Leading Month days
         for (int i = 1; i <= listOfDaysOnScreen.size() % 7; i++)
         {
-            listOfDaysOnScreen.add(new DayDescription(i, R.color.lightgray));
+            listOfDaysOnScreen.add(new DayDescription(i, (givenMonth + 1) % 12, R.color.lightgray));
         }
     }
 
@@ -121,14 +125,11 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         Button gridCell = (Button) row.findViewById(R.id.calendar_day_gridcell);
         gridCell.setOnClickListener(this);
 
-        DayDescription dayToBeShown = listOfDaysOnScreen.get(position);//TODO проверять trail days
-        Calendar calendarRepresentationOfDay = new GregorianCalendar(calendarToBeDisplayed.get(Calendar.YEAR), calendarToBeDisplayed.get(Calendar.MONTH), dayToBeShown.getDay());
-        if (!events.isEmpty())
+        DayDescription dayToBeShown = listOfDaysOnScreen.get(position);
+        Calendar calendarRepresentationOfDay = new GregorianCalendar(calendarToBeDisplayed.get(Calendar.YEAR), dayToBeShown.getMonth(), dayToBeShown.getDay());
+        if (events.containsKey(calendarRepresentationOfDay))
         {
-            if (events.containsKey(calendarRepresentationOfDay))
-            {
-                gridCell.setBackgroundColor(Color.RED);//TODO если щёлкнуть на мероприятие, то цвет пропадает
-            }
+            gridCell.setBackgroundColor(Color.RED);//TODO если щёлкнуть на мероприятие, то цвет пропадает
         }
 
         // Set the Day GridCell
