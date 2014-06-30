@@ -8,13 +8,15 @@ import java.io.Serializable;
 public class DayDescription implements Serializable
 {
     private final int day;
-    private final int month;//TODO а нужен ли месяц?
-    private final int color;
+    private final int month;
+    private final int year;
+    private final int color;//TODO может стоит убрать цвет отсюда? или как-то под-другому обрабатывать календарь?
 
-    public DayDescription(int day, int month, int color)
+    public DayDescription(int day, int month, int year, int color)
     {
         this.day = day;
         this.month = month;
+        this.year = year;
         this.color = color;
     }
 
@@ -69,5 +71,10 @@ public class DayDescription implements Serializable
         int result = day + month;
         result = 31 * result + color;
         return result;
+    }
+
+    public int getYear()
+    {
+        return year;
     }
 }

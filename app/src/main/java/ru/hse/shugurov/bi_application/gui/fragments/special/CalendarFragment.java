@@ -32,12 +32,21 @@ public class CalendarFragment extends BaseFragment//TODO сохранять со
     private ViewGroup container;
     private TextView currentMonthTextView;
     private GridView calendarView;
+    private GridCellAdapter.EventSelectionListener listener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
     {
         this.container = container;
         loadCalendar();
+        listener = new GridCellAdapter.EventSelectionListener()
+        {
+            @Override
+            public void eventSelected(NewsItem[] itemsToBeShown)
+            {
+                Toast.makeText(getActivity(), "win!", Toast.LENGTH_SHORT).show();
+            }
+        };
         return inflater.inflate(R.layout.progress, container, false);
     }
 
@@ -143,7 +152,7 @@ public class CalendarFragment extends BaseFragment//TODO сохранять со
 
     private void setCalendarAdapter(Map<Calendar, NewsItem[]> dateToEvents, Calendar calendar, TextView currentMonth, GridView calendarView)
     {
-        GridCellAdapter adapter = new GridCellAdapter(getActivity(), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), dateToEvents);
+        GridCellAdapter adapter = new GridCellAdapter(getActivity(), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), dateToEvents, listener);
         currentMonth.setText(months[calendar.get(Calendar.MONTH)] + " " + calendar.get(Calendar.YEAR));
         adapter.notifyDataSetChanged();
         calendarView.setAdapter(adapter);

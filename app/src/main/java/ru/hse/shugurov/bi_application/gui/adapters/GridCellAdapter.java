@@ -26,6 +26,7 @@ import ru.hse.shugurov.bi_application.model.NewsItem;
  */
 public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
 {
+    //TODO не отображается текущий день, если открыть следующий/предыдущий месяц
     private final Context context;
     private final List<DayDescription> listOfDaysOnScreen;
     private int currentDayOfMonth;
@@ -36,13 +37,15 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     private GregorianCalendar calendarToBeDisplayed;
     private int givenMonth;
     private int givenYear;
+    private EventSelectionListener listener;
 
-    public GridCellAdapter(Context context, int month, int year, Map<Calendar, NewsItem[]> events)
+    public GridCellAdapter(Context context, int month, int year, Map<Calendar, NewsItem[]> events, EventSelectionListener listener)
     {
         super();
         this.context = context;
         this.listOfDaysOnScreen = new ArrayList<DayDescription>();
         this.events = events;
+        this.listener = listener;
         givenMonth = month;
         givenYear = year;
         Calendar calendar = Calendar.getInstance();
@@ -82,7 +85,7 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         int daysInPreviousMonth = previousMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
         for (int i = 0; i < trailingSpaces; i++)
         {
-            listOfDaysOnScreen.add(new DayDescription(daysInPreviousMonth - trailingSpaces + i + 1, previousMonth.get(Calendar.MONTH), R.color.lightgray));
+            listOfDaysOnScreen.add(new DayDescription(daysInPreviousMonth - trailingSpaces + i + 1, previousMonth.get(Calendar.MONTH), previousMonth.get(Calendar.YEAR), R.color.lightgray));//вынести получение из цикла?
         }
 
         // Current Month Days
@@ -91,17 +94,17 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         {
             if (i == currentDayOfMonth && this.currentMonth == givenMonth && currentYear == givenYear)
             {
-                listOfDaysOnScreen.add(new DayDescription(i, givenMonth, R.color.black));
+                listOfDaysOnScreen.add(new DayDescription(i, givenMonth, givenYear, R.color.black));
             } else
             {
-                listOfDaysOnScreen.add(new DayDescription(i, givenMonth, R.color.lightgray02));
+                listOfDaysOnScreen.add(new DayDescription(i, givenMonth, givenYear, R.color.lightgray02));
             }
         }
 
         // Leading Month days
         for (int i = 1; i <= listOfDaysOnScreen.size() % 7; i++)
         {
-            listOfDaysOnScreen.add(new DayDescription(i, (givenMonth + 1) % 12, R.color.lightgray));
+            listOfDaysOnScreen.add(new DayDescription(i, (givenMonth + 1) % 12, givenYear + 1, R.color.lightgray));
         }
     }
 
@@ -150,10 +153,11 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
             }
         }
         DayDescription selectedDay = (DayDescription) view.getTag();
-        if (events.containsKey(selectedDay))
+        Calendar calendarRepresentationOfTheDay = new GregorianCalendar(selectedDay.getYear(), selectedDay.getMonth(), selectedDay.getDay());
+        NewsItem[] eventsToBeShown = events.get(calendarRepresentationOfTheDay);
+        if (eventsToBeShown != null)
         {
-            /*String event = events.get(selectedDay); TODO тут говорю о нажатие
-            callback.setEventListAdapter(Arrays.asList(new String[]{"sdsds"}));*/
+            listener.eventSelected(events.get(selectedDay));
         }
         Drawable newBackground = context.getResources().getDrawable(R.drawable.calendar_bg_orange);
         if (Build.VERSION.SDK_INT >= 16)
@@ -178,6 +182,11 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     private void setBackgroundV16Minus(View view, Drawable drawable)
     {
         view.setBackgroundDrawable(drawable);
+    }
+
+    public interface EventSelectionListener
+    {
+        void eventSelected(NewsItem[] itemsToBeShown);
     }
 
 }
