@@ -134,7 +134,6 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         {
             gridCell.setBackgroundColor(Color.RED);//TODO если щёлкнуть на мероприятие, то цвет пропадает
         }
-
         // Set the Day GridCell
         gridCell.setText(Integer.toString(dayToBeShown.getDay()));
         gridCell.setTag(dayToBeShown);
@@ -147,9 +146,20 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
     {
         if (currentlySelectedView != null)
         {
-            if (Build.VERSION.SDK_INT >= 16)
+            DayDescription dayDescription = (DayDescription) currentlySelectedView.getTag();
+            Calendar calendarRepresentationOfDay = new GregorianCalendar(dayDescription.getYear(), dayDescription.getMonth(), dayDescription.getDay());
+            if (events.containsKey(calendarRepresentationOfDay))
             {
-                setBackgroundV16Plus(currentlySelectedView, context.getResources().getDrawable(R.drawable.calendar_button_selector));
+                currentlySelectedView.setBackgroundColor(Color.RED);//TODO если щёлкнуть на мероприятие, то цвет пропадает
+            } else
+            {
+                if (Build.VERSION.SDK_INT >= 16)
+                {
+                    setBackgroundV16Plus(currentlySelectedView, context.getResources().getDrawable(R.drawable.calendar_button_selector));
+                } else
+                {
+                    setBackgroundV16Minus(currentlySelectedView, context.getResources().getDrawable(R.drawable.calendar_button_selector));
+                }
             }
         }
         DayDescription selectedDay = (DayDescription) view.getTag();
@@ -157,7 +167,7 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         NewsItem[] eventsToBeShown = events.get(calendarRepresentationOfTheDay);
         if (eventsToBeShown != null)
         {
-            listener.eventSelected(events.get(selectedDay));
+            listener.eventSelected(eventsToBeShown);
         }
         Drawable newBackground = context.getResources().getDrawable(R.drawable.calendar_bg_orange);
         if (Build.VERSION.SDK_INT >= 16)

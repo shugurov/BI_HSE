@@ -107,7 +107,7 @@ public class NewsListFragment extends FragmentWithList
         BaseFragment newsFragment = new NewsItemFragment();
         NewsItem item = getSelectedItem(parent, position);
         Bundle arguments = new Bundle();
-        arguments.putSerializable(NewsItemFragment.ITEM_TAG, item);
+        arguments.putParcelable(NewsItemFragment.ITEM_TAG, item);
         arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
         newsFragment.setArguments(arguments);
         showNextFragment(newsFragment);

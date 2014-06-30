@@ -20,6 +20,8 @@ import ru.hse.shugurov.bi_application.sections.EventsSection;
  */
 public class EventsFragment extends BaseFragment implements View.OnClickListener//TODO календаря нет в кэше
 {//TODO подтормаживает меню
+    //TODO не меняю заголовок в action bar при переходе на специфичные фрагменты
+    //TODO если открыть событие, перейти на другой экран, а потом сново открыть, то будет грустно(
     private int lastPressedButton;
 
     @Override
@@ -74,7 +76,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
         }
         switch (view.getId())
         {
-            case R.id.events_announce_image://TODO проверить, корректно ли работает
+            case R.id.events_announce_image:
                 ((ImageView) getView().findViewById(R.id.events_announce_image)).setImageDrawable(getResources().getDrawable(R.drawable.anons_button_pressed));
                 releaseButton(lastPressedButton);
                 lastPressedButton = R.id.events_announce_image;

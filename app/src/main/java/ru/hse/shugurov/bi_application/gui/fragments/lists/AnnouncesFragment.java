@@ -58,7 +58,7 @@ public class AnnouncesFragment extends FragmentWithList
         BaseFragment newsFragment = new NewsItemFragment();//TODO так ли как в архиве?
         NewsItem item = getSelectedItem(parent, position);
         Bundle arguments = new Bundle();
-        arguments.putSerializable(NewsItemFragment.ITEM_TAG, item);
+        arguments.putParcelable(NewsItemFragment.ITEM_TAG, item);
         arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
         newsFragment.setArguments(arguments);
         BaseFragment parentFragment = (BaseFragment) getParentFragment();

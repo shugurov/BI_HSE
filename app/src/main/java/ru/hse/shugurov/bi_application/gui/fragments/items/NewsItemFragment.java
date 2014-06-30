@@ -49,13 +49,13 @@ public class NewsItemFragment extends BaseFragment
     protected void readStateFromBundle(Bundle args)
     {
         super.readStateFromBundle(args);
-        item = (NewsItem) args.getSerializable(ITEM_TAG);
+        item = args.getParcelable(ITEM_TAG);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(ITEM_TAG, item);
+        outState.putParcelable(ITEM_TAG, item);
     }
 }

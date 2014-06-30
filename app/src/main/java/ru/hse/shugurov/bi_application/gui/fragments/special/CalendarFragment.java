@@ -1,6 +1,8 @@
 package ru.hse.shugurov.bi_application.gui.fragments.special;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,7 @@ import ru.hse.shugurov.bi_application.Downloader;
 import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.adapters.GridCellAdapter;
 import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
+import ru.hse.shugurov.bi_application.gui.fragments.lists.CalendarNewsFragmentList;
 import ru.hse.shugurov.bi_application.model.NewsItem;
 import ru.hse.shugurov.bi_application.model.Parser;
 import ru.hse.shugurov.bi_application.sections.EventsSection;
@@ -44,7 +47,16 @@ public class CalendarFragment extends BaseFragment//TODO сохранять со
             @Override
             public void eventSelected(NewsItem[] itemsToBeShown)
             {
-                Toast.makeText(getActivity(), "win!", Toast.LENGTH_SHORT).show();
+                Fragment fragment = new CalendarNewsFragmentList();
+                BaseFragment parentFragment = (BaseFragment) getParentFragment();
+                parentFragment.getBackStack().addFragmentToBackStack(parentFragment);
+                Bundle arguments = new Bundle();
+                arguments.putSerializable(SECTION_TAG, getSection());
+                arguments.putParcelableArray(CalendarNewsFragmentList.NEWS_ITEMS, itemsToBeShown);
+                fragment.setArguments(arguments);
+                FragmentTransaction transaction = parentFragment.getFragmentManager().beginTransaction();
+                transaction.replace(R.id.container, fragment);
+                transaction.commit();
             }
         };
         return inflater.inflate(R.layout.progress, container, false);
