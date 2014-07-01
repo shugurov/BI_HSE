@@ -83,9 +83,17 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
 
         // Trailing Month days
         int daysInPreviousMonth = previousMonth.getActualMaximum(Calendar.DAY_OF_MONTH);
+        int previousMonthAsInteger = previousMonth.get(Calendar.MONTH);
+        int previousYearAsInteger = previousMonth.get(Calendar.YEAR);
         for (int i = 0; i < trailingSpaces; i++)
         {
-            listOfDaysOnScreen.add(new DayDescription(daysInPreviousMonth - trailingSpaces + i + 1, previousMonth.get(Calendar.MONTH), previousMonth.get(Calendar.YEAR), R.color.lightgray));//вынести получение из цикла?
+            if (i == currentDayOfMonth && previousMonthAsInteger == currentMonth && previousYearAsInteger == currentYear)
+            {
+                listOfDaysOnScreen.add(new DayDescription(daysInPreviousMonth - trailingSpaces + i + 1, previousMonthAsInteger, previousYearAsInteger, R.color.black));
+            } else
+            {
+                listOfDaysOnScreen.add(new DayDescription(daysInPreviousMonth - trailingSpaces + i + 1, previousMonthAsInteger, previousYearAsInteger, R.color.lightgray));
+            }
         }
 
         // Current Month Days
@@ -102,9 +110,17 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         }
 
         // Leading Month days
+        int nextMonthAsInteger = nextMonth.get(Calendar.MONTH);
+        int nextYearAsInteger = nextMonth.get(Calendar.YEAR);
         for (int i = 1; i <= listOfDaysOnScreen.size() % 7; i++)
         {
-            listOfDaysOnScreen.add(new DayDescription(i, (givenMonth + 1) % 12, givenYear + 1, R.color.lightgray));
+            if (i == currentDayOfMonth && nextMonthAsInteger == currentMonth && nextYearAsInteger == currentYear)
+            {
+                listOfDaysOnScreen.add(new DayDescription(i, nextMonthAsInteger, nextYearAsInteger, R.color.black));
+            } else
+            {
+                listOfDaysOnScreen.add(new DayDescription(i, nextMonthAsInteger, nextYearAsInteger, R.color.lightgray));
+            }
         }
     }
 
@@ -129,7 +145,7 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         gridCell.setOnClickListener(this);
 
         DayDescription dayToBeShown = listOfDaysOnScreen.get(position);
-        Calendar calendarRepresentationOfDay = new GregorianCalendar(calendarToBeDisplayed.get(Calendar.YEAR), dayToBeShown.getMonth(), dayToBeShown.getDay());
+        Calendar calendarRepresentationOfDay = new GregorianCalendar(dayToBeShown.getYear(), dayToBeShown.getMonth(), dayToBeShown.getDay());
         if (events.containsKey(calendarRepresentationOfDay))
         {
             gridCell.setBackgroundColor(Color.RED);//TODO если щёлкнуть на мероприятие, то цвет пропадает
