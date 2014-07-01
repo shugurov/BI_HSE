@@ -51,7 +51,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
-        super.onCreate(savedInstanceState);
+        super.onCreate(null);
         isRestored = savedInstanceState != null;
         ImageLoader.init(this);
         FileManager.init(this);
@@ -129,25 +129,20 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     }
 
     @Override
-    public void onNavigationDrawerItemSelected(final int position)
+    public void onNavigationDrawerItemSelected(int position)
     {
         if (navigationDrawerAdapter != null)
         {
             if (isRestored)
             {
-                navigationDrawerAdapter.setPosition(selectedIndex);
+                position = selectedIndex;
+                isRestored = false;
             } else
             {
                 selectedIndex = position;
-                navigationDrawerAdapter.setPosition(position);
             }
         }
-        if (isRestored)
-        {
-            isRestored = false;
-            return;
-        }
-        selectedIndex = position;
+        navigationDrawerAdapter.setPosition(position);
         FragmentManager fragmentManager = getSupportFragmentManager();
         if (fragments[position] == null)
         {
@@ -155,7 +150,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             fragments[position] = current;
         } else
         {
-            current = fragments[position].popCurrentFragment();
+            current = fragments[position].peekCurrentFragment();
             if (current == null)
             {
                 current = fragments[position];

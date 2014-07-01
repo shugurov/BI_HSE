@@ -61,31 +61,26 @@ public class BackStack implements Parcelable//TODO не работает при 
 
     public void addFragmentToBackStack(BaseFragment fragment)
     {
-        backStack.add(fragment);
+        if (backStack.peekLast() != fragment)
+        {
+            backStack.add(fragment);
+        }
     }
 
     public BaseFragment popPreviousFragment()
     {
-        if (backStack.size() < 2)
-        {
-            return null;
-        }
-        backStack.removeLast();
-        return backStack.pollLast();
+        backStack.pollLast();
+        return backStack.peekLast();
     }
 
     public BaseFragment popCurrentFragment()
     {
-        BaseFragment result;
-        if (backStack.isEmpty())
-        {
-            result = null;
-        } else
-        {
-            result = backStack.getLast();
-            backStack.removeLast();
-        }
-        return result;
+        return backStack.pollLast();
+    }
+
+    public BaseFragment peekCurrentFragment()
+    {
+        return backStack.peekLast();
     }
 
     public BaseFragment getMainFragment()

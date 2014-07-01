@@ -15,7 +15,7 @@ import ru.hse.shugurov.bi_application.model.NewsItem;
  * Created by Иван on 30.06.2014.
  */
 public class CalendarNewsFragmentList extends FragmentWithList//TODO не могу переворачивать(
-{
+{//TODO упало при открытии одного из окон после ночи
     public static final String NEWS_ITEMS = "calendar news";
     private NewsItem[] items;
 
