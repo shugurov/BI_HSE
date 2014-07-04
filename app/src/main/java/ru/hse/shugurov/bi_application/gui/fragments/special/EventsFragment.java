@@ -1,7 +1,6 @@
 package ru.hse.shugurov.bi_application.gui.fragments.special;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +27,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         LinearLayout root = (LinearLayout) inflater.inflate(R.layout.events, container, false);
-        Fragment fragmentToBeShown = null;
+        BaseFragment fragmentToBeShown = null;
         Bundle arguments = new Bundle();
         switch (getSection().getCurrentState())
         {
@@ -68,7 +67,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void onClick(View view)
     {
-        Fragment fragmentToBeShown = null;
+        BaseFragment fragmentToBeShown = null;
         Bundle arguments = new Bundle();
         if (view.getId() == lastPressedButton)
         {
@@ -100,9 +99,12 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
 
                 break;
         }
+        getBackStack().popCurrentFragment();
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
         fragmentToBeShown.setArguments(arguments);
+        fragmentToBeShown.setBackStack(getBackStack());
+
         transaction.replace(R.id.events_container, fragmentToBeShown);
         transaction.commit();
     }

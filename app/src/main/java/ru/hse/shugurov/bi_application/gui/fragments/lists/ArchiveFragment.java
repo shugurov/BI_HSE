@@ -1,6 +1,7 @@
 package ru.hse.shugurov.bi_application.gui.fragments.lists;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
@@ -60,9 +61,8 @@ public class ArchiveFragment extends FragmentWithList
         arguments.putParcelable(NewsItemFragment.ITEM_TAG, item);
         arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
         newsFragment.setArguments(arguments);
-        BaseFragment parentFragment = (BaseFragment) getParentFragment();
-        parentFragment.getBackStack().addFragmentToBackStack(this);
-        android.support.v4.app.FragmentTransaction transaction = getParentFragment().getFragmentManager().beginTransaction();
+        Fragment parentFragment = getParentFragment();
+        android.support.v4.app.FragmentTransaction transaction = parentFragment.getFragmentManager().beginTransaction();
         transaction.replace(R.id.container, newsFragment);
         transaction.commit();
     }

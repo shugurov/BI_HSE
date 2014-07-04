@@ -27,6 +27,10 @@ public abstract class BaseFragment extends Fragment//TODO запись в фай
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        if (backStack == null)
+        {
+            backStack = new BackStack();
+        }
         if (savedInstanceState == null)
         {
             Bundle arguments = getArguments();
@@ -41,10 +45,6 @@ public abstract class BaseFragment extends Fragment//TODO запись в фай
     public void onResume()
     {
         super.onResume();
-        if (backStack == null)
-        {
-            backStack = new BackStack();
-        }
         backStack.addFragmentToBackStack(this);
         String title = section.getTitle();
         getActivity().setTitle(title);
@@ -95,7 +95,7 @@ public abstract class BaseFragment extends Fragment//TODO запись в фай
         return backStack;
     }
 
-    void setBackStack(BackStack backStack)
+    public void setBackStack(BackStack backStack)
     {
         this.backStack = backStack;
     }
