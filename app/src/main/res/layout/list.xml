@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
-          style="@style/Fillable"
-          android:layout_weight="1">
+<android.support.v4.widget.SwipeRefreshLayout style="@style/Fillable">
 
-</ListView>
+    <ListView
+        android:id="@+id/list"
+        style="@style/Fillable"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_weight="1">
+
+    </ListView>
+
+</android.support.v4.widget.SwipeRefreshLayout>

@@ -1,6 +1,8 @@
 package ru.hse.shugurov.bi_application.gui.fragments.lists;
 
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,7 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
     private LinearLayout rootView;
     private ListView listView;
     private View progressDialog;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
@@ -74,10 +77,26 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
 
     private void inflateListView(ListAdapter adapter)
     {
-        rootView.removeView(progressDialog);//TODO проверять?
-        listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
+        if (listView == null)
+        {
+            rootView.removeView(progressDialog);//TODO проверять?
+            swipeRefreshLayout = (SwipeRefreshLayout) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
+            swipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.GREEN, Color.YELLOW, Color.RED);
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+            {
+                @Override
+                public void onRefresh()
+                {
+                    requestData(getDataUrl());
+                }
+            });
+            listView = (ListView) swipeRefreshLayout.findViewById(R.id.list);
+            listView.setOnItemClickListener(this);
+        } else
+        {
+            swipeRefreshLayout.setRefreshing(false);
+        }
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(this);
     }
 
     protected String getFileCacheName()
