@@ -28,12 +28,13 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
     private ListView listView;
     private View progressDialog;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private boolean isJustCreated;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
     {
+        isJustCreated = true;
         container.removeAllViews();//TODO fix when a progress bar is shown
-        super.onCreateView(inflater, container, savedInstanceState);
         rootView = (LinearLayout) inflater.inflate(R.layout.fragment_list, container, false);
         ListAdapter adapter = getCurrentAdapter();
         if (adapter != null)
@@ -77,7 +78,7 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
 
     private void inflateListView(ListAdapter adapter)
     {
-        if (listView == null)
+        if (listView == null || isJustCreated)
         {
             rootView.removeView(progressDialog);//TODO проверять?
             swipeRefreshLayout = (SwipeRefreshLayout) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
@@ -161,5 +162,15 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
     protected <T> T getSelectedItem(AdapterView<?> adapterView, int position)
     {
         return (T) adapterView.getItemAtPosition(position);
+    }
+
+    @Override
+    protected void handleLoadProblem()
+    {
+        super.handleLoadProblem();
+        if (swipeRefreshLayout != null)
+        {
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 }
