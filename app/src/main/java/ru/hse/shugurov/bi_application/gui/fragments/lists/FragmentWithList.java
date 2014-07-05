@@ -25,21 +25,17 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
     private LinearLayout rootView;
     private ListView listView;
     private View progressDialog;
-    private ViewGroup container;
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
     {
         container.removeAllViews();//TODO fix when a progress bar is shown
         super.onCreateView(inflater, container, savedInstanceState);
-        this.container = container;
         rootView = (LinearLayout) inflater.inflate(R.layout.fragment_list, container, false);
         ListAdapter adapter = getCurrentAdapter();
         if (adapter != null)
         {
-            listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
-            listView.setAdapter(adapter);
-            listView.setOnItemClickListener(this);
+            inflateListView(adapter);
         } else
         {
             progressDialog = inflater.inflate(R.layout.progress, rootView, false);
@@ -76,6 +72,14 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
         return rootView;
     }
 
+    private void inflateListView(ListAdapter adapter)
+    {
+        rootView.removeView(progressDialog);//TODO проверять?
+        listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
+    }
+
     protected String getFileCacheName()
     {
         return getSection().getTitle();
@@ -109,15 +113,6 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
 
     protected abstract ListAdapter getCurrentAdapter();
 
-    /*have to be run on GUI thread*/
-    protected void setAdapterInsteadProgressDialog(final ListAdapter adapter)
-    {
-        listView.setAdapter(adapter);
-        rootView.removeView(progressDialog);
-        rootView.addView(listView);
-        progressDialog = null;
-    }
-
     protected abstract ListAdapter getAdapter(String data);
 
     protected abstract void setSectionAdapter(ListAdapter adapter);
@@ -136,9 +131,7 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
                     @Override
                     public void run()
                     {
-                        listView = (ListView) getLayoutInflater(getArguments()).inflate(R.layout.list, container, false);
-                        listView.setOnItemClickListener(FragmentWithList.this);
-                        setAdapterInsteadProgressDialog(adapter);
+                        inflateListView(adapter);
                     }
                 };
                 getActivity().runOnUiThread(listCreation);
