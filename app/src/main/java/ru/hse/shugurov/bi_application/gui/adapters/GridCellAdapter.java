@@ -148,7 +148,7 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
         Calendar calendarRepresentationOfDay = new GregorianCalendar(dayToBeShown.getYear(), dayToBeShown.getMonth(), dayToBeShown.getDay());
         if (events.containsKey(calendarRepresentationOfDay))
         {
-            gridCell.setBackgroundColor(Color.RED);//TODO если щёлкнуть на мероприятие, то цвет пропадает
+            gridCell.setBackgroundColor(Color.RED);
         }
         // Set the Day GridCell
         gridCell.setText(Integer.toString(dayToBeShown.getDay()));

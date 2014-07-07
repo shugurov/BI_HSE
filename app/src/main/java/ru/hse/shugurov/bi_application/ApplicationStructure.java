@@ -220,17 +220,7 @@ public class ApplicationStructure
 
     private Icon getIcon()
     {
-        Icon icon = null;
-        try
-        {
-            parser.require(XmlPullParser.START_TAG, null, "icon");//TODO падает при попытке найти картинки?
-        } catch (XmlPullParserException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        Icon icon;
         next();
         next();
         String defaultString = readText();
@@ -272,7 +262,7 @@ public class ApplicationStructure
 
     private int getType()
     {
-        int type = -1;
+        int type;
         next();
         String str = readText();
         type = Integer.parseInt(str);
@@ -325,16 +315,14 @@ public class ApplicationStructure
             next();
             String position = readText();
             next();
-            String lol = parser.getName();
             developers.add(new Developer(getImageID(), name, position));
             next();
-            lol = parser.getName();
         }
         next();
         return developers.toArray(new Developer[developers.size()]);
     }
 
-    private int getImageID()//TODO везде использовать этот метод
+    private int getImageID()
     {
         String imageName = readText();
         int imageID = context.getResources().getIdentifier(imageName, "drawable", context.getPackageName());

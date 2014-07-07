@@ -61,9 +61,17 @@ public class AnnouncesFragment extends FragmentWithList
         arguments.putParcelable(NewsItemFragment.ITEM_TAG, item);
         arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
         newsFragment.setArguments(arguments);
-        android.support.v4.app.FragmentTransaction transaction = getParentFragment().getFragmentManager().beginTransaction();
+        BaseFragment parentFragment = (BaseFragment) getParentFragment();
+        newsFragment.setBackStack(parentFragment.getBackStack());
+        android.support.v4.app.FragmentTransaction transaction = parentFragment.getFragmentManager().beginTransaction();
         transaction.replace(R.id.container, newsFragment);
         transaction.commit();
+    }
+
+    @Override
+    protected void addToBackStack()
+    {
+
     }
 
     @Override

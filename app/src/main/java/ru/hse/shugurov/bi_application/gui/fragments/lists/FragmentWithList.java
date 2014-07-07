@@ -93,6 +93,7 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
             });
             listView = (ListView) swipeRefreshLayout.findViewById(R.id.list);
             listView.setOnItemClickListener(this);
+            isJustCreated = false;
         } else
         {
             swipeRefreshLayout.setRefreshing(false);

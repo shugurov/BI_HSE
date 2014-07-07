@@ -63,7 +63,7 @@ public class ScheduleFragment extends BaseFragment implements View.OnClickListen
         }
         if (url == null)
         {
-            Toast.makeText(getActivity(), "Не удалось скачат файл", Toast.LENGTH_SHORT).show();
+            handleLoadProblem();
             return;
         }
         FileDownloader downloader = new FileDownloader(getActivity(), new FileDownloader.DownloadCallback()

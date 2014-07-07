@@ -10,7 +10,7 @@ public class DayDescription implements Serializable
     private final int day;
     private final int month;
     private final int year;
-    private final int color;//TODO может стоит убрать цвет отсюда? или как-то под-другому обрабатывать календарь?
+    private final int color;
 
     public DayDescription(int day, int month, int year, int color)
     {

@@ -32,10 +32,11 @@ import ru.hse.shugurov.bi_application.sections.Section;
 import ru.hse.shugurov.bi_application.sections.SingleViewSection;
 
 public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks
-{//TODO почему min sdk == 12?!
+{
     private static final String BACK_STACKS_TAG = "back stacks";
     private static final String SELECTED_ITEM_TAG = "selected item";
     //TODO а правильные ли вещи в рейтинге показываются?
+    //TODO падает в настройках
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */

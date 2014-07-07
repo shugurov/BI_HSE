@@ -45,9 +45,14 @@ public abstract class BaseFragment extends Fragment//TODO запись в фай
     public void onResume()
     {
         super.onResume();
-        backStack.addFragmentToBackStack(this);
+        addToBackStack();
         String title = section.getTitle();
         getActivity().setTitle(title);
+    }
+
+    protected void addToBackStack()
+    {
+        backStack.addFragmentToBackStack(this);
     }
 
     @Override

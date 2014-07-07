@@ -69,7 +69,7 @@ public class BackStack implements Parcelable//TODO не работает при 
 
     public BaseFragment popPreviousFragment()
     {
-        backStack.pollLast();//TODO
+        backStack.pollLast();
         return backStack.peekLast();
     }
 

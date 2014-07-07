@@ -18,7 +18,7 @@ public class Parser
 {
     public static NewsItem[] parseNews(String str)
     {
-        str = str.replaceAll("News\":", "\":");//TODO replace with regex
+        str = str.replaceAll("News\":", "\":");
         str = str.replaceAll("Activity\":", "\":");
         JSONArray array;
         try
@@ -97,7 +97,7 @@ public class Parser
     public static ProjectItem[] parseProjects(String jsonString)
     {
         ProjectItem[] items = null;
-        jsonString = jsonString.replaceAll("Volunteering\":", "\":"); //TODO replace with regex
+        jsonString = jsonString.replaceAll("Volunteering\":", "\":");
         jsonString = jsonString.replaceAll("Projects\":", "\":");
         JSONArray jsonArray = null;
         try
@@ -166,7 +166,7 @@ public class Parser
     public static ContactItem[] parseContacts(String jsonString)
     {
         ContactItem[] contactItems = null;
-        jsonString = jsonString.replaceAll("Contacts\":", "\":"); //TODO replace with regex
+        jsonString = jsonString.replaceAll("Contacts\":", "\":");
         jsonString = jsonString.replaceAll("Teachers\":", "\":");
         JSONArray array = null;
         try

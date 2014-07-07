@@ -56,7 +56,7 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
         root.findViewById(R.id.events_archives_image).setOnClickListener(this);
         root.findViewById(R.id.events_calendar_image).setOnClickListener(this);
         root.findViewById(R.id.events_announce_image).setOnClickListener(this);
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();//TODO овторяю один код дважды(
         arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
         fragmentToBeShown.setArguments(arguments);
         transaction.replace(R.id.events_container, fragmentToBeShown);
@@ -99,12 +99,10 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
 
                 break;
         }
-        getBackStack().popCurrentFragment();
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
         fragmentToBeShown.setArguments(arguments);
         fragmentToBeShown.setBackStack(getBackStack());
-
         transaction.replace(R.id.events_container, fragmentToBeShown);
         transaction.commit();
     }

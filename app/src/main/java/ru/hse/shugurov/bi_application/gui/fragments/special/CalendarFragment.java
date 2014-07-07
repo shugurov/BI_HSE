@@ -1,14 +1,12 @@
 package ru.hse.shugurov.bi_application.gui.fragments.special;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -47,9 +45,9 @@ public class CalendarFragment extends BaseFragment//TODO сохранять со
             @Override
             public void eventSelected(NewsItem[] itemsToBeShown)
             {
-                Fragment fragment = new CalendarNewsFragmentList();
+                BaseFragment fragment = new CalendarNewsFragmentList();
                 BaseFragment parentFragment = (BaseFragment) getParentFragment();
-                parentFragment.getBackStack().addFragmentToBackStack(parentFragment);
+                fragment.setBackStack(parentFragment.getBackStack());
                 Bundle arguments = new Bundle();
                 arguments.putSerializable(SECTION_TAG, getSection());
                 arguments.putParcelableArray(CalendarNewsFragmentList.NEWS_ITEMS, itemsToBeShown);
@@ -71,7 +69,7 @@ public class CalendarFragment extends BaseFragment//TODO сохранять со
             {
                 if (results == null)
                 {
-                    Toast.makeText(getActivity(), "Нет Интернет соединения", Toast.LENGTH_SHORT).show();//TODO перенести в базовый класс сообщение о невозможности загрузить?
+                    handleLoadProblem();
                 } else
                 {
                     Map<Calendar, NewsItem[]> dateToEvents = new HashMap<Calendar, NewsItem[]>(results.length);
@@ -193,6 +191,11 @@ public class CalendarFragment extends BaseFragment//TODO сохранять со
         }
         requestBuilder.append(requestParts[requestParts.length - 1]);
         return requestBuilder.toString();
+    }
+
+    @Override
+    protected void addToBackStack()
+    {
     }
 
     @Override
