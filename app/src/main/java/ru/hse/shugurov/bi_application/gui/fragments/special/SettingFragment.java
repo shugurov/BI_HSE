@@ -3,6 +3,7 @@ package ru.hse.shugurov.bi_application.gui.fragments.special;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,9 @@ public class SettingFragment extends BaseFragment
     {
         final SharedPreferences preferences = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
-        final ListView listView = (ListView) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
+        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
+        refreshLayout.setEnabled(false);
+        final ListView listView = (ListView) refreshLayout.findViewById(R.id.list);
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(), R.array.settings, android.R.layout.simple_list_item_multiple_choice);
         listView.setAdapter(adapter);
@@ -42,19 +45,19 @@ public class SettingFragment extends BaseFragment
                 {
                     case 0:
                         editor.putBoolean("enrolee", !preferences.getBoolean("enrolee", false));
-                        editor.commit();
+                        editor.apply();
                         break;
                     case 1:
                         editor.putBoolean("bs", !preferences.getBoolean("bs", false));
-                        editor.commit();
+                        editor.apply();
                         break;
                     case 2:
                         editor.putBoolean("ms_enrolee", !preferences.getBoolean("ms_enrolee", false));
-                        editor.commit();
+                        editor.apply();
                         break;
                     case 3:
                         editor.putBoolean("ms", !preferences.getBoolean("ms", false));
-                        editor.commit();
+                        editor.apply();
                         break;
                 }
             }

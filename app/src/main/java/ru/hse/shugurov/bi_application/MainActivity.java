@@ -36,7 +36,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private static final String BACK_STACKS_TAG = "back stacks";
     private static final String SELECTED_ITEM_TAG = "selected item";
     //TODO а правильные ли вещи в рейтинге показываются?
-    //TODO падает в настройках
+    //TODO в некоторых списках не должно быть pull to refresh
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */

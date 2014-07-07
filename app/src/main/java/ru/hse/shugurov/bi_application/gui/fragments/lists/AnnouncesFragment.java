@@ -55,7 +55,7 @@ public class AnnouncesFragment extends FragmentWithList
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        BaseFragment newsFragment = new NewsItemFragment();//TODO так ли как в архиве?
+        BaseFragment newsFragment = new NewsItemFragment();
         NewsItem item = getSelectedItem(parent, position);
         Bundle arguments = new Bundle();
         arguments.putParcelable(NewsItemFragment.ITEM_TAG, item);
