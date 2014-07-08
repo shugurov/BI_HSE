@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -31,12 +32,17 @@ import ru.hse.shugurov.bi_application.sections.EventsSection;
 public class CalendarFragment extends BaseFragment//TODO сохранять состояние календаря
 {
     private final static String MAPPING_TAG = "events mapping";
-    private final String[] months = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
+    private final static String YEAR_TAG = "calendar_year";
+    private final static String MONTH_TAG = "calendar_month";
+    private final static String[] months = {"Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"};
     private ViewGroup container;
     private TextView currentMonthTextView;
     private GridView calendarView;
     private GridCellAdapter.EventSelectionListener listener;
     private HashMap<Calendar, NewsItem[]> eventsMapping;
+    private Calendar calendar = Calendar.getInstance(Locale.getDefault());
+    private int year;
+    private int month;
     //TODO events mapping не сохраняется почему-то
 
     @Override
@@ -137,7 +143,10 @@ public class CalendarFragment extends BaseFragment//TODO сохранять со
 
     private View showCalendar(boolean addToParent)
     {
-        final Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        if (year != 0 && month != 0)
+        {
+            calendar = new GregorianCalendar(year, month, calendar.get(Calendar.DATE));
+        }
         View calendarContainer = getLayoutInflater(null).inflate(R.layout.calendar_layout, container, false);
         calendarView = (GridView) calendarContainer.findViewById(R.id.calendar);
         currentMonthTextView = (TextView) calendarContainer.findViewById(R.id.current_month);
@@ -222,6 +231,8 @@ public class CalendarFragment extends BaseFragment//TODO сохранять со
             return;
         }
         eventsMapping = (HashMap<Calendar, NewsItem[]>) parentArguments.getSerializable(MAPPING_TAG);
+        year = parentArguments.getInt(YEAR_TAG);
+        month = parentArguments.getInt(MONTH_TAG);
     }
 
     @Override
@@ -244,6 +255,8 @@ public class CalendarFragment extends BaseFragment//TODO сохранять со
             return;
         }
         parentArguments.putSerializable(MAPPING_TAG, eventsMapping);
+        parentArguments.putInt(YEAR_TAG, calendar.get(Calendar.YEAR));
+        parentArguments.putInt(MONTH_TAG, calendar.get(Calendar.MONTH));
     }
 
     @Override
