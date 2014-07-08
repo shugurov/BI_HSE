@@ -3,11 +3,13 @@ package ru.hse.shugurov.bi_application.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
+
 
 /**
  * Created by Иван on 01.01.14.
  */
-public class NewsItem implements Parcelable
+public class NewsItem implements Parcelable, Serializable
 {
     public static final Creator<NewsItem> CREATOR = new Creator<NewsItem>()
     {
