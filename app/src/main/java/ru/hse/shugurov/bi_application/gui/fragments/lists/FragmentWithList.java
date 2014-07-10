@@ -82,6 +82,7 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
         {
             rootView.removeView(progressDialog);//TODO проверять?
             swipeRefreshLayout = (SwipeRefreshLayout) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
+            swipeRefreshLayout.setEnabled(isPullToRefreshAvailable());
             swipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.GREEN, Color.YELLOW, Color.RED);
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
             {
@@ -173,5 +174,10 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
         {
             swipeRefreshLayout.setRefreshing(false);
         }
+    }
+
+    protected boolean isPullToRefreshAvailable()
+    {
+        return true;
     }
 }

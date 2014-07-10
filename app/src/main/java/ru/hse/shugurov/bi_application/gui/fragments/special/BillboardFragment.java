@@ -1,6 +1,10 @@
 package ru.hse.shugurov.bi_application.gui.fragments.special;
 
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import ru.hse.shugurov.bi_application.Downloader;
@@ -26,50 +31,88 @@ import ru.hse.shugurov.bi_application.sections.MultipleAdaptersViewSection;
  * Created by Иван on 13.01.14.
  */
 public class BillboardFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener //TODO я сразу качаю или вначале проверяю кэш?
-{
+{//TODO при перевороте падает
     private LinearLayout root;
     private View currentView;
+    private ImageView bs1Button;
+    private ImageView bs2Button;
+    private ImageView bs3Button;
+    private ImageView bs4Button;
+    private ImageView ms1Button;
+    private ImageView ms2Button;
+    private SwipeRefreshLayout refreshLayout;
 
 
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        root = (LinearLayout) inflater.inflate(R.layout.billboard, container, false);
-        setOnClickListeners();
+        View entireView = inflater.inflate(R.layout.billboard, container, false);
+        root = (LinearLayout) entireView.findViewById(R.id.billboard_container);
+        if (refreshLayout != null)
+        {
+            refreshLayout = null;
+        }
+        setUpButtons(entireView);
+        int drawableId = -1;
+        ImageView selectedButton = null;
         switch (getSection().getCurrentState())
         {
             case 0:
-                ((ImageView) root.findViewById(R.id.bs1)).setImageDrawable(getResources().getDrawable(R.drawable.course1_pressed));
-                if (getSection().getAdapter(0) != null)
+                selectedButton = bs1Button;
+                drawableId = R.drawable.course1_pressed;
+                if (getSection().getAdapter(0) == null)//TODO делаю в том же потоке(
                 {
-                    setAdapter(inflater, 0);
+                    FileManager fileManager = FileManager.instance();
+                    try
+                    {
+                        String value = fileManager.getFileContent(getSection().getTitle());
+                        if (value != null)
+                        {
+                            setAdapters(value, inflater);
+                            break;
+                        }
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    loadContent(inflater);
                 } else
                 {
-                    loadContent(inflater);
+                    setAdapter(inflater, 0);
                 }
                 break;
             case 1:
-                ((ImageView) root.findViewById(R.id.bs2)).setImageDrawable(getResources().getDrawable(R.drawable.course2_pressed));
+                selectedButton = bs2Button;
+                drawableId = R.drawable.course2_pressed;
                 setAdapter(inflater, 1);
                 break;
             case 2:
-                ((ImageView) root.findViewById(R.id.bs3)).setImageDrawable(getResources().getDrawable(R.drawable.course3_pressed));
+                selectedButton = bs3Button;
+                drawableId = R.drawable.course3_pressed;
                 setAdapter(inflater, 2);
                 break;
             case 3:
-                ((ImageView) root.findViewById(R.id.bs4)).setImageDrawable(getResources().getDrawable(R.drawable.course4_pressed));
+                selectedButton = bs4Button;
+                drawableId = R.drawable.course4_pressed;
                 setAdapter(inflater, 3);
                 break;
             case 4:
-                ((ImageView) root.findViewById(R.id.ms1)).setImageDrawable(getResources().getDrawable(R.drawable.course1_pressed));
+                selectedButton = ms1Button;
+                drawableId = R.drawable.course1_pressed;
                 setAdapter(inflater, 4);
                 break;
             case 5:
-                ((ImageView) root.findViewById(R.id.ms2)).setImageDrawable(getResources().getDrawable(R.drawable.course2_pressed));
+                selectedButton = ms2Button;
+                drawableId = R.drawable.course2_pressed;
                 setAdapter(inflater, 5);
                 break;
         }
-        return root;
+        if (selectedButton != null || drawableId > 0)
+        {
+            Drawable drawable = getResources().getDrawable(drawableId);
+            selectedButton.setImageDrawable(drawable);
+        }
+        return entireView;
     }
 
     @Override
@@ -156,35 +199,63 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
     private void releaseButton()
     {
         MultipleAdaptersViewSection section = getSection();
+        ImageView releasedButton = null;
+        int drawableId = -1;
         switch (section.getCurrentState())
         {
             case 0:
-                ((ImageView) getView().findViewById(R.id.bs1)).setImageDrawable(getResources().getDrawable(R.drawable.course1));
+                releasedButton = bs1Button;
+                drawableId = R.drawable.course1;
                 break;
             case 1:
-                ((ImageView) getView().findViewById(R.id.bs2)).setImageDrawable(getResources().getDrawable(R.drawable.course2));
+                releasedButton = bs2Button;
+                drawableId = R.drawable.course2;
                 break;
             case 2:
-                ((ImageView) getView().findViewById(R.id.bs3)).setImageDrawable(getResources().getDrawable(R.drawable.course3));
+                releasedButton = bs3Button;
+                drawableId = R.drawable.course3;
                 break;
             case 3:
-                ((ImageView) getView().findViewById(R.id.bs4)).setImageDrawable(getResources().getDrawable(R.drawable.course4));
+                releasedButton = bs4Button;
+                drawableId = R.drawable.course4;
                 break;
             case 4:
-                ((ImageView) getView().findViewById(R.id.ms1)).setImageDrawable(getResources().getDrawable(R.drawable.course1));
+                releasedButton = ms1Button;
+                drawableId = R.drawable.course1;
                 break;
             case 5:
-                ((ImageView) getView().findViewById(R.id.ms2)).setImageDrawable(getResources().getDrawable(R.drawable.course2));
+                releasedButton = ms2Button;
+                drawableId = R.drawable.course2;
                 break;
         }
+        if (releasedButton != null && drawableId >= 0)
+        {
+            Resources resources = getResources();
+            Drawable drawable = resources.getDrawable(drawableId);
+            releasedButton.setImageDrawable(drawable);
+        }
+
     }
 
-    private void setAdapter(LayoutInflater inflater, int index)
+    private void setAdapter(final LayoutInflater inflater, int index)
     {
-        currentView = inflater.inflate(R.layout.list, root, false);
+        if (refreshLayout == null)
+        {
+            refreshLayout = (SwipeRefreshLayout) inflater.inflate(R.layout.list, root, false);
+            refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
+            {
+                @Override
+                public void onRefresh()
+                {
+                    loadContent(inflater);
+                }
+            });
+            refreshLayout.setColorSchemeColors(Color.BLUE, Color.GREEN, Color.YELLOW, Color.RED);
+            root.addView(refreshLayout);
+        }
+        currentView = refreshLayout.findViewById(R.id.list);
         ((ListView) currentView).setAdapter(getSection().getAdapter(index));
         ((ListView) currentView).setOnItemClickListener(this);
-        root.addView(currentView, 0);
     }
 
     @Override
@@ -200,7 +271,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
         showNextFragment(advertItemPlaceholderFragment);
     }
 
-    private void setAdapters(String result, final LayoutInflater inflater)//TODO а может не надо тут это делать?(
+    private void setAdapters(String result, final LayoutInflater inflater)
     {
         AdvertItem[] advertItems = Parser.parseAdverts(result);
         ArrayList<AdvertItem> bs1 = new ArrayList<AdvertItem>();
@@ -256,21 +327,31 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
     }
 
 
-    private void setOnClickListeners()
+    private void setUpButtons(View entireView)
     {
-        root.findViewById(R.id.bs1).setOnClickListener(this);
-        root.findViewById(R.id.bs2).setOnClickListener(this);
-        root.findViewById(R.id.bs3).setOnClickListener(this);
-        root.findViewById(R.id.bs4).setOnClickListener(this);
-        root.findViewById(R.id.ms1).setOnClickListener(this);
-        root.findViewById(R.id.ms2).setOnClickListener(this);
+        bs1Button = (ImageView) entireView.findViewById(R.id.bs1);
+        bs1Button.setOnClickListener(this);
+        bs2Button = (ImageView) entireView.findViewById(R.id.bs2);
+        bs2Button.setOnClickListener(this);
+        bs3Button = (ImageView) entireView.findViewById(R.id.bs3);
+        bs3Button.setOnClickListener(this);
+        bs4Button = (ImageView) entireView.findViewById(R.id.bs4);
+        bs4Button.setOnClickListener(this);
+        ms1Button = (ImageView) entireView.findViewById(R.id.ms1);
+        ms1Button.setOnClickListener(this);
+        ms2Button = (ImageView) entireView.findViewById(R.id.ms2);
+        ms2Button.setOnClickListener(this);
     }
 
 
     private void loadContent(final LayoutInflater inflater)
     {
-        currentView = inflater.inflate(R.layout.progress, root, false);
-        root.addView(currentView, 0);
+        if (refreshLayout == null)
+        {
+            currentView = inflater.inflate(R.layout.progress, root, false);
+            root.addView(currentView);
+        }
+
         Downloader downloader = new Downloader(new Downloader.RequestResultCallback()
         {
             @Override
@@ -278,6 +359,10 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
             {
                 if (isAdded())
                 {
+                    if (refreshLayout != null)
+                    {
+                        refreshLayout.setRefreshing(false);
+                    }
                     if (result == null)
                     {
                         handleLoadProblem();

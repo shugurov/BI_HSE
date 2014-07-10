@@ -43,7 +43,6 @@ public class CalendarFragment extends BaseFragment//TODO сохранять со
     private Calendar calendar = Calendar.getInstance(Locale.getDefault());
     private int year;
     private int month;
-    //TODO events mapping не сохраняется почему-то
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)

@@ -7,6 +7,12 @@
               android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/billboard_container"
+        style="@style/Fillable"
+        android:layout_marginTop="90dp"
+        android:orientation="vertical"></LinearLayout>
+
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="90dp"
         android:background="@color/reference_color"
