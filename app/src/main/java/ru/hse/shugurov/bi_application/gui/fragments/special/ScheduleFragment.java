@@ -70,8 +70,8 @@ public class ScheduleFragment extends BaseFragment implements View.OnClickListen
         {
             @Override
             public void downloadFinished()
-            {//TODO прогресс бар?
-                File file = new File(getActivity().getFilesDir(), "lol.xlsx");//TODO ;(
+            {
+                File file = new File(getActivity().getFilesDir(), getSection().getTitle() + ".xlsx");
                 if (file.exists())
                 {
                     Intent target = new Intent(Intent.ACTION_VIEW);
@@ -91,7 +91,7 @@ public class ScheduleFragment extends BaseFragment implements View.OnClickListen
                 }
             }
         });
-        FileDescription fileDescription = new FileDescription("lol.xlsx", url);//TODO file name
+        FileDescription fileDescription = new FileDescription(getSection().getTitle() + ".xlsx", url);//TODO file name
         downloader.execute(fileDescription);
     }
 }
