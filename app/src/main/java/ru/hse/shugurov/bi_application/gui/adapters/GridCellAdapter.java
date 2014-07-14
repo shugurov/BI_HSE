@@ -26,7 +26,6 @@ import ru.hse.shugurov.bi_application.model.NewsItem;
  */
 public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
 {
-    //TODO не отображается текущий день, если открыть следующий/предыдущий месяц
     private final Context context;
     private final List<DayDescription> listOfDaysOnScreen;
     private int currentDayOfMonth;
@@ -166,7 +165,7 @@ public class GridCellAdapter extends BaseAdapter implements View.OnClickListener
             Calendar calendarRepresentationOfDay = new GregorianCalendar(dayDescription.getYear(), dayDescription.getMonth(), dayDescription.getDay());
             if (events.containsKey(calendarRepresentationOfDay))
             {
-                currentlySelectedView.setBackgroundColor(Color.RED);//TODO если щёлкнуть на мероприятие, то цвет пропадает
+                currentlySelectedView.setBackgroundColor(Color.RED);
             } else
             {
                 if (Build.VERSION.SDK_INT >= 16)

@@ -60,6 +60,13 @@ public class ProjectItemFragment extends BaseFragment
     }
 
     @Override
+    protected void setTitle()
+    {
+        String title = item.getHeadline();
+        getActivity().setTitle(title);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);

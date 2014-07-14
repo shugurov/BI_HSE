@@ -40,7 +40,7 @@ public class ScheduleFragment extends BaseFragment implements View.OnClickListen
     public void onClick(View view)
     {
         String url = null;
-        switch (view.getId())//TODO почему все ссылки null?
+        switch (view.getId())
         {
             case R.id.schedule_bs1:
                 url = ((ReferencesSection) getSection()).getReference(0);
@@ -91,7 +91,7 @@ public class ScheduleFragment extends BaseFragment implements View.OnClickListen
                 }
             }
         });
-        FileDescription fileDescription = new FileDescription(getSection().getTitle() + ".xlsx", url);//TODO file name
+        FileDescription fileDescription = new FileDescription(getSection().getTitle() + ".xlsx", url);
         downloader.execute(fileDescription);
     }
 }

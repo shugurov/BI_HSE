@@ -25,4 +25,6 @@
         <item>Магистратура</item>
     </string-array>
 
+    <string name="contact">Контакт</string>
+
 </resources>

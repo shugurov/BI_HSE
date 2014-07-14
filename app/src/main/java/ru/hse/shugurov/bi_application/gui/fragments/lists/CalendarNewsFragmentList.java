@@ -8,15 +8,17 @@ import android.widget.ListAdapter;
 
 import java.util.Arrays;
 
+import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.gui.adapters.NewsAdapter;
+import ru.hse.shugurov.bi_application.gui.fragments.BaseFragment;
+import ru.hse.shugurov.bi_application.gui.fragments.items.NewsItemFragment;
 import ru.hse.shugurov.bi_application.model.NewsItem;
 
 /**
  * Created by Иван on 30.06.2014.
  */
 public class CalendarNewsFragmentList extends FragmentWithList
-{//TODO упало при открытии одного из окон после ночи
-    //TODO не могу открывать события
+{
     public static final String NEWS_ITEMS = "calendar news";
     private NewsItem[] items;
 
@@ -53,7 +55,16 @@ public class CalendarNewsFragmentList extends FragmentWithList
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id)
     {
-        //TODO create method
+        BaseFragment newsFragment = new NewsItemFragment();
+        NewsItem item = getSelectedItem(parent, position);
+        Bundle arguments = new Bundle();
+        arguments.putParcelable(NewsItemFragment.ITEM_TAG, item);
+        arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
+        newsFragment.setArguments(arguments);
+        newsFragment.setBackStack(getBackStack());
+        android.support.v4.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, newsFragment);
+        transaction.commit();
     }
 
     @Override

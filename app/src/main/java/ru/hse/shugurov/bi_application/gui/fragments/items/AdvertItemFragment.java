@@ -34,6 +34,13 @@ public class AdvertItemFragment extends BaseFragment
     }
 
     @Override
+    protected void setTitle()
+    {
+        String title = advertItem.getTitle();
+        getActivity().setTitle(title);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);

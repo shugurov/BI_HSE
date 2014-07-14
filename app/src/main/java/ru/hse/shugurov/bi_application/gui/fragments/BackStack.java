@@ -11,7 +11,7 @@ import java.util.LinkedList;
 /**
  * Created by Иван on 07.06.2014.
  */
-public class BackStack implements Parcelable//TODO не работает при перевороте
+public class BackStack implements Parcelable
 {
     public static final Creator<BackStack> CREATOR = new Creator<BackStack>()
     {

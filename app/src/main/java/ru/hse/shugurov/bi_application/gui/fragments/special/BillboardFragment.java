@@ -30,8 +30,8 @@ import ru.hse.shugurov.bi_application.sections.MultipleAdaptersViewSection;
 /**
  * Created by Иван on 13.01.14.
  */
-public class BillboardFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener //TODO я сразу качаю или вначале проверяю кэш?
-{//TODO при перевороте падает
+public class BillboardFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener
+{
     private LinearLayout root;
     private View currentView;
     private ImageView bs1Button;
@@ -55,56 +55,34 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
         setUpButtons(entireView);
         int drawableId = -1;
         ImageView selectedButton = null;
-        switch (getSection().getCurrentState())
+        final MultipleAdaptersViewSection section = getSection();
+        int currentState = section.getCurrentState();
+        switch (currentState)
         {
             case 0:
                 selectedButton = bs1Button;
                 drawableId = R.drawable.course1_pressed;
-                if (getSection().getAdapter(0) == null)//TODO делаю в том же потоке(
-                {
-                    FileManager fileManager = FileManager.instance();
-                    try
-                    {
-                        String value = fileManager.getFileContent(getSection().getTitle());
-                        if (value != null)
-                        {
-                            setAdapters(value, inflater);
-                            break;
-                        }
-                    } catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                    loadContent(inflater);
-                } else
-                {
-                    setAdapter(inflater, 0);
-                }
+
                 break;
             case 1:
                 selectedButton = bs2Button;
                 drawableId = R.drawable.course2_pressed;
-                setAdapter(inflater, 1);
                 break;
             case 2:
                 selectedButton = bs3Button;
                 drawableId = R.drawable.course3_pressed;
-                setAdapter(inflater, 2);
                 break;
             case 3:
                 selectedButton = bs4Button;
                 drawableId = R.drawable.course4_pressed;
-                setAdapter(inflater, 3);
                 break;
             case 4:
                 selectedButton = ms1Button;
                 drawableId = R.drawable.course1_pressed;
-                setAdapter(inflater, 4);
                 break;
             case 5:
                 selectedButton = ms2Button;
                 drawableId = R.drawable.course2_pressed;
-                setAdapter(inflater, 5);
                 break;
         }
         if (selectedButton != null || drawableId > 0)
@@ -112,11 +90,43 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
             Drawable drawable = getResources().getDrawable(drawableId);
             selectedButton.setImageDrawable(drawable);
         }
+        if (section.getAdapter(currentState) == null)
+        {
+            currentView = inflater.inflate(R.layout.progress, root, false);
+            root.addView(currentView);
+
+            Runnable opening = new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    FileManager fileManager = FileManager.instance();
+                    try
+                    {
+                        String value = fileManager.getFileContent(section.getTitle());
+                        if (value != null)
+                        {
+                            setAdapters(value, inflater);
+                            return;
+                        }
+                    } catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    loadContent(inflater);
+                }
+            };
+            new Thread(opening).start();
+
+        } else
+        {
+            setAdapter(inflater, currentState);
+        }
         return entireView;
     }
 
     @Override
-    public void onClick(View view)//TODO слишком много instanceof
+    public void onClick(View view)
     {
         MultipleAdaptersViewSection section = getSection();
         switch (view.getId())
@@ -127,10 +137,6 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                     releaseButton();
                     ((ImageView) getView().findViewById(R.id.bs1)).setImageDrawable(getResources().getDrawable(R.drawable.course1_pressed));
                     section.setCurrentState(0);
-                    if (!(currentView instanceof ProgressBar))
-                    {
-                        ((ListView) currentView).setAdapter(section.getAdapter(0));
-                    }
                 }
                 break;
             case R.id.bs2:
@@ -139,10 +145,6 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                     releaseButton();
                     ((ImageView) getView().findViewById(R.id.bs2)).setImageDrawable(getResources().getDrawable(R.drawable.course2_pressed));
                     section.setCurrentState(1);
-                    if (!(currentView instanceof ProgressBar))
-                    {
-                        ((ListView) currentView).setAdapter(section.getAdapter(1));
-                    }
                 }
                 break;
             case R.id.bs3:
@@ -151,10 +153,6 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                     releaseButton();
                     ((ImageView) getView().findViewById(R.id.bs3)).setImageDrawable(getResources().getDrawable(R.drawable.course3_pressed));
                     section.setCurrentState(2);
-                    if (!(currentView instanceof ProgressBar))
-                    {
-                        ((ListView) currentView).setAdapter(section.getAdapter(2));
-                    }
                 }
                 break;
             case R.id.bs4:
@@ -163,10 +161,6 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                     releaseButton();
                     ((ImageView) getView().findViewById(R.id.bs4)).setImageDrawable(getResources().getDrawable(R.drawable.course4_pressed));
                     section.setCurrentState(3);
-                    if (!(currentView instanceof ProgressBar))
-                    {
-                        ((ListView) currentView).setAdapter(section.getAdapter(3));
-                    }
                 }
                 break;
             case R.id.ms1:
@@ -175,10 +169,6 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                     releaseButton();
                     ((ImageView) getView().findViewById(R.id.ms1)).setImageDrawable(getResources().getDrawable(R.drawable.course1_pressed));
                     section.setCurrentState(4);
-                    if (!(currentView instanceof ProgressBar))
-                    {
-                        ((ListView) currentView).setAdapter(section.getAdapter(4));
-                    }
                 }
                 break;
             case R.id.ms2:
@@ -187,12 +177,14 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                     releaseButton();
                     ((ImageView) getView().findViewById(R.id.ms2)).setImageDrawable(getResources().getDrawable(R.drawable.course2_pressed));
                     section.setCurrentState(5);
-                    if (!(currentView instanceof ProgressBar))
-                    {
-                        ((ListView) currentView).setAdapter(section.getAdapter(5));
-                    }
                 }
                 break;
+            default:
+                return;
+        }
+        if (!(currentView instanceof ProgressBar))
+        {
+            ((ListView) currentView).setAdapter(section.getAdapter(section.getCurrentState()));
         }
     }
 
@@ -305,7 +297,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                     break;
             }
         }
-        MultipleAdaptersViewSection section = getSection();
+        final MultipleAdaptersViewSection section = getSection();
         section.setAdapter(new AdvertAdapter(getActivity(), bs1), 0);
         section.setAdapter(new AdvertAdapter(getActivity(), bs2), 1);
         section.setAdapter(new AdvertAdapter(getActivity(), bs3), 2);
@@ -320,7 +312,7 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
                 public void run()
                 {
                     root.removeView(currentView);
-                    setAdapter(inflater, 0);
+                    setAdapter(inflater, section.getCurrentState());
                 }
             });
         }
@@ -346,12 +338,6 @@ public class BillboardFragment extends BaseFragment implements View.OnClickListe
 
     private void loadContent(final LayoutInflater inflater)
     {
-        if (refreshLayout == null)
-        {
-            currentView = inflater.inflate(R.layout.progress, root, false);
-            root.addView(currentView);
-        }
-
         Downloader downloader = new Downloader(new Downloader.RequestResultCallback()
         {
             @Override

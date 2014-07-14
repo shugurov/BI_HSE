@@ -1,6 +1,7 @@
 package ru.hse.shugurov.bi_application.gui.fragments.special;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -29,7 +31,7 @@ import ru.hse.shugurov.bi_application.sections.EventsSection;
 /**
  * Created by Иван on 17.06.2014.
  */
-public class CalendarFragment extends BaseFragment//TODO сохранять состояние календаря
+public class CalendarFragment extends BaseFragment
 {
     private final static String MAPPING_TAG = "events mapping";
     private final static String YEAR_TAG = "calendar_year";
@@ -88,7 +90,7 @@ public class CalendarFragment extends BaseFragment//TODO сохранять со
                 } else
                 {
                     eventsMapping = new HashMap<Calendar, NewsItem[]>(results.length);
-                    for (int i = 0; i < results.length; i++)//TODO делаю в главном потоке(
+                    for (int i = 0; i < results.length; i++)
                     {
                         if (results[i] != null)
                         {
@@ -230,6 +232,18 @@ public class CalendarFragment extends BaseFragment//TODO сохранять со
             return;
         }
         eventsMapping = (HashMap<Calendar, NewsItem[]>) parentArguments.getSerializable(MAPPING_TAG);
+        if (eventsMapping != null)
+        {
+            for (Calendar c : eventsMapping.keySet())
+            {
+                Object[] array = eventsMapping.get(c);
+                if (array instanceof Parcelable[])
+                {
+                    NewsItem[] items = Arrays.copyOf(array, array.length, NewsItem[].class);
+                    eventsMapping.put(c, items);
+                }
+            }
+        }
         year = parentArguments.getInt(YEAR_TAG);
         month = parentArguments.getInt(MONTH_TAG);
     }

@@ -53,6 +53,13 @@ public class NewsItemFragment extends BaseFragment
     }
 
     @Override
+    protected void setTitle()
+    {
+        String title = item.getTitle();
+        getActivity().setTitle(title);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);

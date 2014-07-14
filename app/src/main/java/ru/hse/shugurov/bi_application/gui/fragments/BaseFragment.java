@@ -12,7 +12,7 @@ import ru.hse.shugurov.bi_application.R;
 import ru.hse.shugurov.bi_application.sections.Section;
 
 
-public abstract class BaseFragment extends Fragment//TODO запись в файл перенести сюда
+public abstract class BaseFragment extends Fragment
 {
     public final static String SECTION_TAG = "section";
     private Section section;
@@ -46,6 +46,11 @@ public abstract class BaseFragment extends Fragment//TODO запись в фай
     {
         super.onResume();
         addToBackStack();
+        setTitle();
+    }
+
+    protected void setTitle()
+    {
         String title = section.getTitle();
         getActivity().setTitle(title);
     }

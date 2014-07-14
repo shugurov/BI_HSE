@@ -309,7 +309,7 @@ public class Parser
         return advertItemItems;
     }
 
-    public static void parseSchedule(Context context, final ReferencesSection section, String url, final String fileName)//TODO как работает, если не удалось скачать в первый раз?
+    public static void parseSchedule(Context context, final ReferencesSection section, String url, final String fileName)
     {
         FileDownloader downloader = new FileDownloader(context, new FileDownloader.DownloadCallback()
         {

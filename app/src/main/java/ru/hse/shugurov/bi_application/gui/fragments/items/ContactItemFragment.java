@@ -90,6 +90,13 @@ public class ContactItemFragment extends BaseFragment
         readFromBundle(savedInstanceState);
     }
 
+    @Override
+    protected void setTitle()
+    {
+        String title = getResources().getString(R.string.contact);
+        getActivity().setTitle(title);
+    }
+
     private void readFromBundle(Bundle savedInstanceState)
     {
         if (savedInstanceState != null)

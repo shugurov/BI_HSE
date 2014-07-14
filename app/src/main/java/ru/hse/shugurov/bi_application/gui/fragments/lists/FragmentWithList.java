@@ -34,7 +34,7 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState)
     {
         isJustCreated = true;
-        container.removeAllViews();//TODO fix when a progress bar is shown
+        container.removeAllViews();
         rootView = (LinearLayout) inflater.inflate(R.layout.fragment_list, container, false);
         ListAdapter adapter = getCurrentAdapter();
         if (adapter != null)
@@ -80,7 +80,7 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
     {
         if (listView == null || isJustCreated)
         {
-            rootView.removeView(progressDialog);//TODO проверять?
+            rootView.removeView(progressDialog);
             swipeRefreshLayout = (SwipeRefreshLayout) ((ViewStub) rootView.findViewById(R.id.fragment_list_stub)).inflate();
             swipeRefreshLayout.setEnabled(isPullToRefreshAvailable());
             swipeRefreshLayout.setColorSchemeColors(Color.BLUE, Color.GREEN, Color.YELLOW, Color.RED);
@@ -144,10 +144,11 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
         if (isAdded())
         {
             final ListAdapter adapter = getAdapter(data);
-            //TODO что делать, если adapter == null
-            setSectionAdapter(adapter);
-            if (isAdded())
+            if (adapter == null)
             {
+                return;
+            }
+            setSectionAdapter(adapter);
                 Runnable listCreation = new Runnable()
                 {
                     @Override
@@ -157,7 +158,6 @@ public abstract class FragmentWithList extends BaseFragment implements AdapterVi
                     }
                 };
                 getActivity().runOnUiThread(listCreation);
-            }
         }
     }
 

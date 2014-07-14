@@ -17,10 +17,8 @@ import ru.hse.shugurov.bi_application.sections.EventsSection;
 /**
  * Created by Иван on 09.01.14.
  */
-public class EventsFragment extends BaseFragment implements View.OnClickListener//TODO календаря нет в кэше
-{//TODO подтормаживает меню
-    //TODO не меняю заголовок в action bar при переходе на специфичные фрагменты
-    //TODO если открыть событие, перейти на другой экран, а потом сново открыть, то будет грустно(
+public class EventsFragment extends BaseFragment implements View.OnClickListener
+{
     private int lastPressedButton;
 
     @Override
@@ -56,13 +54,10 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
         root.findViewById(R.id.events_archives_image).setOnClickListener(this);
         root.findViewById(R.id.events_calendar_image).setOnClickListener(this);
         root.findViewById(R.id.events_announce_image).setOnClickListener(this);
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();//TODO овторяю один код дважды(
-        arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
-        fragmentToBeShown.setArguments(arguments);
-        transaction.replace(R.id.events_container, fragmentToBeShown);
-        transaction.commit();
+        showFragment(fragmentToBeShown, arguments);
         return root;
     }
+
 
     @Override
     public void onClick(View view)
@@ -99,10 +94,15 @@ public class EventsFragment extends BaseFragment implements View.OnClickListener
 
                 break;
         }
-        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        fragmentToBeShown.setBackStack(getBackStack());
+        showFragment(fragmentToBeShown, arguments);
+    }
+
+    private void showFragment(BaseFragment fragmentToBeShown, Bundle arguments)
+    {
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();//
         arguments.putSerializable(BaseFragment.SECTION_TAG, getSection());
         fragmentToBeShown.setArguments(arguments);
-        fragmentToBeShown.setBackStack(getBackStack());
         transaction.replace(R.id.events_container, fragmentToBeShown);
         transaction.commit();
     }
