@@ -3,6 +3,7 @@ package ru.hse.shugurov.bi_application.gui;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -126,6 +127,7 @@ public class NavigationDrawerFragment extends Fragment
         mDrawerListView.setAdapter(adapter);
         mFragmentContainerView = getActivity().findViewById(fragmentId);
         mDrawerLayout = drawerLayout;
+        mDrawerListView.setBackgroundColor(Color.parseColor("#f5f6f8"));
 
         // set a custom shadow that overlays the main content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
